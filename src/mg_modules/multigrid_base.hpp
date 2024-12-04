@@ -22,17 +22,728 @@ namespace multigrid
     {
     }
 
-    /** @brief restriction operator */
+    /** @brief linear restriction operator */
     template <typename T, int Ndim>
-    inline void restriction_operator(ndArray<T, Ndim> &corseData, ndArray<T, Ndim> &fineData)
+    inline void linear_restriction_operator(ndArray<T, Ndim> &corseData, ndArray<T, Ndim> &fineData)
     {
+        size_t nxc,nyc,nzc,nxf,nyf,nzf;
+        nxc = corseData.size(0); nyc = corseData.size(1); nzc = (Ndim==3) ? (corseData.size(2)) : 0;
+        nxf = fineData.size(0); nyf = fineData.size(1); nzf = (Ndim == 3) ? (fineData.size(2)) : 0;
+
+        if(Ndim == 2)
+        {
+            // update iner cells
+            for(int j = 1; j < nyc-1; j++)
+            {
+                for(int i = 1; i < nxc - 1; i++)
+                {
+                    corseData({i,j}) = (1/64) * (9*fineData({2*i, 2*j}) + 9*fineData({2*i + 1, 2*j}) + 9*fineData({2*i, 2*j + 1}) + 9*fineData({2*i + 1, 2*j + 1})\
+                    + 3*fineData({2*i, 2*j + 2}) + 3*fineData({2*i , 2*j -1}) + 3*fineData({2*i + 1, 2*j + 2}) + 3*fineData({2*i + 1, 2*j - 1}) \
+                    + 3*fineData({2*i - 1, 2*j}) + 3*fineData({2*i - 1, 2*j + 1}) + 3*fineData({2*i + 2, 2*j + 1}) + 3*fineData({2*i + 2, 2*j })\
+                    + fineData({2*i - 1, 2*j + 2}) + fineData({2*i - 1, 2*j - 1}) + fineData({2*i + 2, 2*j + 2}) + fineData({2*i + 1, 2*j - 1}));
+                }
+            }
+
+            // update boundaries cells (deepending on the BC types e.g Dirichlet, Neumann, Robin, etc..)
+        }
+
+        else if(Ndim == 3)
+        {
+            // update iner cells
+            for(int k = 1; k < nzc - 1; k++)
+           { 
+                for(int j = 1; j < nyc-1; j++)
+                {
+                    for(int i = 1; i < nxc - 1; i++)
+                    {
+                        corseData({i,j,k}) = (1/512) * (fineData({2*i, 2*j, 2*k}) + fineData({2*i + 1, 2*j, 2*k}) + fineData({2*i , 2*j + 1, 2*k}) + fineData({2*i, 2*j, 2*k + 1}) + fineData({2*i + 1, 2*j, 2*k + 1}) + fineData({2*i, 2*j+1, 2*k+1})+ fineData({2*i+1, 2*j+1, 2*k}) + fineData({2*i + 1, 2*j+1, 2*k+1}) \
+                        + 0);
+                    }
+                }
+            }
+
+            // updates boundaries cells
+        }
+
     }
 
-    /** @brief interpolation operator */
+
+        /** @brief khalil restriction operator */
     template <typename T, int Ndim>
-    inline void interpolation_operator(ndArray<T, Ndim> &corseData, ndArray<T, Ndim> &fineData)
+    inline void Khalil_restriction_operator(ndArray<T, Ndim> &corseData, ndArray<T, Ndim> &fineData)
     {
+        size_t nxc,nyc,nzc,nxf,nyf,nzf;
+        nxc = corseData.size(0); nyc = corseData.size(1); nzc = (Ndim==3) ? (corseData.size(2)) : 0;
+        nxf = fineData.size(0); nyf = fineData.size(1); nzf = (Ndim == 3) ? (fineData.size(2)) : 0;
+
+        if(Ndim == 2)
+        {
+            // update iner cells
+            for(int j = 1; j < nyc-1; j++)
+            {
+                for(int i = 1; i < nxc - 1; i++)
+                {
+                    corseData({i,j}) = (1/16) * (2*fineData({2*i, 2*j}) + 3*fineData({2*i + 1, 2*j}) + 3*fineData({2*i, 2*j + 1}) + 3*fineData({2*i + 1, 2*j + 1})\
+                    + fineData({2*i, 2*j + 2}) + 0*fineData({2*i , 2*j -1}) + 0*fineData({2*i + 1, 2*j + 2}) + fineData({2*i + 1, 2*j - 1}) \
+                    + 0*fineData({2*i - 1, 2*j}) + fineData({2*i - 1, 2*j + 1}) + 0*fineData({2*i + 2, 2*j + 1}) + 1*fineData({2*i + 2, 2*j })\
+                    + fineData({2*i - 1, 2*j + 2}) + 0*fineData({2*i - 1, 2*j - 1}) + 0*fineData({2*i + 2, 2*j + 2}) + fineData({2*i + 1, 2*j - 1}));
+                }
+            }
+
+            // update boundaries cells (deepending on the BC types e.g Dirichlet, Neumann, Robin, etc..)
+        }
+
+        else if(Ndim == 3)
+        {
+            // update iner cells
+            for(int k = 1; k < nzc - 1; k++)
+           { 
+                for(int j = 1; j < nyc-1; j++)
+                {
+                    for(int i = 1; i < nxc - 1; i++)
+                    {
+                        corseData({i,j,k}) = (1/512) * (fineData({2*i, 2*j, 2*k}) + fineData({2*i + 1, 2*j, 2*k}) + fineData({2*i , 2*j + 1, 2*k}) + fineData({2*i, 2*j, 2*k + 1}) + fineData({2*i + 1, 2*j, 2*k + 1}) + fineData({2*i, 2*j+1, 2*k+1})+ fineData({2*i+1, 2*j+1, 2*k}) + fineData({2*i + 1, 2*j+1, 2*k+1}) \
+                        + 0);
+                    }
+                }
+            }
+
+            // updates boundaries cells
+        }
+
     }
+
+
+     /** @brief kwak restriction operator */
+    template <typename T, int Ndim>
+    inline void kwak_restriction_operator(ndArray<T, Ndim> &corseData, ndArray<T, Ndim> &fineData)
+    {
+        size_t nxc,nyc,nzc,nxf,nyf,nzf;
+        nxc = corseData.size(0); nyc = corseData.size(1); nzc = (Ndim==3) ? (corseData.size(2)) : 0;
+        nxf = fineData.size(0); nyf = fineData.size(1); nzf = (Ndim == 3) ? (fineData.size(2)) : 0;
+
+        if(Ndim == 2)
+        {
+            // update iner cells
+            for(int j = 1; j < nyc-1; j++)
+            {
+                for(int i = 1; i < nxc - 1; i++)
+                {
+                    corseData({i,j}) = (1/16) * (2*fineData({2*i, 2*j}) + 2*fineData({2*i + 1, 2*j}) + 2*fineData({2*i, 2*j + 1}) + 2*fineData({2*i + 1, 2*j + 1})\
+                    + fineData({2*i, 2*j + 2}) + fineData({2*i , 2*j -1}) + fineData({2*i + 1, 2*j + 2}) + fineData({2*i + 1, 2*j - 1}) \
+                    + fineData({2*i - 1, 2*j}) + fineData({2*i - 1, 2*j + 1}) + fineData({2*i + 2, 2*j + 1}) + fineData({2*i + 2, 2*j })\
+                    + 0*fineData({2*i - 1, 2*j + 2}) + 0*fineData({2*i - 1, 2*j - 1}) + 0*fineData({2*i + 2, 2*j + 2}) + 0*fineData({2*i + 1, 2*j - 1}));
+                }
+            }
+
+            // update boundaries cells (deepending on the BC types e.g Dirichlet, Neumann, Robin, etc..)
+        }
+
+        else if(Ndim == 3)
+        {
+            // update iner cells
+            for(int k = 1; k < nzc - 1; k++)
+           { 
+                for(int j = 1; j < nyc-1; j++)
+                {
+                    for(int i = 1; i < nxc - 1; i++)
+                    {
+                        corseData({i,j,k}) = (1/512) * (fineData({2*i, 2*j, 2*k}) + fineData({2*i + 1, 2*j, 2*k}) + fineData({2*i , 2*j + 1, 2*k}) + fineData({2*i, 2*j, 2*k + 1}) + fineData({2*i + 1, 2*j, 2*k + 1}) + fineData({2*i, 2*j+1, 2*k+1})+ fineData({2*i+1, 2*j+1, 2*k}) + fineData({2*i + 1, 2*j+1, 2*k+1}) \
+                        + 0);
+                    }
+                }
+            }
+
+            // updates boundaries cells
+        }
+
+    }
+
+
+
+     /** @brief constant restriction operator */
+    template <typename T, int Ndim>
+    inline void constant_restriction_operator(ndArray<T, Ndim> &corseData, ndArray<T, Ndim> &fineData)
+    {
+        size_t nxc,nyc,nzc,nxf,nyf,nzf;
+        nxc = corseData.size(0); nyc = corseData.size(1); nzc = (Ndim==3) ? (corseData.size(2)) : 0;
+        nxf = fineData.size(0); nyf = fineData.size(1); nzf = (Ndim == 3) ? (fineData.size(2)) : 0;
+
+        if(Ndim == 2)
+        {
+            // update iner cells
+            for(int j = 1; j < nyc-1; j++)
+            {
+                for(int i = 1; i < nxc - 1; i++)
+                {
+                    corseData({i,j}) = (1/4) * (fineData({2*i, 2*j}) + fineData({2*i + 1, 2*j}) + fineData({2*i, 2*j + 1}) + fineData({2*i + 1, 2*j + 1}));
+                }
+            }
+
+            // update boundaries cells (deepending on the BC types e.g Dirichlet, Neumann, Robin, etc..)
+        }
+
+        else if(Ndim == 3)
+        {
+            // update iner cells
+            for(int k = 1; k < nzc - 1; k++)
+           { 
+                for(int j = 1; j < nyc-1; j++)
+                {
+                    for(int i = 1; i < nxc - 1; i++)
+                    {
+                        corseData({i,j,k}) = (1/8) * (fineData({2*i, 2*j, 2*k}) + fineData({2*i + 1, 2*j, 2*k}) \
+                        + fineData({2*i , 2*j + 1, 2*k}) + fineData({2*i, 2*j, 2*k + 1}) \
+                        + fineData({2*i + 1, 2*j, 2*k + 1}) + fineData({2*i, 2*j+1, 2*k+1})\
+                        + fineData({2*i+1, 2*j+1, 2*k}) + fineData({2*i + 1, 2*j+1, 2*k+1}));
+                    }
+                }
+            }
+
+            // updates boundaries cells
+        }
+
+    }
+
+    
+
+    /** @brief constantwise interpolation operator */
+    template <typename T, int Ndim>
+    inline void constantwise_interpolation_operator(ndArray<T, Ndim> &corseData, ndArray<T, Ndim> &fineData)
+    {
+        size_t nxc,nyc,nzc,nxf,nyf,nzf;
+        nxc = corseData.size(0); nyc = corseData.size(1); nzc = (Ndim==3) ? (corseData.size(2)) : 0;
+        nxf = fineData.size(0); nyf = fineData.size(1); nzf = (Ndim == 3) ? (fineData.size(2)) : 0;
+
+        if(Ndim == 2)
+        {
+            // update iner cells
+            for(int j = 0; j < nyc; j++)
+            {
+                for(int i = 0; i < nxc; i++)
+                {
+                    auto tmp = corseData({i,j});
+                    fineData({2*i,2*j}) = tmp;
+                    fineData({2*i + 1, 2*j}) = tmp;
+                    fineData({2*i + 1,2*j + 1}) = tmp;
+                    fineData({2*i , 2*j + 1}) = tmp;
+                    
+                }
+            }
+        }
+
+        if(Ndim == 3)
+        {
+            // update iner cells
+            for(int k = 0; k < nzc; k++)
+           { 
+            for(int j = 0; j < nyc; j++)
+            {
+                for(int i = 0; i < nxc; i++)
+                {
+                    auto tmp = corseData({i,j,k});
+                    fineData({2*i,2*j, 2*k}) = tmp;
+                    fineData({2*i + 1, 2*j, 2*k}) = tmp;
+                    fineData({2*i + 1,2*j + 1, 2*k}) = tmp;
+                    fineData({2*i , 2*j + 1, 2*k}) = tmp;
+
+                    fineData({2*i, 2*j, 2*k + 1}) = tmp;
+                    fineData({2*i + 1, 2*j, 2*k + 1}) = tmp;
+                    fineData({2*i + 1,2*j + 1, 2*k + 1}) = tmp;
+                    fineData({2*i , 2*j + 1, 2*k + 1}) = tmp;
+                    
+                }
+            }
+            }
+        }
+
+
+    }
+
+
+
+    /** @brief linear interpolation operator */
+    // TODO make sure ndArray is initialize to zero
+    template <typename T, int Ndim>
+    inline void linear_interpolation_operator(ndArray<T, Ndim> &corseData, ndArray<T, Ndim> &fineData)
+    {
+        size_t nxc,nyc,nzc,nxf,nyf,nzf;
+        nxc = corseData.size(0); nyc = corseData.size(1); nzc = (Ndim==3) ? (corseData.size(2)) : 0;
+        nxf = fineData.size(0); nyf = fineData.size(1); nzf = (Ndim == 3) ? (fineData.size(2)) : 0;
+
+        if(Ndim == 2)
+        {
+            // update iner cells
+            for(int j = 1; j < nyc-1; j++)
+            {
+                for(int i = 1; i < nxc-1; i++)
+                {
+                    auto tmp = (1/16)*corseData({i,j});
+                    fineData({2*i,2*j}) += 9*tmp;
+                    fineData({2*i + 1, 2*j}) += 9*tmp;
+                    fineData({2*i + 1, 2*j +1}) += 9*tmp;
+                    fineData({2*i,2*j + 1}) += 9*tmp;
+
+                    fineData({2*i-1,2*j}) += 3*tmp;
+                    fineData({2*i+2,2*j}) += 3*tmp;
+                    fineData({2*i+2,2*j+1}) += 3*tmp;
+                    fineData({2*i-1,2*j+1}) += 3*tmp;
+
+                                       
+                    fineData({2*i-1,2*j-1}) += tmp;
+                    fineData({2*i+2,2*j-1}) += tmp;
+                    fineData({2*i+2,2*j+2}) += tmp;
+                    fineData({2*i-1,2*j+2}) += tmp;
+
+                    fineData({2*i, 2*j-1}) += 3*tmp;
+                    fineData({2*i + 1,2*j -1}) += 3*tmp;
+                    fineData({2*i+1,2*j +2}) += 3*tmp;
+                    fineData({2*i,2*j+2}) += 3*tmp;
+                }
+            }
+
+            // TODO BC to add on
+        }
+
+        if(Ndim == 3)
+        {
+            for(int k = 1; k < nzc-1; k++)
+            {
+                for(int j = 1; j < nyc-1; j++)
+                {
+                    for(int i = 1; i < nxc-1; i++)
+                    {
+                        auto tmp = (1/64)*corseData({i,j,k });
+                    {  
+                        fineData({2*i,2*j, 2*k - 1}) += 9*tmp;
+                        fineData({2*i + 1, 2*j,  2*k - 1}) += 9*tmp;
+                        fineData({2*i + 1, 2*j +1,  2*k - 1}) += 9*tmp;
+                        fineData({2*i,2*j + 1,  2*k - 1}) += 9*tmp;
+
+                        fineData({2*i-1,2*j,  2*k - 1}) += 3*tmp;
+                        fineData({2*i+2,2*j,  2*k - 1}) += 3*tmp;
+                        fineData({2*i+2,2*j+1,  2*k - 1}) += 3*tmp;
+                        fineData({2*i-1,2*j+1,  2*k - 1}) += 3*tmp;
+
+                                        
+                        fineData({2*i-1,2*j-1,  2*k - 1}) += tmp;
+                        fineData({2*i+2,2*j-1,  2*k - 1}) += tmp;
+                        fineData({2*i+2,2*j+2,  2*k - 1}) += tmp;
+                        fineData({2*i-1,2*j+2 , 2*k - 1}) += tmp;
+
+                        fineData({2*i, 2*j-1,  2*k - 1}) += 3*tmp;
+                        fineData({2*i + 1,2*j -1,  2*k - 1}) += 3*tmp;
+                        fineData({2*i+1,2*j +2,  2*k - 1}) += 3*tmp;
+                        fineData({2*i,2*j+2,  2*k - 1}) += 3*tmp;
+                        
+                    }
+
+            
+                    {  
+                        fineData({2*i,2*j,  2*k}) +=        27*tmp;
+                        fineData({2*i + 1, 2*j,  2*k }) +=  27*tmp;
+                        fineData({2*i + 1, 2*j +1,  2*k})+= 27*tmp;
+                        fineData({2*i,2*j + 1,  2*k}) +=    27*tmp;
+
+                        fineData({2*i-1,2*j,  2*k})  += 9*tmp;
+                        fineData({2*i+2,2*j,  2*k})  += 9*tmp;
+                        fineData(2*i+2,2*j+1,  2*k ) += 9*tmp;
+                        fineData(2*i-1,2*j+1,  2*k ) += 9*tmp;
+
+                                        
+                        fineData({2*i-1,2*j-1,  2*k }) += 3*tmp;
+                        fineData({2*i+2,2*j-1,  2*k }) += 3*tmp;
+                        fineData({2*i+2,2*j+2,  2*k }) += 3*tmp;
+                        fineData({2*i-1,2*j+2,  2*k }) += 3*tmp;
+
+                        fineData({2*i, 2*j-1,      2*k}) += 9*tmp;
+                        fineData({2*i + 1,2*j -1,  2*k}) += 9*tmp;
+                        fineData({2*i+1,2*j +2,    2*k}) += 9*tmp;
+                        fineData({2*i,2*j+2,       2*k}) += 9*tmp;
+                        
+                    }
+
+                       
+                    {  
+                        fineData({2*i,     2*j,     2*k + 1}) += 27*tmp;
+                        fineData({2*i + 1, 2*j,     2*k + 1}) += 27*tmp;
+                        fineData({2*i + 1, 2*j +1,  2*k + 1}) += 27*tmp;
+                        fineData({2*i,     2*j + 1, 2*k + 1}) += 27*tmp;
+
+                        fineData({2*i-1,2*j, 2*k + 1})   += 9*tmp;
+                        fineData({2*i+2,2*j, 2*k + 1})   += 9*tmp;
+                        fineData({2*i+2,2*j+1, 2*k + 1}) += 9*tmp;
+                        fineData({2*i-1,2*j+1, 2*k + 1}) += 9*tmp;
+
+                                        
+                        fineData({2*i-1,2*j-1, 2*k + 1}) += 3*tmp;
+                        fineData({2*i+2,2*j-1, 2*k + 1}) += 3*tmp;
+                        fineData({2*i+2,2*j+2, 2*k + 1}) += 3*tmp;
+                        fineData({2*i-1,2*j+2, 2*k + 1}) += 3*tmp;
+
+                        fineData({2*i, 2*j-1,     2*k + 1}) += 9*tmp;
+                        fineData({2*i + 1,2*j -1, 2*k + 1}) += 9*tmp;
+                        fineData({2*i+1,2*j +2,   2*k + 1}) += 9*tmp;
+                        fineData({2*i,2*j+2,      2*k + 1}) += 9*tmp;
+                        
+                    }
+                    
+
+                    {  
+                        fineData({2*i,2*j, 2*k + 2})         += 9*tmp;
+                        fineData({2*i + 1, 2*j, 2*k + 2})    += 9*tmp;
+                        fineData({2*i + 1, 2*j +1, 2*k + 2}) += 9*tmp;
+                        fineData({2*i,2*j + 1, 2*k + 2})     += 9*tmp;
+
+                        fineData({2*i-1,2*j, 2*k + 2})   += 3*tmp;
+                        fineData({2*i+2,2*j, 2*k + 2})   += 3*tmp;
+                        fineData({2*i+2,2*j+1, 2*k + 2}) += 3*tmp;
+                        fineData({2*i-1,2*j+1, 2*k + 2}) += 3*tmp;
+
+                                        
+                        fineData({2*i-1,2*j-1, 2*k + 2}) += tmp;
+                        fineData({2*i+2,2*j-1, 2*k + 2}) += tmp;
+                        fineData({2*i+2,2*j+2, 2*k + 2}) += tmp;
+                        fineData({2*i-1,2*j+2, 2*k + 2}) += tmp;
+
+                        fineData({2*i, 2*j-1, 2*k + 2})     += 3*tmp;
+                        fineData({2*i + 1,2*j -1, 2*k + 2}) += 3*tmp;
+                        fineData({2*i+1,2*j +2, 2*k + 2})   += 3*tmp;
+                        fineData({2*i,2*j+2, 2*k + 2})      += 3*tmp;
+                        
+                    }
+                    
+                    }
+                }
+            }
+
+            // TODO : add BC
+            
+        }
+    }
+
+    /** @brief Khalil interpolation operator */
+    // TODO make sure ndArray is initialize to zero
+    template <typename T, int Ndim>
+    inline void khalil_interpolation_operator(ndArray<T, Ndim> &corseData, ndArray<T, Ndim> &fineData)
+    {
+        size_t nxc,nyc,nzc,nxf,nyf,nzf;
+        nxc = corseData.size(0); nyc = corseData.size(1); nzc = (Ndim==3) ? (corseData.size(2)) : 0;
+        nxf = fineData.size(0); nyf = fineData.size(1); nzf = (Ndim == 3) ? (fineData.size(2)) : 0;
+
+        if(Ndim == 2)
+        {
+            // update iner cells
+            for(int j = 1; j < nyc-1; j++)
+            {
+                for(int i = 1; i < nxc-1; i++)
+                {
+                    auto tmp = (1/4)*corseData({i,j});
+                    fineData({2*i,2*j}) += 2*tmp;
+                    fineData({2*i + 1, 2*j}) += 3*tmp;
+                    fineData({2*i + 1, 2*j +1}) += 2*tmp;
+                    fineData({2*i,2*j + 1}) += 3*tmp;
+
+                    fineData({2*i-1,2*j}) += 0*tmp;
+                    fineData({2*i+2,2*j}) += tmp;
+                    fineData({2*i+2,2*j+1}) += 0*tmp;
+                    fineData({2*i-1,2*j+1}) += tmp;
+
+                                       
+                    fineData({2*i-1,2*j-1}) += 0*tmp;
+                    fineData({2*i+2,2*j-1}) += tmp;
+                    fineData({2*i+2,2*j+2}) += 0*tmp;
+                    fineData({2*i-1,2*j+2}) += tmp;
+
+                    fineData({2*i, 2*j-1}) += 0*tmp;
+                    fineData({2*i + 1,2*j -1}) += tmp;
+                    fineData({2*i+1,2*j +2}) +=0*tmp;
+                    fineData({2*i,2*j+2}) += tmp;
+                   
+                }
+            }
+
+            // TODO BC to add on
+        }
+
+        if(Ndim == 3)
+        {
+            for(int k = 1; k < nzc-1; k++)
+            {
+                for(int j = 1; j < nyc-1; j++)
+                {
+                    for(int i = 1; i < nxc-1; i++)
+                    {
+                        auto tmp = (1/4)*corseData({i,j,k });
+                    {  
+                        fineData({2*i,2*j, 2*k - 1}) +=          0*tmp;
+                        fineData({2*i + 1, 2*j,  2*k - 1})  +=   tmp;
+                        fineData({2*i + 1, 2*j +1,  2*k - 1}) += 0*tmp;
+                        fineData({2*i,2*j + 1,  2*k - 1}) +=     0*tmp;
+
+                        fineData({2*i-1,2*j,  2*k - 1}) +=   0*tmp;
+                        fineData({2*i+2,2*j,  2*k - 1}) +=   tmp;
+                        fineData({2*i+2,2*j+1,  2*k - 1}) += 0*tmp;
+                        fineData({2*i-1,2*j+1,  2*k - 1}) += 0*tmp;
+
+                                        
+                        fineData({2*i-1,2*j-1,  2*k - 1}) += 0*tmp;
+                        fineData({2*i+2,2*j-1,  2*k - 1}) += tmp;
+                        fineData({2*i+2,2*j+2,  2*k - 1}) += 0*tmp;
+                        fineData({2*i-1,2*j+2 , 2*k - 1}) += 0*tmp;
+
+                        fineData({2*i, 2*j-1,  2*k - 1}) +=     0*tmp;
+                        fineData({2*i + 1,2*j -1,  2*k - 1}) += tmp;
+                        fineData({2*i+1,2*j +2,  2*k - 1}) +=   0*tmp;
+                        fineData({2*i,2*j+2,  2*k - 1}) +=      0*tmp;
+                        
+                    }
+
+            
+                    {  
+                        fineData({2*i,2*j,  2*k}) +=        2*tmp;
+                        fineData({2*i + 1, 2*j,  2*k }) +=  3*tmp;
+                        fineData({2*i + 1, 2*j +1,  2*k})+= 2*tmp;
+                        fineData({2*i,2*j + 1,  2*k}) +=    2*tmp;
+
+                        fineData({2*i-1,2*j,  2*k})  += 0*tmp;
+                        fineData({2*i+2,2*j,  2*k})  += tmp;
+                        fineData(2*i+2,2*j+1,  2*k ) += 0*tmp;
+                        fineData(2*i-1,2*j+1,  2*k ) += 0*tmp;
+
+                                        
+                        fineData({2*i-1,2*j-1,  2*k }) += 0*tmp;
+                        fineData({2*i+2,2*j-1,  2*k }) += tmp;
+                        fineData({2*i+2,2*j+2,  2*k }) += 0*tmp;
+                        fineData({2*i-1,2*j+2,  2*k }) += 0*tmp;
+
+                        fineData({2*i, 2*j-1,      2*k}) += 0*tmp;
+                        fineData({2*i + 1,2*j -1,  2*k}) += tmp;
+                        fineData({2*i+1,2*j +2,    2*k}) += 0*tmp;
+                        fineData({2*i,2*j+2,       2*k}) += 0*tmp;
+                        
+                    }
+
+                       
+                    {  
+                        fineData({2*i,     2*j,     2*k + 1}) += 2*tmp;
+                        fineData({2*i + 1, 2*j,     2*k + 1}) += 2*tmp;
+                        fineData({2*i + 1, 2*j +1,  2*k + 1}) += 2*tmp;
+                        fineData({2*i,     2*j + 1, 2*k + 1}) += 3*tmp;
+
+                        fineData({2*i-1,2*j, 2*k + 1})   += 0*tmp;
+                        fineData({2*i+2,2*j, 2*k + 1})   += 0*tmp;
+                        fineData({2*i+2,2*j+1, 2*k + 1}) += 0*tmp;
+                        fineData({2*i-1,2*j+1, 2*k + 1}) += tmp;
+
+                                        
+                        fineData({2*i-1,2*j-1, 2*k + 1}) += 0*tmp;
+                        fineData({2*i+2,2*j-1, 2*k + 1}) += 0*tmp;
+                        fineData({2*i+2,2*j+2, 2*k + 1}) += 0*tmp;
+                        fineData({2*i-1,2*j+2, 2*k + 1}) += tmp;
+
+                        fineData({2*i, 2*j-1,     2*k + 1}) += 0*tmp;
+                        fineData({2*i + 1,2*j -1, 2*k + 1}) += 0*tmp;
+                        fineData({2*i+1,2*j +2,   2*k + 1}) += 0*tmp;
+                        fineData({2*i,2*j+2,      2*k + 1}) += tmp;
+                        
+                    }
+                    
+
+                    {  
+                        fineData({2*i,2*j, 2*k + 2})         += 0*tmp;
+                        fineData({2*i + 1, 2*j, 2*k + 2})    += 0*tmp;
+                        fineData({2*i + 1, 2*j +1, 2*k + 2}) += 0*tmp;
+                        fineData({2*i,2*j + 1, 2*k + 2})     += tmp;
+
+                        fineData({2*i-1,2*j, 2*k + 2})   += 0*tmp;
+                        fineData({2*i+2,2*j, 2*k + 2})   += 0*tmp;
+                        fineData({2*i+2,2*j+1, 2*k + 2}) += 0*tmp;
+                        fineData({2*i-1,2*j+1, 2*k + 2}) += tmp;
+
+                                        
+                        fineData({2*i-1,2*j-1, 2*k + 2}) += 0*tmp;
+                        fineData({2*i+2,2*j-1, 2*k + 2}) += 0*tmp;
+                        fineData({2*i+2,2*j+2, 2*k + 2}) += 0*tmp;
+                        fineData({2*i-1,2*j+2, 2*k + 2}) += tmp;
+
+                        fineData({2*i, 2*j-1, 2*k + 2})     += 0*tmp;
+                        fineData({2*i + 1,2*j -1, 2*k + 2}) += 0*tmp;
+                        fineData({2*i+1,2*j +2, 2*k + 2})   += 0*tmp;
+                        fineData({2*i,2*j+2, 2*k + 2})      += tmp;
+                        
+                    }
+                    
+                    }
+                }
+            }
+
+            // TODO : add BC
+        }
+    }
+
+
+    /** @brief Kwak interpolation operator */
+    // TODO make sure ndArray is initialize to zero
+    template <typename T, int Ndim>
+    inline void kwak_interpolation_operator(ndArray<T, Ndim> &corseData, ndArray<T, Ndim> &fineData)
+    {
+        size_t nxc,nyc,nzc,nxf,nyf,nzf;
+        nxc = corseData.size(0); nyc = corseData.size(1); nzc = (Ndim==3) ? (corseData.size(2)) : 0;
+        nxf = fineData.size(0); nyf = fineData.size(1); nzf = (Ndim == 3) ? (fineData.size(2)) : 0;
+
+        if(Ndim == 2)
+        {
+            // update iner cells
+            for(int j = 1; j < nyc-1; j++)
+            {
+                for(int i = 1; i < nxc-1; i++)
+                {
+                    auto tmp = (1/4)*corseData({i,j});
+                    fineData({2*i,2*j}) += 2*tmp;
+                    fineData({2*i + 1, 2*j}) += 2*tmp;
+                    fineData({2*i + 1, 2*j +1}) += 2*tmp;
+                    fineData({2*i,2*j + 1}) += 2*tmp;
+
+                    fineData({2*i-1,2*j}) += tmp;
+                    fineData({2*i+2,2*j}) += tmp;
+                    fineData({2*i+2,2*j+1}) += tmp;
+                    fineData({2*i-1,2*j+1}) += tmp;
+
+                                       
+                    fineData({2*i-1,2*j-1}) += 0*tmp;
+                    fineData({2*i+2,2*j-1}) += 0*tmp;
+                    fineData({2*i+2,2*j+2}) += 0*tmp;
+                    fineData({2*i-1,2*j+2}) += 0*tmp;
+
+                    fineData({2*i, 2*j-1}) += tmp;
+                    fineData({2*i + 1,2*j -1}) += tmp;
+                    fineData({2*i+1,2*j +2}) += tmp;
+                    fineData({2*i,2*j+2}) += tmp;
+                   
+                }
+            }
+
+            // TODO BC to add on
+        }
+
+        if(Ndim == 3)
+        {
+            for(int k = 1; k < nzc-1; k++)
+            {
+                for(int j = 1; j < nyc-1; j++)
+                {
+                    for(int i = 1; i < nxc-1; i++)
+                    {
+                        auto tmp = (1/6)*corseData({i,j,k });
+                    {  
+                        fineData({2*i,2*j, 2*k - 1}) +=          tmp;
+                        fineData({2*i + 1, 2*j,  2*k - 1}) +=    tmp;
+                        fineData({2*i + 1, 2*j +1,  2*k - 1}) += tmp;
+                        fineData({2*i,2*j + 1,  2*k - 1}) +=     tmp;
+
+                        fineData({2*i-1,2*j,  2*k - 1}) +=    0*tmp;
+                        fineData({2*i+2,2*j,  2*k - 1}) +=    0*tmp;
+                        fineData({2*i+2,2*j+1,  2*k - 1}) +=  0*tmp;
+                        fineData({2*i-1,2*j+1,  2*k - 1}) +=  0*tmp;
+
+                                        
+                        fineData({2*i-1,2*j-1,  2*k - 1}) += 0*tmp;
+                        fineData({2*i+2,2*j-1,  2*k - 1}) += 0*tmp;
+                        fineData({2*i+2,2*j+2,  2*k - 1}) += 0*tmp;
+                        fineData({2*i-1,2*j+2 , 2*k - 1}) += 0*tmp;
+
+                        fineData({2*i, 2*j-1,  2*k - 1}) +=     0*tmp;
+                        fineData({2*i + 1,2*j -1,  2*k - 1}) += 0*tmp;
+                        fineData({2*i+1,2*j +2,  2*k - 1}) +=   0*tmp;
+                        fineData({2*i,2*j+2,  2*k - 1}) +=      0*tmp;
+                        
+                    }
+
+            
+                    {  
+                        fineData({2*i,2*j,  2*k}) +=        3*tmp;
+                        fineData({2*i + 1, 2*j,  2*k }) +=  3*tmp;
+                        fineData({2*i + 1, 2*j +1,  2*k})+= 3*tmp;
+                        fineData({2*i,2*j + 1,  2*k}) +=    3*tmp;
+
+                        fineData({2*i-1,2*j,  2*k})  += tmp;
+                        fineData({2*i+2,2*j,  2*k})  += tmp;
+                        fineData(2*i+2,2*j+1,  2*k ) += tmp;
+                        fineData(2*i-1,2*j+1,  2*k ) += tmp;
+
+                                        
+                        fineData({2*i-1,2*j-1,  2*k }) += 0*tmp;
+                        fineData({2*i+2,2*j-1,  2*k }) += 0*tmp;
+                        fineData({2*i+2,2*j+2,  2*k }) += 0*tmp;
+                        fineData({2*i-1,2*j+2,  2*k }) += 0*tmp;
+
+                        fineData({2*i, 2*j-1,      2*k}) += tmp;
+                        fineData({2*i + 1,2*j -1,  2*k}) += tmp;
+                        fineData({2*i+1,2*j +2,    2*k}) += tmp;
+                        fineData({2*i,2*j+2,       2*k}) += tmp;
+                        
+                    }
+
+                       
+                    {  
+                        fineData({2*i,     2*j,     2*k + 1}) += 3*tmp;
+                        fineData({2*i + 1, 2*j,     2*k + 1}) += 3*tmp;
+                        fineData({2*i + 1, 2*j +1,  2*k + 1}) += 3*tmp;
+                        fineData({2*i,     2*j + 1, 2*k + 1}) += 3*tmp;
+
+                        fineData({2*i-1,2*j, 2*k + 1})   += tmp;
+                        fineData({2*i+2,2*j, 2*k + 1})   += tmp;
+                        fineData({2*i+2,2*j+1, 2*k + 1}) += tmp;
+                        fineData({2*i-1,2*j+1, 2*k + 1}) += tmp;
+
+                                        
+                        fineData({2*i-1,2*j-1, 2*k + 1}) += 0*tmp;
+                        fineData({2*i+2,2*j-1, 2*k + 1}) += 0*tmp;
+                        fineData({2*i+2,2*j+2, 2*k + 1}) += 0*tmp;
+                        fineData({2*i-1,2*j+2, 2*k + 1}) += 0*tmp;
+
+                        fineData({2*i, 2*j-1,     2*k + 1}) += tmp;
+                        fineData({2*i + 1,2*j -1, 2*k + 1}) += tmp;
+                        fineData({2*i+1,2*j +2,   2*k + 1}) += tmp;
+                        fineData({2*i,2*j+2,      2*k + 1}) += tmp;
+                        
+                    }
+                    
+
+                    {  
+                        fineData({2*i,2*j, 2*k + 2})         += tmp;
+                        fineData({2*i + 1, 2*j, 2*k + 2})    += tmp;
+                        fineData({2*i + 1, 2*j +1, 2*k + 2}) += tmp;
+                        fineData({2*i,2*j + 1, 2*k + 2})     += tmp;
+
+                        fineData({2*i-1,2*j, 2*k + 2})   += 0*tmp;
+                        fineData({2*i+2,2*j, 2*k + 2})   += 0*tmp;
+                        fineData({2*i+2,2*j+1, 2*k + 2}) += 0*tmp;
+                        fineData({2*i-1,2*j+1, 2*k + 2}) += 0*tmp;
+
+                                        
+                        fineData({2*i-1,2*j-1, 2*k + 2}) += 0*tmp;
+                        fineData({2*i+2,2*j-1, 2*k + 2}) += 0*tmp;
+                        fineData({2*i+2,2*j+2, 2*k + 2}) += 0*tmp;
+                        fineData({2*i-1,2*j+2, 2*k + 2}) += 0*tmp;
+
+                        fineData({2*i, 2*j-1, 2*k + 2})     += 0*tmp;
+                        fineData({2*i + 1,2*j -1, 2*k + 2}) += 0*tmp;
+                        fineData({2*i+1,2*j +2, 2*k + 2})   += 0*tmp;
+                        fineData({2*i,2*j+2, 2*k + 2})      += 0*tmp;
+                        
+                    }
+                    
+                    }
+                }
+            }
+
+            // update BC
+        }
+    }
+
+
 
     /** @brief structure to set initial parameter for the multigrid class */
     template <typename T>
@@ -183,13 +894,17 @@ namespace multigrid
         virtual inline void multigrid() {}
         virtual inline void solve() { multigrid(); }
 
-        /** @brief get the differential operator at a given position in 2D*/
+        /** @brief get the differential operator at a given position in 2D*/  
+        // specialized through class function specialization
         virtual T differential_operator(size_t, int, int) = 0;
         /** @brief get the differential operator at a given position in 3D*/
+         // specialized through class function specialization
         virtual T differential_operator(size_t, int, int, int) = 0;
         /** @brief relation at a given position in 2D*/
+         // specialized through class function specialization
         virtual void relaxation_updater(size_t, int, int) = 0;
         /** @brief relation at a given position in 3D*/
+         // specialized through class function specialization
         virtual void relaxation_updater(size_t, int, int, int) = 0;
 
     protected:

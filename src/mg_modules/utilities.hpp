@@ -11,6 +11,7 @@ namespace multigrid {
 
     enum CycleType{vCycle, wCycle, fCycle };
     enum BcType{dirichlet, neumann};
+    enum TransfertOperator{PointAverage, Linear, Khalil, Kwak};
     struct BoundaryPoint {
         BcType bcType;
         double value;
