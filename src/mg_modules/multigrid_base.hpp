@@ -35,12 +35,15 @@ namespace multigrid
             // update iner cells
             for(int j = 1; j < nyc-1; j++)
             {
+                auto fj = 2*j;
                 for(int i = 1; i < nxc - 1; i++)
                 {
-                    corseData({i,j}) = (1/64) * (9*fineData({2*i, 2*j}) + 9*fineData({2*i + 1, 2*j}) + 9*fineData({2*i, 2*j + 1}) + 9*fineData({2*i + 1, 2*j + 1})\
-                    + 3*fineData({2*i, 2*j + 2}) + 3*fineData({2*i , 2*j -1}) + 3*fineData({2*i + 1, 2*j + 2}) + 3*fineData({2*i + 1, 2*j - 1}) \
-                    + 3*fineData({2*i - 1, 2*j}) + 3*fineData({2*i - 1, 2*j + 1}) + 3*fineData({2*i + 2, 2*j + 1}) + 3*fineData({2*i + 2, 2*j })\
-                    + fineData({2*i - 1, 2*j + 2}) + fineData({2*i - 1, 2*j - 1}) + fineData({2*i + 2, 2*j + 2}) + fineData({2*i + 1, 2*j - 1}));
+                    auto fi = 2*i;
+                    corseData({i,j}) = (1/64) * (9*fineData({fi, fj}) + 9*fineData({fi + 1, fj}) + 9*fineData({fi + 1, fj + 1}) + 9*fineData({fi , fj + 1})\
+                    + 3*fineData({fi - 1, fj}) + 3*fineData({fi + 2, fj }) + 3*fineData({fi + 2, fj + 1})  + 3*fineData({fi - 1 , fj + 1 })\
+                    + fineData({fi - 1, fj - 1}) + fineData({fi + 2, fj - 1}) + fineData({fi + 2, fj + 2}) + fineData({fi -1, fj + 2})\
+                    + 3*fineData({fi, fj -1 }) + 3*fineData({fi + 1  , 2*j -1}) + 3*fineData({fi + 1, fj + 2}) + 3*fineData({fi , fj + 2})
+                    );
                 }
             }
 
@@ -52,12 +55,33 @@ namespace multigrid
             // update iner cells
             for(int k = 1; k < nzc - 1; k++)
            { 
+            auto fk =  2*k;
                 for(int j = 1; j < nyc-1; j++)
                 {
+                    auto fj = 2*j;
                     for(int i = 1; i < nxc - 1; i++)
                     {
-                        corseData({i,j,k}) = (1/512) * (fineData({2*i, 2*j, 2*k}) + fineData({2*i + 1, 2*j, 2*k}) + fineData({2*i , 2*j + 1, 2*k}) + fineData({2*i, 2*j, 2*k + 1}) + fineData({2*i + 1, 2*j, 2*k + 1}) + fineData({2*i, 2*j+1, 2*k+1})+ fineData({2*i+1, 2*j+1, 2*k}) + fineData({2*i + 1, 2*j+1, 2*k+1}) \
-                        + 0);
+                        auto fi = 2*i;
+                       corseData({i,j,k}) = (1/512) * (fineData({fi-1,fj+2,fk-1}) + 3*fineData({fi-1,fj+1,fk-1}) + 3*fineData({fi-1,fj,fk-1}) + fineData({fi-1,fj-1,fk-1})\
+                                                    + 3*fineData({fi,fj+2,fk-1}) + 9*fineData({fi, fj+1,fk-1}) + 9*fineData({fi,fj,fk-1}) + 3*fineData({fi,fj-1,fk-1}) \
+                                                    + 3*fineData({fi+1,fj+2,fk-1}) + 9*fineData({fi+1,fj+1,fk-1}) + 9*fineData({fi+1,fj,fk-1}) + 3*fineData({fi+1,fj-1,fk-1})\
+                                                    + fineData({fi+2, fj+2, fk-1}) + 3*fineData({fi+2,fj+1,fk-1}) + 3*fineData({fi+2,fj,fk-1}) + fineData({fi+2,fj-1,fk-1}) \
+
+                                                    + 3*fineData({fi-1,fj+2,fk}) + 9*fineData({fi-1,fj+1,fk}) + 9*fineData({fi-1,fj,fk}) + 3*fineData({fi-1,fj-1,fk}) \
+                                                    + 9*fineData({fi,fj+2,fk}) + 27*fineData({fi,fj+1,fk}) + 27*fineData({fi,fj,fk}) + 9*fineData({fi,fj-1,fk}) \
+                                                    + 9*fineData({fi+1,fj+2,fk}) + 27*fineData({fi+1,fj+1,fk}) + 27*fineData({fi+1,fj,fk}) + 9*fineData({fi+1,fj-1,fk})\
+                                                    + 3*fineData({fi+2,fj+2,fk}) + 9*fineData({fi+2,fj+1,fk}) + 9*fineData({fi+2,fj,fk}) + 3*fineData({fi+2,fj-1,fk})\
+                                                    
+                                                    + 3*fineData({fi-1,fj+2,fk+1}) + 9*fineData({fi-1,fj+1,fk+1}) + 9*fineData({fi-1,fj,fk+1}) + 3*fineData({fi-1,fj-1,fk+1}) \
+                                                    + 9*fineData({fi,fj+2,fk+1}) + 27*fineData({fi,fj+1,fk+1}) + 27*fineData({fi,fj,fk+1}) + 9*fineData({fi,fj-1,fk+1}) \
+                                                    + 9*fineData({fi+1,fj+2,fk+1}) + 27*fineData({fi+1,fj+1,fk+1}) + 27*fineData({fi+1,fj,fk+1}) + 9*fineData({fi+1,fj-1,fk+1})\
+                                                    + 3*fineData({fi+2,fj+2,fk+1}) + 9*fineData({fi+2,fj+1,fk+1}) + 9*fineData({fi+2,fj,fk+1}) + 3*fineData({fi+2,fj-1,fk+1})\
+
+                                                    + fineData({fi-1,fj+2,fk+2}) + 3*fineData({fi-1,fj+1,fk+2}) + 3*fineData({fi-1,fj,fk+2}) + fineData({fi-1,fj-1,fk+2})\
+                                                    + 3*fineData({fi,fj+2,fk+2}) + 9*fineData({fi, fj+1,fk+2}) + 9*fineData({fi,fj,fk+2}) + 3*fineData({fi,fj-1,fk+2}) \
+                                                    + 3*fineData({fi+1,fj+2,fk+2}) + 9*fineData({fi+1,fj+1,fk+2}) + 9*fineData({fi+1,fj,fk+2}) + 3*fineData({fi+1,fj-1,fk+2})\
+                                                    + fineData({fi+2, fj+2, fk+2}) + 3*fineData({fi+2,fj+1,fk+2}) + 3*fineData({fi+2,fj,fk+2}) + fineData({fi+2,fj-1,fk+2})
+                                                    );
                     }
                 }
             }
@@ -81,12 +105,14 @@ namespace multigrid
             // update iner cells
             for(int j = 1; j < nyc-1; j++)
             {
+                auto fj = 2*j;
                 for(int i = 1; i < nxc - 1; i++)
                 {
-                    corseData({i,j}) = (1/16) * (2*fineData({2*i, 2*j}) + 3*fineData({2*i + 1, 2*j}) + 3*fineData({2*i, 2*j + 1}) + 3*fineData({2*i + 1, 2*j + 1})\
-                    + fineData({2*i, 2*j + 2}) + 0*fineData({2*i , 2*j -1}) + 0*fineData({2*i + 1, 2*j + 2}) + fineData({2*i + 1, 2*j - 1}) \
-                    + 0*fineData({2*i - 1, 2*j}) + fineData({2*i - 1, 2*j + 1}) + 0*fineData({2*i + 2, 2*j + 1}) + 1*fineData({2*i + 2, 2*j })\
-                    + fineData({2*i - 1, 2*j + 2}) + 0*fineData({2*i - 1, 2*j - 1}) + 0*fineData({2*i + 2, 2*j + 2}) + fineData({2*i + 1, 2*j - 1}));
+                    auto fi = 2*i;
+                    corseData({i,j}) = (1/16) * (2*fineData({fi, fj}) + 3*fineData({fi + 1, fj}) + 3*fineData({fi, fj + 1}) + 3*fineData({fi + 1, fj + 1})\
+                    + fineData({fi, fj + 2}) + 0*fineData({fi , fj -1}) + 0*fineData({fi + 1, fj + 2}) + fineData({fi + 1, fj - 1}) \
+                    + 0*fineData({fi - 1, fj}) + fineData({fi - 1, fj + 1}) + 0*fineData({fi + 2, fj + 1}) + 1*fineData({fi + 2, fj })\
+                    + fineData({fi - 1, fj + 2}) + 0*fineData({fi - 1, fj - 1}) + 0*fineData({fi + 2, fj + 2}) + fineData({fi + 1, fj - 1}));
                 }
             }
 
@@ -98,12 +124,23 @@ namespace multigrid
             // update iner cells
             for(int k = 1; k < nzc - 1; k++)
            { 
+            auto fk = 2*k;
                 for(int j = 1; j < nyc-1; j++)
                 {
+                    auto fj = 2*j;
                     for(int i = 1; i < nxc - 1; i++)
                     {
-                        corseData({i,j,k}) = (1/512) * (fineData({2*i, 2*j, 2*k}) + fineData({2*i + 1, 2*j, 2*k}) + fineData({2*i , 2*j + 1, 2*k}) + fineData({2*i, 2*j, 2*k + 1}) + fineData({2*i + 1, 2*j, 2*k + 1}) + fineData({2*i, 2*j+1, 2*k+1})+ fineData({2*i+1, 2*j+1, 2*k}) + fineData({2*i + 1, 2*j+1, 2*k+1}) \
-                        + 0);
+                        auto fi = 2*i;
+                       corseData({i,j,k}) = (1/32) * (fineData({fi+1,fj,fk-1}) + fineData({fi+1,fj-1,fk-1}) \
+                                                    + fineData({fi+2,fj,fk-1}) + fineData({fi+2,fj-1,fk-1}) \
+                                                    + 2*fineData({fi,fj+1,fk}) + 2*fineData({fi,fj,fk}) \
+                                                    + 2*fineData({fi+1,fj+1,fk}) + 3*fineData({fi+1,fj,fk}) + fineData({fi+1,fj-1,fk})\
+                                                    + fineData({fi+2,fj,fk}) + fineData({fi+2,fj-1,fk})\
+                                                    + fineData({fi-1,fj+2,fk+1}) + fineData({fi-1,fj+1,fk+1})  \
+                                                    + fineData({fi,fj+2,fk+1}) + 3*fineData({fi,fj+1,fk+1}) + 2*fineData({fi,fj,fk+1}) \
+                                                    +  2*fineData({fi+1,fj+1,fk+1}) + 2*fineData({fi+1,fj,fk+1})\
+                                                    + fineData({fi-1,fj+2,fk+2}) + fineData({fi-1,fj+1,fk+2})\
+                                                    + fineData({fi,fj+2,fk+2}) + fineData({fi, fj+1,fk+2}));
                     }
                 }
             }
@@ -127,12 +164,14 @@ namespace multigrid
             // update iner cells
             for(int j = 1; j < nyc-1; j++)
             {
+                auto fj = 2*j;
                 for(int i = 1; i < nxc - 1; i++)
                 {
-                    corseData({i,j}) = (1/16) * (2*fineData({2*i, 2*j}) + 2*fineData({2*i + 1, 2*j}) + 2*fineData({2*i, 2*j + 1}) + 2*fineData({2*i + 1, 2*j + 1})\
-                    + fineData({2*i, 2*j + 2}) + fineData({2*i , 2*j -1}) + fineData({2*i + 1, 2*j + 2}) + fineData({2*i + 1, 2*j - 1}) \
-                    + fineData({2*i - 1, 2*j}) + fineData({2*i - 1, 2*j + 1}) + fineData({2*i + 2, 2*j + 1}) + fineData({2*i + 2, 2*j })\
-                    + 0*fineData({2*i - 1, 2*j + 2}) + 0*fineData({2*i - 1, 2*j - 1}) + 0*fineData({2*i + 2, 2*j + 2}) + 0*fineData({2*i + 1, 2*j - 1}));
+                    auto fi = 2*i;
+                    corseData({i,j}) = (1/16) * (2*fineData({fi, fj}) + 2*fineData({fi + 1, fj}) + 2*fineData({fi, fj + 1}) + 2*fineData({fi + 1, fj + 1})\
+                    + fineData({fi, fj + 2}) + fineData({fi , fj -1}) + fineData({fi + 1, fj + 2}) + fineData({fi + 1, fj - 1}) \
+                    + fineData({fi - 1, fj}) + fineData({fi - 1, fj + 1}) + fineData({fi + 2, fj + 1}) + fineData({fi + 2, fj })\
+                    + 0*fineData({fi - 1, fj + 2}) + 0*fineData({fi - 1, fj - 1}) + 0*fineData({fi + 2, fj + 2}) + 0*fineData({fi + 1, fj - 1}));
                 }
             }
 
@@ -144,12 +183,27 @@ namespace multigrid
             // update iner cells
             for(int k = 1; k < nzc - 1; k++)
            { 
+            auto fk= 2*k;
                 for(int j = 1; j < nyc-1; j++)
                 {
+                    auto fj = 2*j;
                     for(int i = 1; i < nxc - 1; i++)
                     {
-                        corseData({i,j,k}) = (1/512) * (fineData({2*i, 2*j, 2*k}) + fineData({2*i + 1, 2*j, 2*k}) + fineData({2*i , 2*j + 1, 2*k}) + fineData({2*i, 2*j, 2*k + 1}) + fineData({2*i + 1, 2*j, 2*k + 1}) + fineData({2*i, 2*j+1, 2*k+1})+ fineData({2*i+1, 2*j+1, 2*k}) + fineData({2*i + 1, 2*j+1, 2*k+1}) \
-                        + 0);
+                        auto fi = 2*i;
+                        corseData({i,j,k}) = (1/48) * (fineData({i,j+1,k-1}) + fineData({i,j,k-1}) + fineData({i+1,j,k-1}) + fineData({i+1,j+1,k-1}) \
+
+                        + fineData({i-1,j+1,k}) + fineData({i-1,j,k})\
+                        + fineData({i,j+2,k}) + 3*fineData({i,j+1,k}) + 3*fineData({i,j,k}) + fineData({i,j-1,k}) \
+                        + fineData({i+1,j+2,k}) + 3*fineData({i+1,j+1,k}) + 3*fineData({i+1,j,k}) + fineData({i+1,j-1,k}) \
+                        + fineData({i+2,j+1,k}) + fineData({i+2, j,k})\
+
+                        + fineData({i-1,j+1,k+1}) + fineData({i-1,j,k+1})\
+                        + fineData({i,j+2,k+1}) + 3*fineData({i,j+1,k+1}) + 3*fineData({i,j,k+1}) + fineData({i,j-1,k+1}) \
+                        + fineData({i+1,j+2,k+1}) + 3*fineData({i+1,j+1,k+1}) + 3*fineData({i+1,j,k+1}) + fineData({i+1,j-1,k+1}) \
+                        + fineData({i+2,j+1,k+1}) + fineData({i+2, j,k+1})\
+
+                        + fineData({i,j+1,k+2}) + fineData({i,j,k+2}) + fineData({i+1,j,k+2}) + fineData({i+1,j+1,k+2})
+                        );
                     }
                 }
             }
@@ -174,9 +228,11 @@ namespace multigrid
             // update iner cells
             for(int j = 1; j < nyc-1; j++)
             {
+                auto fj = 2j;
                 for(int i = 1; i < nxc - 1; i++)
                 {
-                    corseData({i,j}) = (1/4) * (fineData({2*i, 2*j}) + fineData({2*i + 1, 2*j}) + fineData({2*i, 2*j + 1}) + fineData({2*i + 1, 2*j + 1}));
+                    auto fi = 2*i;
+                    corseData({i,j}) = (1/4) * (fineData({fi, fj}) + fineData({fi + 1, fj}) + fineData({fi, fj + 1}) + fineData({fi + 1, fj + 1}));
                 }
             }
 
@@ -187,15 +243,18 @@ namespace multigrid
         {
             // update iner cells
             for(int k = 1; k < nzc - 1; k++)
-           { 
+           {
+            auto fk = 2*k;
                 for(int j = 1; j < nyc-1; j++)
                 {
+                    auto fj = 2*j;
                     for(int i = 1; i < nxc - 1; i++)
                     {
-                        corseData({i,j,k}) = (1/8) * (fineData({2*i, 2*j, 2*k}) + fineData({2*i + 1, 2*j, 2*k}) \
-                        + fineData({2*i , 2*j + 1, 2*k}) + fineData({2*i, 2*j, 2*k + 1}) \
-                        + fineData({2*i + 1, 2*j, 2*k + 1}) + fineData({2*i, 2*j+1, 2*k+1})\
-                        + fineData({2*i+1, 2*j+1, 2*k}) + fineData({2*i + 1, 2*j+1, 2*k+1}));
+                        auto fi = 2*i;
+                        corseData({i,j,k}) = (1/8) * (fineData({fi, fj, fk}) + fineData({fi + 1, fj, fk}) \
+                        + fineData({fi , fj + 1, fk}) + fineData({fi, fj, fk + 1}) \
+                        + fineData({fi + 1, fj, fk + 1}) + fineData({fi, fj+1, fk+1})\
+                        + fineData({fi+1, fj+1, fk}) + fineData({fi + 1, fj+1, fk+1}));
                     }
                 }
             }
@@ -220,13 +279,15 @@ namespace multigrid
             // update iner cells
             for(int j = 0; j < nyc; j++)
             {
+                auto  fj = 2*j;
                 for(int i = 0; i < nxc; i++)
                 {
+                    auto fi = 2*i;
                     auto tmp = corseData({i,j});
-                    fineData({2*i,2*j}) = tmp;
-                    fineData({2*i + 1, 2*j}) = tmp;
-                    fineData({2*i + 1,2*j + 1}) = tmp;
-                    fineData({2*i , 2*j + 1}) = tmp;
+                    fineData({fi,fj}) = tmp;
+                    fineData({fi + 1, fj}) = tmp;
+                    fineData({fi + 1,fj + 1}) = tmp;
+                    fineData({fi , fj + 1}) = tmp;
                     
                 }
             }
@@ -237,20 +298,23 @@ namespace multigrid
             // update iner cells
             for(int k = 0; k < nzc; k++)
            { 
+            auto fk = 2*k;
             for(int j = 0; j < nyc; j++)
             {
+                auto fj = 2*j;
                 for(int i = 0; i < nxc; i++)
                 {
+                    auto fi = 2*i;
                     auto tmp = corseData({i,j,k});
-                    fineData({2*i,2*j, 2*k}) = tmp;
-                    fineData({2*i + 1, 2*j, 2*k}) = tmp;
-                    fineData({2*i + 1,2*j + 1, 2*k}) = tmp;
-                    fineData({2*i , 2*j + 1, 2*k}) = tmp;
+                    fineData({fi,fj, fk}) = tmp;
+                    fineData({fi + 1, fj, fk}) = tmp;
+                    fineData({fi + 1,fj + 1, fk}) = tmp;
+                    fineData({fi , fj + 1, fk}) = tmp;
 
-                    fineData({2*i, 2*j, 2*k + 1}) = tmp;
-                    fineData({2*i + 1, 2*j, 2*k + 1}) = tmp;
-                    fineData({2*i + 1,2*j + 1, 2*k + 1}) = tmp;
-                    fineData({2*i , 2*j + 1, 2*k + 1}) = tmp;
+                    fineData({fi, fj, fk + 1}) = tmp;
+                    fineData({fi + 1, fj, fk + 1}) = tmp;
+                    fineData({fi + 1,fj + 1, fk + 1}) = tmp;
+                    fineData({fi , fj + 1, fk + 1}) = tmp;
                     
                 }
             }
@@ -276,29 +340,38 @@ namespace multigrid
             // update iner cells
             for(int j = 1; j < nyc-1; j++)
             {
-                for(int i = 1; i < nxc-1; i++)
-                {
-                    auto tmp = (1/16)*corseData({i,j});
-                    fineData({2*i,2*j}) += 9*tmp;
-                    fineData({2*i + 1, 2*j}) += 9*tmp;
-                    fineData({2*i + 1, 2*j +1}) += 9*tmp;
-                    fineData({2*i,2*j + 1}) += 9*tmp;
+                // for(int i = 1; i < nxc-1; i++)
+                // {
+                //     auto tmp = (1/16)*corseData({i,j});
+                //     fineData({2*i,2*j}) += 9*tmp;
+                //     fineData({2*i + 1, 2*j}) += 9*tmp;
+                //     fineData({2*i + 1, 2*j +1}) += 9*tmp;
+                //     fineData({2*i,2*j + 1}) += 9*tmp;
 
-                    fineData({2*i-1,2*j}) += 3*tmp;
-                    fineData({2*i+2,2*j}) += 3*tmp;
-                    fineData({2*i+2,2*j+1}) += 3*tmp;
-                    fineData({2*i-1,2*j+1}) += 3*tmp;
+                //     fineData({2*i-1,2*j}) += 3*tmp;
+                //     fineData({2*i+2,2*j}) += 3*tmp;
+                //     fineData({2*i+2,2*j+1}) += 3*tmp;
+                //     fineData({2*i-1,2*j+1}) += 3*tmp;
 
                                        
-                    fineData({2*i-1,2*j-1}) += tmp;
-                    fineData({2*i+2,2*j-1}) += tmp;
-                    fineData({2*i+2,2*j+2}) += tmp;
-                    fineData({2*i-1,2*j+2}) += tmp;
+                //     fineData({2*i-1,2*j-1}) += tmp;
+                //     fineData({2*i+2,2*j-1}) += tmp;
+                //     fineData({2*i+2,2*j+2}) += tmp;
+                //     fineData({2*i-1,2*j+2}) += tmp;
 
-                    fineData({2*i, 2*j-1}) += 3*tmp;
-                    fineData({2*i + 1,2*j -1}) += 3*tmp;
-                    fineData({2*i+1,2*j +2}) += 3*tmp;
-                    fineData({2*i,2*j+2}) += 3*tmp;
+                //     fineData({2*i, 2*j-1}) += 3*tmp;
+                //     fineData({2*i + 1,2*j -1}) += 3*tmp;
+                //     fineData({2*i+1,2*j +2}) += 3*tmp;
+                //     fineData({2*i,2*j+2}) += 3*tmp;
+                // }
+                auto fj = 2*j;
+                for(int i = 1; i < nxc-1; i++)
+                {
+                    auto fi = 2*i;
+                    fineData({fi,fj})  = (1/16) * (9*corseData({i,j})  + 3 * corseData({i-1,j}) + 3 * corseData({i,j-1}) + corseData({i-1,j-1}));
+                    fineData({fi+1,fj}) = (1/16) * (9*corseData({i,j}) + 3 * corseData({i+1,j}) + 3 * corseData({i,j-1}) + corseData({i+1,j-1}));
+                    fineData({fi,fj+1}) = (1/16) * (9*corseData({i,j}) + 3 * corseData({i,j+1}) + 3 * corseData({i-1,j}) + corseData({i-1,j+1}));
+                    fineData({fi+1,fj+1}) = (1/16) * (9*corseData({i,j}) + 3 * corseData({i,j+1}) + 3 * corseData({i+1, j}) + corseData({i+1,j+1}));
                 }
             }
 
@@ -309,109 +382,146 @@ namespace multigrid
         {
             for(int k = 1; k < nzc-1; k++)
             {
+
+                auto fk = 2*k;
                 for(int j = 1; j < nyc-1; j++)
                 {
+                    auto fj = 2*j;
                     for(int i = 1; i < nxc-1; i++)
                     {
-                        auto tmp = (1/64)*corseData({i,j,k });
-                    {  
-                        fineData({2*i,2*j, 2*k - 1}) += 9*tmp;
-                        fineData({2*i + 1, 2*j,  2*k - 1}) += 9*tmp;
-                        fineData({2*i + 1, 2*j +1,  2*k - 1}) += 9*tmp;
-                        fineData({2*i,2*j + 1,  2*k - 1}) += 9*tmp;
+                        auto fi = 2*i;
 
-                        fineData({2*i-1,2*j,  2*k - 1}) += 3*tmp;
-                        fineData({2*i+2,2*j,  2*k - 1}) += 3*tmp;
-                        fineData({2*i+2,2*j+1,  2*k - 1}) += 3*tmp;
-                        fineData({2*i-1,2*j+1,  2*k - 1}) += 3*tmp;
+
+
+
+
+                        fineData({fi,fj,fk}) = (1/64) * (27*corseData({i,j,k}) + 9 *corseData({i-1,j,k}) + 3*corseData({i-1,j-1,k}) + 9*corseData({i,j-1,k}) \
+                        + 3 * corseData({i-1,j,k-1}) + corseData({i-1,j-1,k-1}) + 3 * corseData({i,j-1,k-1}) + 9 * corseData({i,j,k-1}));
+
+                        fineData({fi+1,fj,fk}) = (1/64) *( 27*corseData(i,j,k)  + 9*corseData({i,j-1,k}) + 3*corseData({i+1,j-1,k}) + 9 * corseData(i+1,j,k) \
+                        + 3 * corseData({i,j-1,k-1}) + corseData({i+1,j-1,k-1}) + 9 * corseData({i,j,k-1}) + 3 * corseData({i+1,j,k-1}));
+
+                        fineData({fi,fj+1,fk}) = (1/64) * (27 * corseData(i,j,k) + 9 *corseData({i,j+1,k}) + 9*corseData({i-1,j,k}) + 3 * corseData({i-1,j+1,k})\
+                        + 9 * corseData({i,j,k-1}) + 3 * corseData({i,j+1,k-1}) + 3 * corseData({i-1,j,k-1}) + corseData({i-1,j+1,k-1}));
+
+                        fineData({fi+1,fj+1, fk}) = (1/64) * ( 27 * corseData(i,j,k) + 9 * corseData({i+1,j,k}) + 9 * corseData({i,j+1,k}) + 3 * corseData(i+1,j+1,k) \
+                        + 9 * corseData({i,j,k-1}) + 3 * corseData({i+1,j,k-1}) + 3 * corseData({i,j+1,k-1}) + corseData(i+1, j+1, k-1));
+
+                        fineData({fi,fj,fk+1}) = (1/64) * ( 27 * corseData({i,j,k}) + 9*corseData({i,j-1,k}) + 9 * corseData({i-1,j,k}) + 3 * corseData({i-1,j-1,k}) \
+                        + 9 * corseData({i,j,k+1}) + 3 * corseData({i,j-1,k+1}) + 3*corseData({i-1,j,k+1}) + corseData({i-1,j-1,k+1}));
+
+                        fineData({fi+1,fj,fk+1}) = (1/64) * ( 27 * corseData({i,j,k}) + 9 * corseData({i+1,j,k}) + 9 * corseData({i,j-1,k}) + 3 * corseData(i+1,j-1,k)\
+                        + 9 * corseData({i,j,k+1}) + 3 * corseData({i+1,j,k+1}) + 3 * corseData(i,j-1,k+1) + corseData({i+1,j-1,k+1}));
+
+                        fineData({fi,fj+1,fk+1}) = (1/64) * ( 27 * corseData({i,j,k}) + 9 * corseData({i,j+1,k}) + 9 * corseData(i-1,j,k) + 3 * corseData(i-1,j+1,k) \
+                        + 9 * corseData({i,j,k+1}) + 3 * corseData({i-1,j,k+1}) + 3 * corseData({i,j+1,k+1}) + corseData({i-1, j+1, k+1}));
+
+                        fineData({fi+1,fj+1,fk+1}) = (1/64) * (27 * corseData({i,j,k}) + 9 * corseData({i+1,j,k}) + 9*corseData({i,j+1,k}) + corseData({i+1,j+1,k}) \
+                        + 9 * corseData({i,j,k+1}) + 3 * corseData({i,j+1,k+1}) + 3*corseData({i+1,j,k+1}) + corseData({i+1,j+1,k+1}));
+
+                    // 
+
+                    //     auto tmp = (1/64)*corseData({i,j,k });
+                    // {  
+                    //     fineData({2*i,2*j, 2*k - 1}) += 9*tmp;
+                    //     fineData({2*i + 1, 2*j,  2*k - 1}) += 9*tmp;
+                    //     fineData({2*i + 1, 2*j +1,  2*k - 1}) += 9*tmp;
+                    //     fineData({2*i,2*j + 1,  2*k - 1}) += 9*tmp;
+
+                    //     fineData({2*i-1,2*j,  2*k - 1}) += 3*tmp;
+                    //     fineData({2*i+2,2*j,  2*k - 1}) += 3*tmp;
+                    //     fineData({2*i+2,2*j+1,  2*k - 1}) += 3*tmp;
+                    //     fineData({2*i-1,2*j+1,  2*k - 1}) += 3*tmp;
 
                                         
-                        fineData({2*i-1,2*j-1,  2*k - 1}) += tmp;
-                        fineData({2*i+2,2*j-1,  2*k - 1}) += tmp;
-                        fineData({2*i+2,2*j+2,  2*k - 1}) += tmp;
-                        fineData({2*i-1,2*j+2 , 2*k - 1}) += tmp;
+                    //     fineData({2*i-1,2*j-1,  2*k - 1}) += tmp;
+                    //     fineData({2*i+2,2*j-1,  2*k - 1}) += tmp;
+                    //     fineData({2*i+2,2*j+2,  2*k - 1}) += tmp;
+                    //     fineData({2*i-1,2*j+2 , 2*k - 1}) += tmp;
 
-                        fineData({2*i, 2*j-1,  2*k - 1}) += 3*tmp;
-                        fineData({2*i + 1,2*j -1,  2*k - 1}) += 3*tmp;
-                        fineData({2*i+1,2*j +2,  2*k - 1}) += 3*tmp;
-                        fineData({2*i,2*j+2,  2*k - 1}) += 3*tmp;
+                    //     fineData({2*i, 2*j-1,  2*k - 1}) += 3*tmp;
+                    //     fineData({2*i + 1,2*j -1,  2*k - 1}) += 3*tmp;
+                    //     fineData({2*i+1,2*j +2,  2*k - 1}) += 3*tmp;
+                    //     fineData({2*i,2*j+2,  2*k - 1}) += 3*tmp;
                         
-                    }
+                    // }
 
             
-                    {  
-                        fineData({2*i,2*j,  2*k}) +=        27*tmp;
-                        fineData({2*i + 1, 2*j,  2*k }) +=  27*tmp;
-                        fineData({2*i + 1, 2*j +1,  2*k})+= 27*tmp;
-                        fineData({2*i,2*j + 1,  2*k}) +=    27*tmp;
+                    // {  
+                    //     fineData({2*i,2*j,  2*k}) +=        27*tmp;
+                    //     fineData({2*i + 1, 2*j,  2*k }) +=  27*tmp;
+                    //     fineData({2*i + 1, 2*j +1,  2*k})+= 27*tmp;
+                    //     fineData({2*i,2*j + 1,  2*k}) +=    27*tmp;
 
-                        fineData({2*i-1,2*j,  2*k})  += 9*tmp;
-                        fineData({2*i+2,2*j,  2*k})  += 9*tmp;
-                        fineData(2*i+2,2*j+1,  2*k ) += 9*tmp;
-                        fineData(2*i-1,2*j+1,  2*k ) += 9*tmp;
+                    //     fineData({2*i-1,2*j,  2*k})  += 9*tmp;
+                    //     fineData({2*i+2,2*j,  2*k})  += 9*tmp;
+                    //     fineData(2*i+2,2*j+1,  2*k ) += 9*tmp;
+                    //     fineData(2*i-1,2*j+1,  2*k ) += 9*tmp;
 
                                         
-                        fineData({2*i-1,2*j-1,  2*k }) += 3*tmp;
-                        fineData({2*i+2,2*j-1,  2*k }) += 3*tmp;
-                        fineData({2*i+2,2*j+2,  2*k }) += 3*tmp;
-                        fineData({2*i-1,2*j+2,  2*k }) += 3*tmp;
+                    //     fineData({2*i-1,2*j-1,  2*k }) += 3*tmp;
+                    //     fineData({2*i+2,2*j-1,  2*k }) += 3*tmp;
+                    //     fineData({2*i+2,2*j+2,  2*k }) += 3*tmp;
+                    //     fineData({2*i-1,2*j+2,  2*k }) += 3*tmp;
 
-                        fineData({2*i, 2*j-1,      2*k}) += 9*tmp;
-                        fineData({2*i + 1,2*j -1,  2*k}) += 9*tmp;
-                        fineData({2*i+1,2*j +2,    2*k}) += 9*tmp;
-                        fineData({2*i,2*j+2,       2*k}) += 9*tmp;
+                    //     fineData({2*i, 2*j-1,      2*k}) += 9*tmp;
+                    //     fineData({2*i + 1,2*j -1,  2*k}) += 9*tmp;
+                    //     fineData({2*i+1,2*j +2,    2*k}) += 9*tmp;
+                    //     fineData({2*i,2*j+2,       2*k}) += 9*tmp;
                         
-                    }
+                    // }
 
                        
-                    {  
-                        fineData({2*i,     2*j,     2*k + 1}) += 27*tmp;
-                        fineData({2*i + 1, 2*j,     2*k + 1}) += 27*tmp;
-                        fineData({2*i + 1, 2*j +1,  2*k + 1}) += 27*tmp;
-                        fineData({2*i,     2*j + 1, 2*k + 1}) += 27*tmp;
+                    // {  
+                    //     fineData({2*i,     2*j,     2*k + 1}) += 27*tmp;
+                    //     fineData({2*i + 1, 2*j,     2*k + 1}) += 27*tmp;
+                    //     fineData({2*i + 1, 2*j +1,  2*k + 1}) += 27*tmp;
+                    //     fineData({2*i,     2*j + 1, 2*k + 1}) += 27*tmp;
 
-                        fineData({2*i-1,2*j, 2*k + 1})   += 9*tmp;
-                        fineData({2*i+2,2*j, 2*k + 1})   += 9*tmp;
-                        fineData({2*i+2,2*j+1, 2*k + 1}) += 9*tmp;
-                        fineData({2*i-1,2*j+1, 2*k + 1}) += 9*tmp;
+                    //     fineData({2*i-1,2*j, 2*k + 1})   += 9*tmp;
+                    //     fineData({2*i+2,2*j, 2*k + 1})   += 9*tmp;
+                    //     fineData({2*i+2,2*j+1, 2*k + 1}) += 9*tmp;
+                    //     fineData({2*i-1,2*j+1, 2*k + 1}) += 9*tmp;
 
                                         
-                        fineData({2*i-1,2*j-1, 2*k + 1}) += 3*tmp;
-                        fineData({2*i+2,2*j-1, 2*k + 1}) += 3*tmp;
-                        fineData({2*i+2,2*j+2, 2*k + 1}) += 3*tmp;
-                        fineData({2*i-1,2*j+2, 2*k + 1}) += 3*tmp;
+                    //     fineData({2*i-1,2*j-1, 2*k + 1}) += 3*tmp;
+                    //     fineData({2*i+2,2*j-1, 2*k + 1}) += 3*tmp;
+                    //     fineData({2*i+2,2*j+2, 2*k + 1}) += 3*tmp;
+                    //     fineData({2*i-1,2*j+2, 2*k + 1}) += 3*tmp;
 
-                        fineData({2*i, 2*j-1,     2*k + 1}) += 9*tmp;
-                        fineData({2*i + 1,2*j -1, 2*k + 1}) += 9*tmp;
-                        fineData({2*i+1,2*j +2,   2*k + 1}) += 9*tmp;
-                        fineData({2*i,2*j+2,      2*k + 1}) += 9*tmp;
+                    //     fineData({2*i, 2*j-1,     2*k + 1}) += 9*tmp;
+                    //     fineData({2*i + 1,2*j -1, 2*k + 1}) += 9*tmp;
+                    //     fineData({2*i+1,2*j +2,   2*k + 1}) += 9*tmp;
+                    //     fineData({2*i,2*j+2,      2*k + 1}) += 9*tmp;
                         
-                    }
+                    // }
                     
 
-                    {  
-                        fineData({2*i,2*j, 2*k + 2})         += 9*tmp;
-                        fineData({2*i + 1, 2*j, 2*k + 2})    += 9*tmp;
-                        fineData({2*i + 1, 2*j +1, 2*k + 2}) += 9*tmp;
-                        fineData({2*i,2*j + 1, 2*k + 2})     += 9*tmp;
+                    // {  
+                    //     fineData({2*i,2*j, 2*k + 2})         += 9*tmp;
+                    //     fineData({2*i + 1, 2*j, 2*k + 2})    += 9*tmp;
+                    //     fineData({2*i + 1, 2*j +1, 2*k + 2}) += 9*tmp;
+                    //     fineData({2*i,2*j + 1, 2*k + 2})     += 9*tmp;
 
-                        fineData({2*i-1,2*j, 2*k + 2})   += 3*tmp;
-                        fineData({2*i+2,2*j, 2*k + 2})   += 3*tmp;
-                        fineData({2*i+2,2*j+1, 2*k + 2}) += 3*tmp;
-                        fineData({2*i-1,2*j+1, 2*k + 2}) += 3*tmp;
+                    //     fineData({2*i-1,2*j, 2*k + 2})   += 3*tmp;
+                    //     fineData({2*i+2,2*j, 2*k + 2})   += 3*tmp;
+                    //     fineData({2*i+2,2*j+1, 2*k + 2}) += 3*tmp;
+                    //     fineData({2*i-1,2*j+1, 2*k + 2}) += 3*tmp;
 
                                         
-                        fineData({2*i-1,2*j-1, 2*k + 2}) += tmp;
-                        fineData({2*i+2,2*j-1, 2*k + 2}) += tmp;
-                        fineData({2*i+2,2*j+2, 2*k + 2}) += tmp;
-                        fineData({2*i-1,2*j+2, 2*k + 2}) += tmp;
+                    //     fineData({2*i-1,2*j-1, 2*k + 2}) += tmp;
+                    //     fineData({2*i+2,2*j-1, 2*k + 2}) += tmp;
+                    //     fineData({2*i+2,2*j+2, 2*k + 2}) += tmp;
+                    //     fineData({2*i-1,2*j+2, 2*k + 2}) += tmp;
 
-                        fineData({2*i, 2*j-1, 2*k + 2})     += 3*tmp;
-                        fineData({2*i + 1,2*j -1, 2*k + 2}) += 3*tmp;
-                        fineData({2*i+1,2*j +2, 2*k + 2})   += 3*tmp;
-                        fineData({2*i,2*j+2, 2*k + 2})      += 3*tmp;
+                    //     fineData({2*i, 2*j-1, 2*k + 2})     += 3*tmp;
+                    //     fineData({2*i + 1,2*j -1, 2*k + 2}) += 3*tmp;
+                    //     fineData({2*i+1,2*j +2, 2*k + 2})   += 3*tmp;
+                    //     fineData({2*i,2*j+2, 2*k + 2})      += 3*tmp;
                         
-                    }
+                    // }
+
+                    // 
                     
                     }
                 }
@@ -436,29 +546,40 @@ namespace multigrid
             // update iner cells
             for(int j = 1; j < nyc-1; j++)
             {
-                for(int i = 1; i < nxc-1; i++)
-                {
-                    auto tmp = (1/4)*corseData({i,j});
-                    fineData({2*i,2*j}) += 2*tmp;
-                    fineData({2*i + 1, 2*j}) += 3*tmp;
-                    fineData({2*i + 1, 2*j +1}) += 2*tmp;
-                    fineData({2*i,2*j + 1}) += 3*tmp;
+                // for(int i = 1; i < nxc-1; i++)
+                // {
+                //     auto tmp = (1/4)*corseData({i,j});
+                //     fineData({2*i,2*j}) += 2*tmp;
+                //     fineData({2*i + 1, 2*j}) += 3*tmp;
+                //     fineData({2*i + 1, 2*j +1}) += 2*tmp;
+                //     fineData({2*i,2*j + 1}) += 3*tmp;
 
-                    fineData({2*i-1,2*j}) += 0*tmp;
-                    fineData({2*i+2,2*j}) += tmp;
-                    fineData({2*i+2,2*j+1}) += 0*tmp;
-                    fineData({2*i-1,2*j+1}) += tmp;
+                //     fineData({2*i-1,2*j}) += 0*tmp;
+                //     fineData({2*i+2,2*j}) += tmp;
+                //     fineData({2*i+2,2*j+1}) += 0*tmp;
+                //     fineData({2*i-1,2*j+1}) += tmp;
 
                                        
-                    fineData({2*i-1,2*j-1}) += 0*tmp;
-                    fineData({2*i+2,2*j-1}) += tmp;
-                    fineData({2*i+2,2*j+2}) += 0*tmp;
-                    fineData({2*i-1,2*j+2}) += tmp;
+                //     fineData({2*i-1,2*j-1}) += 0*tmp;
+                //     fineData({2*i+2,2*j-1}) += tmp;
+                //     fineData({2*i+2,2*j+2}) += 0*tmp;
+                //     fineData({2*i-1,2*j+2}) += tmp;
 
-                    fineData({2*i, 2*j-1}) += 0*tmp;
-                    fineData({2*i + 1,2*j -1}) += tmp;
-                    fineData({2*i+1,2*j +2}) +=0*tmp;
-                    fineData({2*i,2*j+2}) += tmp;
+                //     fineData({2*i, 2*j-1}) += 0*tmp;
+                //     fineData({2*i + 1,2*j -1}) += tmp;
+                //     fineData({2*i+1,2*j +2}) +=0*tmp;
+                //     fineData({2*i,2*j+2}) += tmp;
+                   
+                // }
+                auto fj = j*2;
+
+                for(int i = 1; i < nxc-1; i++)
+                {
+                    auto fi = 2*i;
+                    fineData({fi,fj}) = (1/4) * (2*corseData({i,j}));
+                    fineData({fi+1,fj}) = (1/4) * (3*corseData({i,j}) + corseData({i+1,j}) + corseData({i,j-1}) + corseData({i+1,j-1}));
+                    fineData({fi,fj+1}) = (1/4) * (3*corseData({i,j}) + corseData({i-1,j}) + corseData({i,j+1}) + corseData({i-1,j+1}));
+                    fineData({fi+1,fj+1}) = (1/4) * (2*corseData(i,j)) ;
                    
                 }
             }
@@ -470,109 +591,134 @@ namespace multigrid
         {
             for(int k = 1; k < nzc-1; k++)
             {
+                auto fk = 2 * k;
                 for(int j = 1; j < nyc-1; j++)
                 {
+                    auto fj = 2 * j;
                     for(int i = 1; i < nxc-1; i++)
                     {
-                        auto tmp = (1/4)*corseData({i,j,k });
-                    {  
-                        fineData({2*i,2*j, 2*k - 1}) +=          0*tmp;
-                        fineData({2*i + 1, 2*j,  2*k - 1})  +=   tmp;
-                        fineData({2*i + 1, 2*j +1,  2*k - 1}) += 0*tmp;
-                        fineData({2*i,2*j + 1,  2*k - 1}) +=     0*tmp;
+                        auto fi = 2 * i;
 
-                        fineData({2*i-1,2*j,  2*k - 1}) +=   0*tmp;
-                        fineData({2*i+2,2*j,  2*k - 1}) +=   tmp;
-                        fineData({2*i+2,2*j+1,  2*k - 1}) += 0*tmp;
-                        fineData({2*i-1,2*j+1,  2*k - 1}) += 0*tmp;
+
+                        fineData({fi,fj,fk}) = (1/4) * (2*corseData({i,j,k}));
+
+                        fineData({fi+1,fj,fk}) = (1/4) *( 3*corseData(i,j,k)  + corseData({i,j-1,k}) + corseData({i+1,j-1,k}) + corseData(i+1,j,k) \
+                        + corseData({i,j-1,k-1}) + corseData({i+1,j-1,k-1}) + corseData({i,j,k-1}) + corseData({i+1,j,k-1}));
+
+                        fineData({fi,fj+1,fk}) = (1/4) * (2 * corseData(i,j,k));
+
+                        fineData({fi+1,fj+1, fk}) = (1/4) * (2 * corseData(i,j,k));
+
+                        fineData({fi,fj,fk+1}) = (1/4) * (2 * corseData({i,j,k}));
+
+                        fineData({fi+1,fj,fk+1}) = (1/4) * (2 * corseData({i,j,k}));
+
+                        fineData({fi,fj+1,fk+1}) = (1/4) * ( 3 * corseData({i,j,k}) +  corseData({i,j+1,k}) + corseData(i-1,j,k) + corseData(i-1,j+1,k) \
+                        +  corseData({i,j,k+1}) + corseData({i-1,j,k+1}) + corseData({i,j+1,k+1}) + corseData({i-1, j+1, k+1}));
+
+                        fineData({fi+1,fj+1,fk+1}) = (1/4) * (2 * corseData({i,j,k}));
+
+
+
+                    //     auto tmp = (1/4)*corseData({i,j,k });
+                    // {  
+                    //     fineData({2*i,2*j, 2*k - 1}) +=          0*tmp;
+                    //     fineData({2*i + 1, 2*j,  2*k - 1})  +=   tmp;
+                    //     fineData({2*i + 1, 2*j +1,  2*k - 1}) += 0*tmp;
+                    //     fineData({2*i,2*j + 1,  2*k - 1}) +=     0*tmp;
+
+                    //     fineData({2*i-1,2*j,  2*k - 1}) +=   0*tmp;
+                    //     fineData({2*i+2,2*j,  2*k - 1}) +=   tmp;
+                    //     fineData({2*i+2,2*j+1,  2*k - 1}) += 0*tmp;
+                    //     fineData({2*i-1,2*j+1,  2*k - 1}) += 0*tmp;
 
                                         
-                        fineData({2*i-1,2*j-1,  2*k - 1}) += 0*tmp;
-                        fineData({2*i+2,2*j-1,  2*k - 1}) += tmp;
-                        fineData({2*i+2,2*j+2,  2*k - 1}) += 0*tmp;
-                        fineData({2*i-1,2*j+2 , 2*k - 1}) += 0*tmp;
+                    //     fineData({2*i-1,2*j-1,  2*k - 1}) += 0*tmp;
+                    //     fineData({2*i+2,2*j-1,  2*k - 1}) += tmp;
+                    //     fineData({2*i+2,2*j+2,  2*k - 1}) += 0*tmp;
+                    //     fineData({2*i-1,2*j+2 , 2*k - 1}) += 0*tmp;
 
-                        fineData({2*i, 2*j-1,  2*k - 1}) +=     0*tmp;
-                        fineData({2*i + 1,2*j -1,  2*k - 1}) += tmp;
-                        fineData({2*i+1,2*j +2,  2*k - 1}) +=   0*tmp;
-                        fineData({2*i,2*j+2,  2*k - 1}) +=      0*tmp;
+                    //     fineData({2*i, 2*j-1,  2*k - 1}) +=     0*tmp;
+                    //     fineData({2*i + 1,2*j -1,  2*k - 1}) += tmp;
+                    //     fineData({2*i+1,2*j +2,  2*k - 1}) +=   0*tmp;
+                    //     fineData({2*i,2*j+2,  2*k - 1}) +=      0*tmp;
                         
-                    }
+                    // }
 
             
-                    {  
-                        fineData({2*i,2*j,  2*k}) +=        2*tmp;
-                        fineData({2*i + 1, 2*j,  2*k }) +=  3*tmp;
-                        fineData({2*i + 1, 2*j +1,  2*k})+= 2*tmp;
-                        fineData({2*i,2*j + 1,  2*k}) +=    2*tmp;
+                    // {  
+                    //     fineData({2*i,2*j,  2*k}) +=        2*tmp;
+                    //     fineData({2*i + 1, 2*j,  2*k }) +=  3*tmp;
+                    //     fineData({2*i + 1, 2*j +1,  2*k})+= 2*tmp;
+                    //     fineData({2*i,2*j + 1,  2*k}) +=    2*tmp;
 
-                        fineData({2*i-1,2*j,  2*k})  += 0*tmp;
-                        fineData({2*i+2,2*j,  2*k})  += tmp;
-                        fineData(2*i+2,2*j+1,  2*k ) += 0*tmp;
-                        fineData(2*i-1,2*j+1,  2*k ) += 0*tmp;
+                    //     fineData({2*i-1,2*j,  2*k})  += 0*tmp;
+                    //     fineData({2*i+2,2*j,  2*k})  += tmp;
+                    //     fineData(2*i+2,2*j+1,  2*k ) += 0*tmp;
+                    //     fineData(2*i-1,2*j+1,  2*k ) += 0*tmp;
 
                                         
-                        fineData({2*i-1,2*j-1,  2*k }) += 0*tmp;
-                        fineData({2*i+2,2*j-1,  2*k }) += tmp;
-                        fineData({2*i+2,2*j+2,  2*k }) += 0*tmp;
-                        fineData({2*i-1,2*j+2,  2*k }) += 0*tmp;
+                    //     fineData({2*i-1,2*j-1,  2*k }) += 0*tmp;
+                    //     fineData({2*i+2,2*j-1,  2*k }) += tmp;
+                    //     fineData({2*i+2,2*j+2,  2*k }) += 0*tmp;
+                    //     fineData({2*i-1,2*j+2,  2*k }) += 0*tmp;
 
-                        fineData({2*i, 2*j-1,      2*k}) += 0*tmp;
-                        fineData({2*i + 1,2*j -1,  2*k}) += tmp;
-                        fineData({2*i+1,2*j +2,    2*k}) += 0*tmp;
-                        fineData({2*i,2*j+2,       2*k}) += 0*tmp;
+                    //     fineData({2*i, 2*j-1,      2*k}) += 0*tmp;
+                    //     fineData({2*i + 1,2*j -1,  2*k}) += tmp;
+                    //     fineData({2*i+1,2*j +2,    2*k}) += 0*tmp;
+                    //     fineData({2*i,2*j+2,       2*k}) += 0*tmp;
                         
-                    }
+                    // }
 
                        
-                    {  
-                        fineData({2*i,     2*j,     2*k + 1}) += 2*tmp;
-                        fineData({2*i + 1, 2*j,     2*k + 1}) += 2*tmp;
-                        fineData({2*i + 1, 2*j +1,  2*k + 1}) += 2*tmp;
-                        fineData({2*i,     2*j + 1, 2*k + 1}) += 3*tmp;
+                    // {  
+                    //     fineData({2*i,     2*j,     2*k + 1}) += 2*tmp;
+                    //     fineData({2*i + 1, 2*j,     2*k + 1}) += 2*tmp;
+                    //     fineData({2*i + 1, 2*j +1,  2*k + 1}) += 2*tmp;
+                    //     fineData({2*i,     2*j + 1, 2*k + 1}) += 3*tmp;
 
-                        fineData({2*i-1,2*j, 2*k + 1})   += 0*tmp;
-                        fineData({2*i+2,2*j, 2*k + 1})   += 0*tmp;
-                        fineData({2*i+2,2*j+1, 2*k + 1}) += 0*tmp;
-                        fineData({2*i-1,2*j+1, 2*k + 1}) += tmp;
+                    //     fineData({2*i-1,2*j, 2*k + 1})   += 0*tmp;
+                    //     fineData({2*i+2,2*j, 2*k + 1})   += 0*tmp;
+                    //     fineData({2*i+2,2*j+1, 2*k + 1}) += 0*tmp;
+                    //     fineData({2*i-1,2*j+1, 2*k + 1}) += tmp;
 
                                         
-                        fineData({2*i-1,2*j-1, 2*k + 1}) += 0*tmp;
-                        fineData({2*i+2,2*j-1, 2*k + 1}) += 0*tmp;
-                        fineData({2*i+2,2*j+2, 2*k + 1}) += 0*tmp;
-                        fineData({2*i-1,2*j+2, 2*k + 1}) += tmp;
+                    //     fineData({2*i-1,2*j-1, 2*k + 1}) += 0*tmp;
+                    //     fineData({2*i+2,2*j-1, 2*k + 1}) += 0*tmp;
+                    //     fineData({2*i+2,2*j+2, 2*k + 1}) += 0*tmp;
+                    //     fineData({2*i-1,2*j+2, 2*k + 1}) += tmp;
 
-                        fineData({2*i, 2*j-1,     2*k + 1}) += 0*tmp;
-                        fineData({2*i + 1,2*j -1, 2*k + 1}) += 0*tmp;
-                        fineData({2*i+1,2*j +2,   2*k + 1}) += 0*tmp;
-                        fineData({2*i,2*j+2,      2*k + 1}) += tmp;
+                    //     fineData({2*i, 2*j-1,     2*k + 1}) += 0*tmp;
+                    //     fineData({2*i + 1,2*j -1, 2*k + 1}) += 0*tmp;
+                    //     fineData({2*i+1,2*j +2,   2*k + 1}) += 0*tmp;
+                    //     fineData({2*i,2*j+2,      2*k + 1}) += tmp;
                         
-                    }
+                    // }
                     
 
-                    {  
-                        fineData({2*i,2*j, 2*k + 2})         += 0*tmp;
-                        fineData({2*i + 1, 2*j, 2*k + 2})    += 0*tmp;
-                        fineData({2*i + 1, 2*j +1, 2*k + 2}) += 0*tmp;
-                        fineData({2*i,2*j + 1, 2*k + 2})     += tmp;
+                    // {  
+                    //     fineData({2*i,2*j, 2*k + 2})         += 0*tmp;
+                    //     fineData({2*i + 1, 2*j, 2*k + 2})    += 0*tmp;
+                    //     fineData({2*i + 1, 2*j +1, 2*k + 2}) += 0*tmp;
+                    //     fineData({2*i,2*j + 1, 2*k + 2})     += tmp;
 
-                        fineData({2*i-1,2*j, 2*k + 2})   += 0*tmp;
-                        fineData({2*i+2,2*j, 2*k + 2})   += 0*tmp;
-                        fineData({2*i+2,2*j+1, 2*k + 2}) += 0*tmp;
-                        fineData({2*i-1,2*j+1, 2*k + 2}) += tmp;
+                    //     fineData({2*i-1,2*j, 2*k + 2})   += 0*tmp;
+                    //     fineData({2*i+2,2*j, 2*k + 2})   += 0*tmp;
+                    //     fineData({2*i+2,2*j+1, 2*k + 2}) += 0*tmp;
+                    //     fineData({2*i-1,2*j+1, 2*k + 2}) += tmp;
 
                                         
-                        fineData({2*i-1,2*j-1, 2*k + 2}) += 0*tmp;
-                        fineData({2*i+2,2*j-1, 2*k + 2}) += 0*tmp;
-                        fineData({2*i+2,2*j+2, 2*k + 2}) += 0*tmp;
-                        fineData({2*i-1,2*j+2, 2*k + 2}) += tmp;
+                    //     fineData({2*i-1,2*j-1, 2*k + 2}) += 0*tmp;
+                    //     fineData({2*i+2,2*j-1, 2*k + 2}) += 0*tmp;
+                    //     fineData({2*i+2,2*j+2, 2*k + 2}) += 0*tmp;
+                    //     fineData({2*i-1,2*j+2, 2*k + 2}) += tmp;
 
-                        fineData({2*i, 2*j-1, 2*k + 2})     += 0*tmp;
-                        fineData({2*i + 1,2*j -1, 2*k + 2}) += 0*tmp;
-                        fineData({2*i+1,2*j +2, 2*k + 2})   += 0*tmp;
-                        fineData({2*i,2*j+2, 2*k + 2})      += tmp;
+                    //     fineData({2*i, 2*j-1, 2*k + 2})     += 0*tmp;
+                    //     fineData({2*i + 1,2*j -1, 2*k + 2}) += 0*tmp;
+                    //     fineData({2*i+1,2*j +2, 2*k + 2})   += 0*tmp;
+                    //     fineData({2*i,2*j+2, 2*k + 2})      += tmp;
                         
-                    }
+                    // }
                     
                     }
                 }
@@ -597,29 +743,40 @@ namespace multigrid
             // update iner cells
             for(int j = 1; j < nyc-1; j++)
             {
-                for(int i = 1; i < nxc-1; i++)
-                {
-                    auto tmp = (1/4)*corseData({i,j});
-                    fineData({2*i,2*j}) += 2*tmp;
-                    fineData({2*i + 1, 2*j}) += 2*tmp;
-                    fineData({2*i + 1, 2*j +1}) += 2*tmp;
-                    fineData({2*i,2*j + 1}) += 2*tmp;
+        
+                // for(int i = 1; i < nxc-1; i++)
+                // {
+                //     auto tmp = (1/4)*corseData({i,j});
+                //     fineData({2*i,2*j}) += 2*tmp;
+                //     fineData({2*i + 1, 2*j}) += 2*tmp;
+                //     fineData({2*i + 1, 2*j +1}) += 2*tmp;
+                //     fineData({2*i,2*j + 1}) += 2*tmp;
 
-                    fineData({2*i-1,2*j}) += tmp;
-                    fineData({2*i+2,2*j}) += tmp;
-                    fineData({2*i+2,2*j+1}) += tmp;
-                    fineData({2*i-1,2*j+1}) += tmp;
+                //     fineData({2*i-1,2*j}) += tmp;
+                //     fineData({2*i+2,2*j}) += tmp;
+                //     fineData({2*i+2,2*j+1}) += tmp;
+                //     fineData({2*i-1,2*j+1}) += tmp;
 
                                        
-                    fineData({2*i-1,2*j-1}) += 0*tmp;
-                    fineData({2*i+2,2*j-1}) += 0*tmp;
-                    fineData({2*i+2,2*j+2}) += 0*tmp;
-                    fineData({2*i-1,2*j+2}) += 0*tmp;
+                //     fineData({2*i-1,2*j-1}) += 0*tmp;
+                //     fineData({2*i+2,2*j-1}) += 0*tmp;
+                //     fineData({2*i+2,2*j+2}) += 0*tmp;
+                //     fineData({2*i-1,2*j+2}) += 0*tmp;
 
-                    fineData({2*i, 2*j-1}) += tmp;
-                    fineData({2*i + 1,2*j -1}) += tmp;
-                    fineData({2*i+1,2*j +2}) += tmp;
-                    fineData({2*i,2*j+2}) += tmp;
+                //     fineData({2*i, 2*j-1}) += tmp;
+                //     fineData({2*i + 1,2*j -1}) += tmp;
+                //     fineData({2*i+1,2*j +2}) += tmp;
+                //     fineData({2*i,2*j+2}) += tmp;
+                   
+                // }
+                auto fj = 2*j;
+                for(int i = 1; i < nxc-1; i++)
+                {
+                    auto fi = 2*i;
+                    fineData({fi,fj}) = (1/4) * (2*corseData({i,j}) + corseData({i-1,j}) + corseData({i,j-1}));
+                    fineData({fi+1,fj}) = (1/4) * (2*corseData({i,j}) + corseData({i,j-1}) + corseData({i+1,j}));
+                    fineData({fi,fj+1}) = (1/4) * (2*corseData({i,j}) + corseData({i-1, j}) + corseData({i,j+1}));
+                    fineData({fi+1,fj+1}) = (1/4) * (2*corseData({i,j}) + corseData({i+1,j}) + corseData({i+1,j+1}));
                    
                 }
             }
@@ -631,109 +788,129 @@ namespace multigrid
         {
             for(int k = 1; k < nzc-1; k++)
             {
+                auto fk = 2*k;
                 for(int j = 1; j < nyc-1; j++)
                 {
+                    auto fj = 2*j;
                     for(int i = 1; i < nxc-1; i++)
                     {
-                        auto tmp = (1/6)*corseData({i,j,k });
-                    {  
-                        fineData({2*i,2*j, 2*k - 1}) +=          tmp;
-                        fineData({2*i + 1, 2*j,  2*k - 1}) +=    tmp;
-                        fineData({2*i + 1, 2*j +1,  2*k - 1}) += tmp;
-                        fineData({2*i,2*j + 1,  2*k - 1}) +=     tmp;
+                        auto fi = 2*i;
 
-                        fineData({2*i-1,2*j,  2*k - 1}) +=    0*tmp;
-                        fineData({2*i+2,2*j,  2*k - 1}) +=    0*tmp;
-                        fineData({2*i+2,2*j+1,  2*k - 1}) +=  0*tmp;
-                        fineData({2*i-1,2*j+1,  2*k - 1}) +=  0*tmp;
+                        fineData({fi,fj,fk}) = (1/6) *(3*corseData({i,j,k}) + corseData({i-1,j,k}) + corseData({i-1,j-1,k}) + corseData({i,j,k-1}));
+
+                        fineData({fi+1,fj,fk}) = (1/6) *(3*corseData({i,j,k})  + corseData({i,j-1,k}) +  corseData({i+1,j,k}) + corseData({i,j,k-1}));
+
+                        fineData({fi,fj+1,fk}) = (1/6) *(3 * corseData({i,j,k}) + corseData({i,j+1,k}) + corseData({i-1,j,k}) + corseData({i,j,k-1}));
+
+                        fineData({fi+1,fj+1, fk}) = (1/6) * (3* corseData(i,j,k) +corseData({i+1,j,k}) +corseData({i,j+1,k}) + corseData({i,j,k-1}));
+
+                        fineData({fi,fj,fk+1}) = (1/6) * (3 * corseData({i,j,k}) + corseData({i,j-1,k}) +  corseData({i-1,j,k}) + corseData({i,j,k+1}));
+
+                        fineData({fi+1,fj,fk+1}) = (1/6) * (3 * corseData({i,j,k}) +  corseData({i+1,j,k}) + corseData({i,j-1,k}) +  corseData({i,j,k+1}));
+
+                        fineData({fi,fj+1,fk+1}) = (1/6) * (3 * corseData({i,j,k}) + corseData({i,j+1,k}) +  corseData(i-1,j,k) + corseData({i,j,k+1}));
+
+                        fineData({fi+1,fj+1,fk+1}) = (1/6) * (3 * corseData({i,j,k}) + corseData({i+1,j,k}) + corseData({i,j+1,k}) + corseData({i,j,k+1}));
+
+                    //     auto tmp = (1/6)*corseData({i,j,k });
+                    // {  
+                    //     fineData({2*i,2*j, 2*k - 1}) +=          tmp;
+                    //     fineData({2*i + 1, 2*j,  2*k - 1}) +=    tmp;
+                    //     fineData({2*i + 1, 2*j +1,  2*k - 1}) += tmp;
+                    //     fineData({2*i,2*j + 1,  2*k - 1}) +=     tmp;
+
+                    //     fineData({2*i-1,2*j,  2*k - 1}) +=    0*tmp;
+                    //     fineData({2*i+2,2*j,  2*k - 1}) +=    0*tmp;
+                    //     fineData({2*i+2,2*j+1,  2*k - 1}) +=  0*tmp;
+                    //     fineData({2*i-1,2*j+1,  2*k - 1}) +=  0*tmp;
 
                                         
-                        fineData({2*i-1,2*j-1,  2*k - 1}) += 0*tmp;
-                        fineData({2*i+2,2*j-1,  2*k - 1}) += 0*tmp;
-                        fineData({2*i+2,2*j+2,  2*k - 1}) += 0*tmp;
-                        fineData({2*i-1,2*j+2 , 2*k - 1}) += 0*tmp;
+                    //     fineData({2*i-1,2*j-1,  2*k - 1}) += 0*tmp;
+                    //     fineData({2*i+2,2*j-1,  2*k - 1}) += 0*tmp;
+                    //     fineData({2*i+2,2*j+2,  2*k - 1}) += 0*tmp;
+                    //     fineData({2*i-1,2*j+2 , 2*k - 1}) += 0*tmp;
 
-                        fineData({2*i, 2*j-1,  2*k - 1}) +=     0*tmp;
-                        fineData({2*i + 1,2*j -1,  2*k - 1}) += 0*tmp;
-                        fineData({2*i+1,2*j +2,  2*k - 1}) +=   0*tmp;
-                        fineData({2*i,2*j+2,  2*k - 1}) +=      0*tmp;
+                    //     fineData({2*i, 2*j-1,  2*k - 1}) +=     0*tmp;
+                    //     fineData({2*i + 1,2*j -1,  2*k - 1}) += 0*tmp;
+                    //     fineData({2*i+1,2*j +2,  2*k - 1}) +=   0*tmp;
+                    //     fineData({2*i,2*j+2,  2*k - 1}) +=      0*tmp;
                         
-                    }
+                    // }
 
             
-                    {  
-                        fineData({2*i,2*j,  2*k}) +=        3*tmp;
-                        fineData({2*i + 1, 2*j,  2*k }) +=  3*tmp;
-                        fineData({2*i + 1, 2*j +1,  2*k})+= 3*tmp;
-                        fineData({2*i,2*j + 1,  2*k}) +=    3*tmp;
+                    // {  
+                    //     fineData({2*i,2*j,  2*k}) +=        3*tmp;
+                    //     fineData({2*i + 1, 2*j,  2*k }) +=  3*tmp;
+                    //     fineData({2*i + 1, 2*j +1,  2*k})+= 3*tmp;
+                    //     fineData({2*i,2*j + 1,  2*k}) +=    3*tmp;
 
-                        fineData({2*i-1,2*j,  2*k})  += tmp;
-                        fineData({2*i+2,2*j,  2*k})  += tmp;
-                        fineData(2*i+2,2*j+1,  2*k ) += tmp;
-                        fineData(2*i-1,2*j+1,  2*k ) += tmp;
+                    //     fineData({2*i-1,2*j,  2*k})  += tmp;
+                    //     fineData({2*i+2,2*j,  2*k})  += tmp;
+                    //     fineData(2*i+2,2*j+1,  2*k ) += tmp;
+                    //     fineData(2*i-1,2*j+1,  2*k ) += tmp;
 
                                         
-                        fineData({2*i-1,2*j-1,  2*k }) += 0*tmp;
-                        fineData({2*i+2,2*j-1,  2*k }) += 0*tmp;
-                        fineData({2*i+2,2*j+2,  2*k }) += 0*tmp;
-                        fineData({2*i-1,2*j+2,  2*k }) += 0*tmp;
+                    //     fineData({2*i-1,2*j-1,  2*k }) += 0*tmp;
+                    //     fineData({2*i+2,2*j-1,  2*k }) += 0*tmp;
+                    //     fineData({2*i+2,2*j+2,  2*k }) += 0*tmp;
+                    //     fineData({2*i-1,2*j+2,  2*k }) += 0*tmp;
 
-                        fineData({2*i, 2*j-1,      2*k}) += tmp;
-                        fineData({2*i + 1,2*j -1,  2*k}) += tmp;
-                        fineData({2*i+1,2*j +2,    2*k}) += tmp;
-                        fineData({2*i,2*j+2,       2*k}) += tmp;
+                    //     fineData({2*i, 2*j-1,      2*k}) += tmp;
+                    //     fineData({2*i + 1,2*j -1,  2*k}) += tmp;
+                    //     fineData({2*i+1,2*j +2,    2*k}) += tmp;
+                    //     fineData({2*i,2*j+2,       2*k}) += tmp;
                         
-                    }
+                    // }
 
                        
-                    {  
-                        fineData({2*i,     2*j,     2*k + 1}) += 3*tmp;
-                        fineData({2*i + 1, 2*j,     2*k + 1}) += 3*tmp;
-                        fineData({2*i + 1, 2*j +1,  2*k + 1}) += 3*tmp;
-                        fineData({2*i,     2*j + 1, 2*k + 1}) += 3*tmp;
+                    // {  
+                    //     fineData({2*i,     2*j,     2*k + 1}) += 3*tmp;
+                    //     fineData({2*i + 1, 2*j,     2*k + 1}) += 3*tmp;
+                    //     fineData({2*i + 1, 2*j +1,  2*k + 1}) += 3*tmp;
+                    //     fineData({2*i,     2*j + 1, 2*k + 1}) += 3*tmp;
 
-                        fineData({2*i-1,2*j, 2*k + 1})   += tmp;
-                        fineData({2*i+2,2*j, 2*k + 1})   += tmp;
-                        fineData({2*i+2,2*j+1, 2*k + 1}) += tmp;
-                        fineData({2*i-1,2*j+1, 2*k + 1}) += tmp;
+                    //     fineData({2*i-1,2*j, 2*k + 1})   += tmp;
+                    //     fineData({2*i+2,2*j, 2*k + 1})   += tmp;
+                    //     fineData({2*i+2,2*j+1, 2*k + 1}) += tmp;
+                    //     fineData({2*i-1,2*j+1, 2*k + 1}) += tmp;
 
                                         
-                        fineData({2*i-1,2*j-1, 2*k + 1}) += 0*tmp;
-                        fineData({2*i+2,2*j-1, 2*k + 1}) += 0*tmp;
-                        fineData({2*i+2,2*j+2, 2*k + 1}) += 0*tmp;
-                        fineData({2*i-1,2*j+2, 2*k + 1}) += 0*tmp;
+                    //     fineData({2*i-1,2*j-1, 2*k + 1}) += 0*tmp;
+                    //     fineData({2*i+2,2*j-1, 2*k + 1}) += 0*tmp;
+                    //     fineData({2*i+2,2*j+2, 2*k + 1}) += 0*tmp;
+                    //     fineData({2*i-1,2*j+2, 2*k + 1}) += 0*tmp;
 
-                        fineData({2*i, 2*j-1,     2*k + 1}) += tmp;
-                        fineData({2*i + 1,2*j -1, 2*k + 1}) += tmp;
-                        fineData({2*i+1,2*j +2,   2*k + 1}) += tmp;
-                        fineData({2*i,2*j+2,      2*k + 1}) += tmp;
+                    //     fineData({2*i, 2*j-1,     2*k + 1}) += tmp;
+                    //     fineData({2*i + 1,2*j -1, 2*k + 1}) += tmp;
+                    //     fineData({2*i+1,2*j +2,   2*k + 1}) += tmp;
+                    //     fineData({2*i,2*j+2,      2*k + 1}) += tmp;
                         
-                    }
+                    // }
                     
 
-                    {  
-                        fineData({2*i,2*j, 2*k + 2})         += tmp;
-                        fineData({2*i + 1, 2*j, 2*k + 2})    += tmp;
-                        fineData({2*i + 1, 2*j +1, 2*k + 2}) += tmp;
-                        fineData({2*i,2*j + 1, 2*k + 2})     += tmp;
+                    // {  
+                    //     fineData({2*i,2*j, 2*k + 2})         += tmp;
+                    //     fineData({2*i + 1, 2*j, 2*k + 2})    += tmp;
+                    //     fineData({2*i + 1, 2*j +1, 2*k + 2}) += tmp;
+                    //     fineData({2*i,2*j + 1, 2*k + 2})     += tmp;
 
-                        fineData({2*i-1,2*j, 2*k + 2})   += 0*tmp;
-                        fineData({2*i+2,2*j, 2*k + 2})   += 0*tmp;
-                        fineData({2*i+2,2*j+1, 2*k + 2}) += 0*tmp;
-                        fineData({2*i-1,2*j+1, 2*k + 2}) += 0*tmp;
+                    //     fineData({2*i-1,2*j, 2*k + 2})   += 0*tmp;
+                    //     fineData({2*i+2,2*j, 2*k + 2})   += 0*tmp;
+                    //     fineData({2*i+2,2*j+1, 2*k + 2}) += 0*tmp;
+                    //     fineData({2*i-1,2*j+1, 2*k + 2}) += 0*tmp;
 
                                         
-                        fineData({2*i-1,2*j-1, 2*k + 2}) += 0*tmp;
-                        fineData({2*i+2,2*j-1, 2*k + 2}) += 0*tmp;
-                        fineData({2*i+2,2*j+2, 2*k + 2}) += 0*tmp;
-                        fineData({2*i-1,2*j+2, 2*k + 2}) += 0*tmp;
+                    //     fineData({2*i-1,2*j-1, 2*k + 2}) += 0*tmp;
+                    //     fineData({2*i+2,2*j-1, 2*k + 2}) += 0*tmp;
+                    //     fineData({2*i+2,2*j+2, 2*k + 2}) += 0*tmp;
+                    //     fineData({2*i-1,2*j+2, 2*k + 2}) += 0*tmp;
 
-                        fineData({2*i, 2*j-1, 2*k + 2})     += 0*tmp;
-                        fineData({2*i + 1,2*j -1, 2*k + 2}) += 0*tmp;
-                        fineData({2*i+1,2*j +2, 2*k + 2})   += 0*tmp;
-                        fineData({2*i,2*j+2, 2*k + 2})      += 0*tmp;
+                    //     fineData({2*i, 2*j-1, 2*k + 2})     += 0*tmp;
+                    //     fineData({2*i + 1,2*j -1, 2*k + 2}) += 0*tmp;
+                    //     fineData({2*i+1,2*j +2, 2*k + 2})   += 0*tmp;
+                    //     fineData({2*i,2*j+2, 2*k + 2})      += 0*tmp;
                         
-                    }
+                    // }
                     
                     }
                 }
@@ -1092,6 +1269,8 @@ namespace multigrid
         }
     }
 
+
+// RB-GS smoother
     template <typename T, int Ndim>
     void MultigridBase<T, Ndim>::relax(const size_t level, size_t N)
     {
@@ -1167,6 +1346,8 @@ namespace multigrid
         */
     }
 
+
+// RB-GS smoother
     template <typename T, int Ndim>
     void MultigridBase<T, Ndim>::relax(const size_t level, const double tolerance)
     {
