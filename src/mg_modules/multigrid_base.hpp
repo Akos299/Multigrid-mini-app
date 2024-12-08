@@ -1,1032 +1,22 @@
 #ifndef __MULTIGRID__
 #define __MULTIGRID__
 
+#include <cstddef>
 #include <vector>
 #include <array>
 #include "utilities.hpp"
-#include "Bcondition.hpp"
+#include "boundary_condition.hpp"
+#include "mgrid_stack.hpp"
 #include "ndArray.h"
+
+
 
 namespace multigrid
 {
 
-    /** @brief restriction operator */
-    template <typename T, int Ndim>
-    inline void restriction_operator(std::vector<std::vector<T>> &corseData, std::vector<std::vector<T>> &fineData)
-    {
-    }
-
-    /** @brief interpolation operator */
-    template <typename T, int Ndim>
-    inline void interpolation_operator(std::vector<std::vector<T>> &corseData, std::vector<std::vector<T>> &fineData)
-    {
-    }
-
-    /** @brief linear restriction operator */
-    template <typename T, int Ndim>
-    inline void linear_restriction_operator(ndArray<T, Ndim> &corseData, ndArray<T, Ndim> &fineData)
-    {
-        size_t nxc,nyc,nzc,nxf,nyf,nzf;
-        nxc = corseData.size(0); nyc = corseData.size(1); nzc = (Ndim==3) ? (corseData.size(2)) : 0;
-        nxf = fineData.size(0); nyf = fineData.size(1); nzf = (Ndim == 3) ? (fineData.size(2)) : 0;
-
-        if(Ndim == 2)
-        {
-            // update iner cells
-            for(int j = 1; j < nyc-1; j++)
-            {
-                auto fj = 2*j;
-                for(int i = 1; i < nxc - 1; i++)
-                {
-                    auto fi = 2*i;
-                    corseData({i,j}) = (1/64) * (9*fineData({fi, fj}) + 9*fineData({fi + 1, fj}) + 9*fineData({fi + 1, fj + 1}) + 9*fineData({fi , fj + 1})\
-                    + 3*fineData({fi - 1, fj}) + 3*fineData({fi + 2, fj }) + 3*fineData({fi + 2, fj + 1})  + 3*fineData({fi - 1 , fj + 1 })\
-                    + fineData({fi - 1, fj - 1}) + fineData({fi + 2, fj - 1}) + fineData({fi + 2, fj + 2}) + fineData({fi -1, fj + 2})\
-                    + 3*fineData({fi, fj -1 }) + 3*fineData({fi + 1  , 2*j -1}) + 3*fineData({fi + 1, fj + 2}) + 3*fineData({fi , fj + 2})
-                    );
-                }
-            }
-
-            // update boundaries cells (deepending on the BC types e.g Dirichlet, Neumann, Robin, etc..)
-        }
-
-        else if(Ndim == 3)
-        {
-            // update iner cells
-            for(int k = 1; k < nzc - 1; k++)
-           { 
-            auto fk =  2*k;
-                for(int j = 1; j < nyc-1; j++)
-                {
-                    auto fj = 2*j;
-                    for(int i = 1; i < nxc - 1; i++)
-                    {
-                        auto fi = 2*i;
-                       corseData({i,j,k}) = (1/512) * (fineData({fi-1,fj+2,fk-1}) + 3*fineData({fi-1,fj+1,fk-1}) + 3*fineData({fi-1,fj,fk-1}) + fineData({fi-1,fj-1,fk-1})\
-                                                    + 3*fineData({fi,fj+2,fk-1}) + 9*fineData({fi, fj+1,fk-1}) + 9*fineData({fi,fj,fk-1}) + 3*fineData({fi,fj-1,fk-1}) \
-                                                    + 3*fineData({fi+1,fj+2,fk-1}) + 9*fineData({fi+1,fj+1,fk-1}) + 9*fineData({fi+1,fj,fk-1}) + 3*fineData({fi+1,fj-1,fk-1})\
-                                                    + fineData({fi+2, fj+2, fk-1}) + 3*fineData({fi+2,fj+1,fk-1}) + 3*fineData({fi+2,fj,fk-1}) + fineData({fi+2,fj-1,fk-1}) \
-
-                                                    + 3*fineData({fi-1,fj+2,fk}) + 9*fineData({fi-1,fj+1,fk}) + 9*fineData({fi-1,fj,fk}) + 3*fineData({fi-1,fj-1,fk}) \
-                                                    + 9*fineData({fi,fj+2,fk}) + 27*fineData({fi,fj+1,fk}) + 27*fineData({fi,fj,fk}) + 9*fineData({fi,fj-1,fk}) \
-                                                    + 9*fineData({fi+1,fj+2,fk}) + 27*fineData({fi+1,fj+1,fk}) + 27*fineData({fi+1,fj,fk}) + 9*fineData({fi+1,fj-1,fk})\
-                                                    + 3*fineData({fi+2,fj+2,fk}) + 9*fineData({fi+2,fj+1,fk}) + 9*fineData({fi+2,fj,fk}) + 3*fineData({fi+2,fj-1,fk})\
-                                                    
-                                                    + 3*fineData({fi-1,fj+2,fk+1}) + 9*fineData({fi-1,fj+1,fk+1}) + 9*fineData({fi-1,fj,fk+1}) + 3*fineData({fi-1,fj-1,fk+1}) \
-                                                    + 9*fineData({fi,fj+2,fk+1}) + 27*fineData({fi,fj+1,fk+1}) + 27*fineData({fi,fj,fk+1}) + 9*fineData({fi,fj-1,fk+1}) \
-                                                    + 9*fineData({fi+1,fj+2,fk+1}) + 27*fineData({fi+1,fj+1,fk+1}) + 27*fineData({fi+1,fj,fk+1}) + 9*fineData({fi+1,fj-1,fk+1})\
-                                                    + 3*fineData({fi+2,fj+2,fk+1}) + 9*fineData({fi+2,fj+1,fk+1}) + 9*fineData({fi+2,fj,fk+1}) + 3*fineData({fi+2,fj-1,fk+1})\
-
-                                                    + fineData({fi-1,fj+2,fk+2}) + 3*fineData({fi-1,fj+1,fk+2}) + 3*fineData({fi-1,fj,fk+2}) + fineData({fi-1,fj-1,fk+2})\
-                                                    + 3*fineData({fi,fj+2,fk+2}) + 9*fineData({fi, fj+1,fk+2}) + 9*fineData({fi,fj,fk+2}) + 3*fineData({fi,fj-1,fk+2}) \
-                                                    + 3*fineData({fi+1,fj+2,fk+2}) + 9*fineData({fi+1,fj+1,fk+2}) + 9*fineData({fi+1,fj,fk+2}) + 3*fineData({fi+1,fj-1,fk+2})\
-                                                    + fineData({fi+2, fj+2, fk+2}) + 3*fineData({fi+2,fj+1,fk+2}) + 3*fineData({fi+2,fj,fk+2}) + fineData({fi+2,fj-1,fk+2})
-                                                    );
-                    }
-                }
-            }
-
-            // updates boundaries cells
-        }
-
-    }
-
-
-        /** @brief khalil restriction operator */
-    template <typename T, int Ndim>
-    inline void Khalil_restriction_operator(ndArray<T, Ndim> &corseData, ndArray<T, Ndim> &fineData)
-    {
-        size_t nxc,nyc,nzc,nxf,nyf,nzf;
-        nxc = corseData.size(0); nyc = corseData.size(1); nzc = (Ndim==3) ? (corseData.size(2)) : 0;
-        nxf = fineData.size(0); nyf = fineData.size(1); nzf = (Ndim == 3) ? (fineData.size(2)) : 0;
-
-        if(Ndim == 2)
-        {
-            // update iner cells
-            for(int j = 1; j < nyc-1; j++)
-            {
-                auto fj = 2*j;
-                for(int i = 1; i < nxc - 1; i++)
-                {
-                    auto fi = 2*i;
-                    corseData({i,j}) = (1/16) * (2*fineData({fi, fj}) + 3*fineData({fi + 1, fj}) + 3*fineData({fi, fj + 1}) + 3*fineData({fi + 1, fj + 1})\
-                    + fineData({fi, fj + 2}) + 0*fineData({fi , fj -1}) + 0*fineData({fi + 1, fj + 2}) + fineData({fi + 1, fj - 1}) \
-                    + 0*fineData({fi - 1, fj}) + fineData({fi - 1, fj + 1}) + 0*fineData({fi + 2, fj + 1}) + 1*fineData({fi + 2, fj })\
-                    + fineData({fi - 1, fj + 2}) + 0*fineData({fi - 1, fj - 1}) + 0*fineData({fi + 2, fj + 2}) + fineData({fi + 1, fj - 1}));
-                }
-            }
-
-            // update boundaries cells (deepending on the BC types e.g Dirichlet, Neumann, Robin, etc..)
-        }
-
-        else if(Ndim == 3)
-        {
-            // update iner cells
-            for(int k = 1; k < nzc - 1; k++)
-           { 
-            auto fk = 2*k;
-                for(int j = 1; j < nyc-1; j++)
-                {
-                    auto fj = 2*j;
-                    for(int i = 1; i < nxc - 1; i++)
-                    {
-                        auto fi = 2*i;
-                       corseData({i,j,k}) = (1/32) * (fineData({fi+1,fj,fk-1}) + fineData({fi+1,fj-1,fk-1}) \
-                                                    + fineData({fi+2,fj,fk-1}) + fineData({fi+2,fj-1,fk-1}) \
-                                                    + 2*fineData({fi,fj+1,fk}) + 2*fineData({fi,fj,fk}) \
-                                                    + 2*fineData({fi+1,fj+1,fk}) + 3*fineData({fi+1,fj,fk}) + fineData({fi+1,fj-1,fk})\
-                                                    + fineData({fi+2,fj,fk}) + fineData({fi+2,fj-1,fk})\
-                                                    + fineData({fi-1,fj+2,fk+1}) + fineData({fi-1,fj+1,fk+1})  \
-                                                    + fineData({fi,fj+2,fk+1}) + 3*fineData({fi,fj+1,fk+1}) + 2*fineData({fi,fj,fk+1}) \
-                                                    +  2*fineData({fi+1,fj+1,fk+1}) + 2*fineData({fi+1,fj,fk+1})\
-                                                    + fineData({fi-1,fj+2,fk+2}) + fineData({fi-1,fj+1,fk+2})\
-                                                    + fineData({fi,fj+2,fk+2}) + fineData({fi, fj+1,fk+2}));
-                    }
-                }
-            }
-
-            // updates boundaries cells
-        }
-
-    }
-
-
-     /** @brief kwak restriction operator */
-    template <typename T, int Ndim>
-    inline void kwak_restriction_operator(ndArray<T, Ndim> &corseData, ndArray<T, Ndim> &fineData)
-    {
-        size_t nxc,nyc,nzc,nxf,nyf,nzf;
-        nxc = corseData.size(0); nyc = corseData.size(1); nzc = (Ndim==3) ? (corseData.size(2)) : 0;
-        nxf = fineData.size(0); nyf = fineData.size(1); nzf = (Ndim == 3) ? (fineData.size(2)) : 0;
-
-        if(Ndim == 2)
-        {
-            // update iner cells
-            for(int j = 1; j < nyc-1; j++)
-            {
-                auto fj = 2*j;
-                for(int i = 1; i < nxc - 1; i++)
-                {
-                    auto fi = 2*i;
-                    corseData({i,j}) = (1/16) * (2*fineData({fi, fj}) + 2*fineData({fi + 1, fj}) + 2*fineData({fi, fj + 1}) + 2*fineData({fi + 1, fj + 1})\
-                    + fineData({fi, fj + 2}) + fineData({fi , fj -1}) + fineData({fi + 1, fj + 2}) + fineData({fi + 1, fj - 1}) \
-                    + fineData({fi - 1, fj}) + fineData({fi - 1, fj + 1}) + fineData({fi + 2, fj + 1}) + fineData({fi + 2, fj })\
-                    + 0*fineData({fi - 1, fj + 2}) + 0*fineData({fi - 1, fj - 1}) + 0*fineData({fi + 2, fj + 2}) + 0*fineData({fi + 1, fj - 1}));
-                }
-            }
-
-            // update boundaries cells (deepending on the BC types e.g Dirichlet, Neumann, Robin, etc..)
-        }
-
-        else if(Ndim == 3)
-        {
-            // update iner cells
-            for(int k = 1; k < nzc - 1; k++)
-           { 
-            auto fk= 2*k;
-                for(int j = 1; j < nyc-1; j++)
-                {
-                    auto fj = 2*j;
-                    for(int i = 1; i < nxc - 1; i++)
-                    {
-                        auto fi = 2*i;
-                        corseData({i,j,k}) = (1/48) * (fineData({i,j+1,k-1}) + fineData({i,j,k-1}) + fineData({i+1,j,k-1}) + fineData({i+1,j+1,k-1}) \
-
-                        + fineData({i-1,j+1,k}) + fineData({i-1,j,k})\
-                        + fineData({i,j+2,k}) + 3*fineData({i,j+1,k}) + 3*fineData({i,j,k}) + fineData({i,j-1,k}) \
-                        + fineData({i+1,j+2,k}) + 3*fineData({i+1,j+1,k}) + 3*fineData({i+1,j,k}) + fineData({i+1,j-1,k}) \
-                        + fineData({i+2,j+1,k}) + fineData({i+2, j,k})\
-
-                        + fineData({i-1,j+1,k+1}) + fineData({i-1,j,k+1})\
-                        + fineData({i,j+2,k+1}) + 3*fineData({i,j+1,k+1}) + 3*fineData({i,j,k+1}) + fineData({i,j-1,k+1}) \
-                        + fineData({i+1,j+2,k+1}) + 3*fineData({i+1,j+1,k+1}) + 3*fineData({i+1,j,k+1}) + fineData({i+1,j-1,k+1}) \
-                        + fineData({i+2,j+1,k+1}) + fineData({i+2, j,k+1})\
-
-                        + fineData({i,j+1,k+2}) + fineData({i,j,k+2}) + fineData({i+1,j,k+2}) + fineData({i+1,j+1,k+2})
-                        );
-                    }
-                }
-            }
-
-            // updates boundaries cells
-        }
-
-    }
-
-
-
-     /** @brief constant restriction operator */
-    template <typename T, int Ndim>
-    inline void constant_restriction_operator(ndArray<T, Ndim> &corseData, ndArray<T, Ndim> &fineData)
-    {
-        size_t nxc,nyc,nzc,nxf,nyf,nzf;
-        nxc = corseData.size(0); nyc = corseData.size(1); nzc = (Ndim==3) ? (corseData.size(2)) : 0;
-        nxf = fineData.size(0); nyf = fineData.size(1); nzf = (Ndim == 3) ? (fineData.size(2)) : 0;
-
-        if(Ndim == 2)
-        {
-            // update iner cells
-            for(int j = 1; j < nyc-1; j++)
-            {
-                auto fj = 2j;
-                for(int i = 1; i < nxc - 1; i++)
-                {
-                    auto fi = 2*i;
-                    corseData({i,j}) = (1/4) * (fineData({fi, fj}) + fineData({fi + 1, fj}) + fineData({fi, fj + 1}) + fineData({fi + 1, fj + 1}));
-                }
-            }
-
-            // update boundaries cells (deepending on the BC types e.g Dirichlet, Neumann, Robin, etc..)
-        }
-
-        else if(Ndim == 3)
-        {
-            // update iner cells
-            for(int k = 1; k < nzc - 1; k++)
-           {
-            auto fk = 2*k;
-                for(int j = 1; j < nyc-1; j++)
-                {
-                    auto fj = 2*j;
-                    for(int i = 1; i < nxc - 1; i++)
-                    {
-                        auto fi = 2*i;
-                        corseData({i,j,k}) = (1/8) * (fineData({fi, fj, fk}) + fineData({fi + 1, fj, fk}) \
-                        + fineData({fi , fj + 1, fk}) + fineData({fi, fj, fk + 1}) \
-                        + fineData({fi + 1, fj, fk + 1}) + fineData({fi, fj+1, fk+1})\
-                        + fineData({fi+1, fj+1, fk}) + fineData({fi + 1, fj+1, fk+1}));
-                    }
-                }
-            }
-
-            // updates boundaries cells
-        }
-
-    }
-
-    
-
-    /** @brief constantwise interpolation operator */
-    template <typename T, int Ndim>
-    inline void constantwise_interpolation_operator(ndArray<T, Ndim> &corseData, ndArray<T, Ndim> &fineData)
-    {
-        size_t nxc,nyc,nzc,nxf,nyf,nzf;
-        nxc = corseData.size(0); nyc = corseData.size(1); nzc = (Ndim==3) ? (corseData.size(2)) : 0;
-        nxf = fineData.size(0); nyf = fineData.size(1); nzf = (Ndim == 3) ? (fineData.size(2)) : 0;
-
-        if(Ndim == 2)
-        {
-            // update iner cells
-            for(int j = 0; j < nyc; j++)
-            {
-                auto  fj = 2*j;
-                for(int i = 0; i < nxc; i++)
-                {
-                    auto fi = 2*i;
-                    auto tmp = corseData({i,j});
-                    fineData({fi,fj}) = tmp;
-                    fineData({fi + 1, fj}) = tmp;
-                    fineData({fi + 1,fj + 1}) = tmp;
-                    fineData({fi , fj + 1}) = tmp;
-                    
-                }
-            }
-        }
-
-        if(Ndim == 3)
-        {
-            // update iner cells
-            for(int k = 0; k < nzc; k++)
-           { 
-            auto fk = 2*k;
-            for(int j = 0; j < nyc; j++)
-            {
-                auto fj = 2*j;
-                for(int i = 0; i < nxc; i++)
-                {
-                    auto fi = 2*i;
-                    auto tmp = corseData({i,j,k});
-                    fineData({fi,fj, fk}) = tmp;
-                    fineData({fi + 1, fj, fk}) = tmp;
-                    fineData({fi + 1,fj + 1, fk}) = tmp;
-                    fineData({fi , fj + 1, fk}) = tmp;
-
-                    fineData({fi, fj, fk + 1}) = tmp;
-                    fineData({fi + 1, fj, fk + 1}) = tmp;
-                    fineData({fi + 1,fj + 1, fk + 1}) = tmp;
-                    fineData({fi , fj + 1, fk + 1}) = tmp;
-                    
-                }
-            }
-            }
-        }
-
-
-    }
-
-
-
-    /** @brief linear interpolation operator */
-    // TODO make sure ndArray is initialize to zero
-    template <typename T, int Ndim>
-    inline void linear_interpolation_operator(ndArray<T, Ndim> &corseData, ndArray<T, Ndim> &fineData)
-    {
-        size_t nxc,nyc,nzc,nxf,nyf,nzf;
-        nxc = corseData.size(0); nyc = corseData.size(1); nzc = (Ndim==3) ? (corseData.size(2)) : 0;
-        nxf = fineData.size(0); nyf = fineData.size(1); nzf = (Ndim == 3) ? (fineData.size(2)) : 0;
-
-        if(Ndim == 2)
-        {
-            // update iner cells
-            for(int j = 1; j < nyc-1; j++)
-            {
-                // for(int i = 1; i < nxc-1; i++)
-                // {
-                //     auto tmp = (1/16)*corseData({i,j});
-                //     fineData({2*i,2*j}) += 9*tmp;
-                //     fineData({2*i + 1, 2*j}) += 9*tmp;
-                //     fineData({2*i + 1, 2*j +1}) += 9*tmp;
-                //     fineData({2*i,2*j + 1}) += 9*tmp;
-
-                //     fineData({2*i-1,2*j}) += 3*tmp;
-                //     fineData({2*i+2,2*j}) += 3*tmp;
-                //     fineData({2*i+2,2*j+1}) += 3*tmp;
-                //     fineData({2*i-1,2*j+1}) += 3*tmp;
-
-                                       
-                //     fineData({2*i-1,2*j-1}) += tmp;
-                //     fineData({2*i+2,2*j-1}) += tmp;
-                //     fineData({2*i+2,2*j+2}) += tmp;
-                //     fineData({2*i-1,2*j+2}) += tmp;
-
-                //     fineData({2*i, 2*j-1}) += 3*tmp;
-                //     fineData({2*i + 1,2*j -1}) += 3*tmp;
-                //     fineData({2*i+1,2*j +2}) += 3*tmp;
-                //     fineData({2*i,2*j+2}) += 3*tmp;
-                // }
-                auto fj = 2*j;
-                for(int i = 1; i < nxc-1; i++)
-                {
-                    auto fi = 2*i;
-                    fineData({fi,fj})  = (1/16) * (9*corseData({i,j})  + 3 * corseData({i-1,j}) + 3 * corseData({i,j-1}) + corseData({i-1,j-1}));
-                    fineData({fi+1,fj}) = (1/16) * (9*corseData({i,j}) + 3 * corseData({i+1,j}) + 3 * corseData({i,j-1}) + corseData({i+1,j-1}));
-                    fineData({fi,fj+1}) = (1/16) * (9*corseData({i,j}) + 3 * corseData({i,j+1}) + 3 * corseData({i-1,j}) + corseData({i-1,j+1}));
-                    fineData({fi+1,fj+1}) = (1/16) * (9*corseData({i,j}) + 3 * corseData({i,j+1}) + 3 * corseData({i+1, j}) + corseData({i+1,j+1}));
-                }
-            }
-
-            // TODO BC to add on
-        }
-
-        if(Ndim == 3)
-        {
-            for(int k = 1; k < nzc-1; k++)
-            {
-
-                auto fk = 2*k;
-                for(int j = 1; j < nyc-1; j++)
-                {
-                    auto fj = 2*j;
-                    for(int i = 1; i < nxc-1; i++)
-                    {
-                        auto fi = 2*i;
-
-
-
-
-
-                        fineData({fi,fj,fk}) = (1/64) * (27*corseData({i,j,k}) + 9 *corseData({i-1,j,k}) + 3*corseData({i-1,j-1,k}) + 9*corseData({i,j-1,k}) \
-                        + 3 * corseData({i-1,j,k-1}) + corseData({i-1,j-1,k-1}) + 3 * corseData({i,j-1,k-1}) + 9 * corseData({i,j,k-1}));
-
-                        fineData({fi+1,fj,fk}) = (1/64) *( 27*corseData(i,j,k)  + 9*corseData({i,j-1,k}) + 3*corseData({i+1,j-1,k}) + 9 * corseData(i+1,j,k) \
-                        + 3 * corseData({i,j-1,k-1}) + corseData({i+1,j-1,k-1}) + 9 * corseData({i,j,k-1}) + 3 * corseData({i+1,j,k-1}));
-
-                        fineData({fi,fj+1,fk}) = (1/64) * (27 * corseData(i,j,k) + 9 *corseData({i,j+1,k}) + 9*corseData({i-1,j,k}) + 3 * corseData({i-1,j+1,k})\
-                        + 9 * corseData({i,j,k-1}) + 3 * corseData({i,j+1,k-1}) + 3 * corseData({i-1,j,k-1}) + corseData({i-1,j+1,k-1}));
-
-                        fineData({fi+1,fj+1, fk}) = (1/64) * ( 27 * corseData(i,j,k) + 9 * corseData({i+1,j,k}) + 9 * corseData({i,j+1,k}) + 3 * corseData(i+1,j+1,k) \
-                        + 9 * corseData({i,j,k-1}) + 3 * corseData({i+1,j,k-1}) + 3 * corseData({i,j+1,k-1}) + corseData(i+1, j+1, k-1));
-
-                        fineData({fi,fj,fk+1}) = (1/64) * ( 27 * corseData({i,j,k}) + 9*corseData({i,j-1,k}) + 9 * corseData({i-1,j,k}) + 3 * corseData({i-1,j-1,k}) \
-                        + 9 * corseData({i,j,k+1}) + 3 * corseData({i,j-1,k+1}) + 3*corseData({i-1,j,k+1}) + corseData({i-1,j-1,k+1}));
-
-                        fineData({fi+1,fj,fk+1}) = (1/64) * ( 27 * corseData({i,j,k}) + 9 * corseData({i+1,j,k}) + 9 * corseData({i,j-1,k}) + 3 * corseData(i+1,j-1,k)\
-                        + 9 * corseData({i,j,k+1}) + 3 * corseData({i+1,j,k+1}) + 3 * corseData(i,j-1,k+1) + corseData({i+1,j-1,k+1}));
-
-                        fineData({fi,fj+1,fk+1}) = (1/64) * ( 27 * corseData({i,j,k}) + 9 * corseData({i,j+1,k}) + 9 * corseData(i-1,j,k) + 3 * corseData(i-1,j+1,k) \
-                        + 9 * corseData({i,j,k+1}) + 3 * corseData({i-1,j,k+1}) + 3 * corseData({i,j+1,k+1}) + corseData({i-1, j+1, k+1}));
-
-                        fineData({fi+1,fj+1,fk+1}) = (1/64) * (27 * corseData({i,j,k}) + 9 * corseData({i+1,j,k}) + 9*corseData({i,j+1,k}) + corseData({i+1,j+1,k}) \
-                        + 9 * corseData({i,j,k+1}) + 3 * corseData({i,j+1,k+1}) + 3*corseData({i+1,j,k+1}) + corseData({i+1,j+1,k+1}));
-
-                    // 
-
-                    //     auto tmp = (1/64)*corseData({i,j,k });
-                    // {  
-                    //     fineData({2*i,2*j, 2*k - 1}) += 9*tmp;
-                    //     fineData({2*i + 1, 2*j,  2*k - 1}) += 9*tmp;
-                    //     fineData({2*i + 1, 2*j +1,  2*k - 1}) += 9*tmp;
-                    //     fineData({2*i,2*j + 1,  2*k - 1}) += 9*tmp;
-
-                    //     fineData({2*i-1,2*j,  2*k - 1}) += 3*tmp;
-                    //     fineData({2*i+2,2*j,  2*k - 1}) += 3*tmp;
-                    //     fineData({2*i+2,2*j+1,  2*k - 1}) += 3*tmp;
-                    //     fineData({2*i-1,2*j+1,  2*k - 1}) += 3*tmp;
-
-                                        
-                    //     fineData({2*i-1,2*j-1,  2*k - 1}) += tmp;
-                    //     fineData({2*i+2,2*j-1,  2*k - 1}) += tmp;
-                    //     fineData({2*i+2,2*j+2,  2*k - 1}) += tmp;
-                    //     fineData({2*i-1,2*j+2 , 2*k - 1}) += tmp;
-
-                    //     fineData({2*i, 2*j-1,  2*k - 1}) += 3*tmp;
-                    //     fineData({2*i + 1,2*j -1,  2*k - 1}) += 3*tmp;
-                    //     fineData({2*i+1,2*j +2,  2*k - 1}) += 3*tmp;
-                    //     fineData({2*i,2*j+2,  2*k - 1}) += 3*tmp;
-                        
-                    // }
-
-            
-                    // {  
-                    //     fineData({2*i,2*j,  2*k}) +=        27*tmp;
-                    //     fineData({2*i + 1, 2*j,  2*k }) +=  27*tmp;
-                    //     fineData({2*i + 1, 2*j +1,  2*k})+= 27*tmp;
-                    //     fineData({2*i,2*j + 1,  2*k}) +=    27*tmp;
-
-                    //     fineData({2*i-1,2*j,  2*k})  += 9*tmp;
-                    //     fineData({2*i+2,2*j,  2*k})  += 9*tmp;
-                    //     fineData(2*i+2,2*j+1,  2*k ) += 9*tmp;
-                    //     fineData(2*i-1,2*j+1,  2*k ) += 9*tmp;
-
-                                        
-                    //     fineData({2*i-1,2*j-1,  2*k }) += 3*tmp;
-                    //     fineData({2*i+2,2*j-1,  2*k }) += 3*tmp;
-                    //     fineData({2*i+2,2*j+2,  2*k }) += 3*tmp;
-                    //     fineData({2*i-1,2*j+2,  2*k }) += 3*tmp;
-
-                    //     fineData({2*i, 2*j-1,      2*k}) += 9*tmp;
-                    //     fineData({2*i + 1,2*j -1,  2*k}) += 9*tmp;
-                    //     fineData({2*i+1,2*j +2,    2*k}) += 9*tmp;
-                    //     fineData({2*i,2*j+2,       2*k}) += 9*tmp;
-                        
-                    // }
-
-                       
-                    // {  
-                    //     fineData({2*i,     2*j,     2*k + 1}) += 27*tmp;
-                    //     fineData({2*i + 1, 2*j,     2*k + 1}) += 27*tmp;
-                    //     fineData({2*i + 1, 2*j +1,  2*k + 1}) += 27*tmp;
-                    //     fineData({2*i,     2*j + 1, 2*k + 1}) += 27*tmp;
-
-                    //     fineData({2*i-1,2*j, 2*k + 1})   += 9*tmp;
-                    //     fineData({2*i+2,2*j, 2*k + 1})   += 9*tmp;
-                    //     fineData({2*i+2,2*j+1, 2*k + 1}) += 9*tmp;
-                    //     fineData({2*i-1,2*j+1, 2*k + 1}) += 9*tmp;
-
-                                        
-                    //     fineData({2*i-1,2*j-1, 2*k + 1}) += 3*tmp;
-                    //     fineData({2*i+2,2*j-1, 2*k + 1}) += 3*tmp;
-                    //     fineData({2*i+2,2*j+2, 2*k + 1}) += 3*tmp;
-                    //     fineData({2*i-1,2*j+2, 2*k + 1}) += 3*tmp;
-
-                    //     fineData({2*i, 2*j-1,     2*k + 1}) += 9*tmp;
-                    //     fineData({2*i + 1,2*j -1, 2*k + 1}) += 9*tmp;
-                    //     fineData({2*i+1,2*j +2,   2*k + 1}) += 9*tmp;
-                    //     fineData({2*i,2*j+2,      2*k + 1}) += 9*tmp;
-                        
-                    // }
-                    
-
-                    // {  
-                    //     fineData({2*i,2*j, 2*k + 2})         += 9*tmp;
-                    //     fineData({2*i + 1, 2*j, 2*k + 2})    += 9*tmp;
-                    //     fineData({2*i + 1, 2*j +1, 2*k + 2}) += 9*tmp;
-                    //     fineData({2*i,2*j + 1, 2*k + 2})     += 9*tmp;
-
-                    //     fineData({2*i-1,2*j, 2*k + 2})   += 3*tmp;
-                    //     fineData({2*i+2,2*j, 2*k + 2})   += 3*tmp;
-                    //     fineData({2*i+2,2*j+1, 2*k + 2}) += 3*tmp;
-                    //     fineData({2*i-1,2*j+1, 2*k + 2}) += 3*tmp;
-
-                                        
-                    //     fineData({2*i-1,2*j-1, 2*k + 2}) += tmp;
-                    //     fineData({2*i+2,2*j-1, 2*k + 2}) += tmp;
-                    //     fineData({2*i+2,2*j+2, 2*k + 2}) += tmp;
-                    //     fineData({2*i-1,2*j+2, 2*k + 2}) += tmp;
-
-                    //     fineData({2*i, 2*j-1, 2*k + 2})     += 3*tmp;
-                    //     fineData({2*i + 1,2*j -1, 2*k + 2}) += 3*tmp;
-                    //     fineData({2*i+1,2*j +2, 2*k + 2})   += 3*tmp;
-                    //     fineData({2*i,2*j+2, 2*k + 2})      += 3*tmp;
-                        
-                    // }
-
-                    // 
-                    
-                    }
-                }
-            }
-
-            // TODO : add BC
-            
-        }
-    }
-
-    /** @brief Khalil interpolation operator */
-    // TODO make sure ndArray is initialize to zero
-    template <typename T, int Ndim>
-    inline void khalil_interpolation_operator(ndArray<T, Ndim> &corseData, ndArray<T, Ndim> &fineData)
-    {
-        size_t nxc,nyc,nzc,nxf,nyf,nzf;
-        nxc = corseData.size(0); nyc = corseData.size(1); nzc = (Ndim==3) ? (corseData.size(2)) : 0;
-        nxf = fineData.size(0); nyf = fineData.size(1); nzf = (Ndim == 3) ? (fineData.size(2)) : 0;
-
-        if(Ndim == 2)
-        {
-            // update iner cells
-            for(int j = 1; j < nyc-1; j++)
-            {
-                // for(int i = 1; i < nxc-1; i++)
-                // {
-                //     auto tmp = (1/4)*corseData({i,j});
-                //     fineData({2*i,2*j}) += 2*tmp;
-                //     fineData({2*i + 1, 2*j}) += 3*tmp;
-                //     fineData({2*i + 1, 2*j +1}) += 2*tmp;
-                //     fineData({2*i,2*j + 1}) += 3*tmp;
-
-                //     fineData({2*i-1,2*j}) += 0*tmp;
-                //     fineData({2*i+2,2*j}) += tmp;
-                //     fineData({2*i+2,2*j+1}) += 0*tmp;
-                //     fineData({2*i-1,2*j+1}) += tmp;
-
-                                       
-                //     fineData({2*i-1,2*j-1}) += 0*tmp;
-                //     fineData({2*i+2,2*j-1}) += tmp;
-                //     fineData({2*i+2,2*j+2}) += 0*tmp;
-                //     fineData({2*i-1,2*j+2}) += tmp;
-
-                //     fineData({2*i, 2*j-1}) += 0*tmp;
-                //     fineData({2*i + 1,2*j -1}) += tmp;
-                //     fineData({2*i+1,2*j +2}) +=0*tmp;
-                //     fineData({2*i,2*j+2}) += tmp;
-                   
-                // }
-                auto fj = j*2;
-
-                for(int i = 1; i < nxc-1; i++)
-                {
-                    auto fi = 2*i;
-                    fineData({fi,fj}) = (1/4) * (2*corseData({i,j}));
-                    fineData({fi+1,fj}) = (1/4) * (3*corseData({i,j}) + corseData({i+1,j}) + corseData({i,j-1}) + corseData({i+1,j-1}));
-                    fineData({fi,fj+1}) = (1/4) * (3*corseData({i,j}) + corseData({i-1,j}) + corseData({i,j+1}) + corseData({i-1,j+1}));
-                    fineData({fi+1,fj+1}) = (1/4) * (2*corseData(i,j)) ;
-                   
-                }
-            }
-
-            // TODO BC to add on
-        }
-
-        if(Ndim == 3)
-        {
-            for(int k = 1; k < nzc-1; k++)
-            {
-                auto fk = 2 * k;
-                for(int j = 1; j < nyc-1; j++)
-                {
-                    auto fj = 2 * j;
-                    for(int i = 1; i < nxc-1; i++)
-                    {
-                        auto fi = 2 * i;
-
-
-                        fineData({fi,fj,fk}) = (1/4) * (2*corseData({i,j,k}));
-
-                        fineData({fi+1,fj,fk}) = (1/4) *( 3*corseData(i,j,k)  + corseData({i,j-1,k}) + corseData({i+1,j-1,k}) + corseData(i+1,j,k) \
-                        + corseData({i,j-1,k-1}) + corseData({i+1,j-1,k-1}) + corseData({i,j,k-1}) + corseData({i+1,j,k-1}));
-
-                        fineData({fi,fj+1,fk}) = (1/4) * (2 * corseData(i,j,k));
-
-                        fineData({fi+1,fj+1, fk}) = (1/4) * (2 * corseData(i,j,k));
-
-                        fineData({fi,fj,fk+1}) = (1/4) * (2 * corseData({i,j,k}));
-
-                        fineData({fi+1,fj,fk+1}) = (1/4) * (2 * corseData({i,j,k}));
-
-                        fineData({fi,fj+1,fk+1}) = (1/4) * ( 3 * corseData({i,j,k}) +  corseData({i,j+1,k}) + corseData(i-1,j,k) + corseData(i-1,j+1,k) \
-                        +  corseData({i,j,k+1}) + corseData({i-1,j,k+1}) + corseData({i,j+1,k+1}) + corseData({i-1, j+1, k+1}));
-
-                        fineData({fi+1,fj+1,fk+1}) = (1/4) * (2 * corseData({i,j,k}));
-
-
-
-                    //     auto tmp = (1/4)*corseData({i,j,k });
-                    // {  
-                    //     fineData({2*i,2*j, 2*k - 1}) +=          0*tmp;
-                    //     fineData({2*i + 1, 2*j,  2*k - 1})  +=   tmp;
-                    //     fineData({2*i + 1, 2*j +1,  2*k - 1}) += 0*tmp;
-                    //     fineData({2*i,2*j + 1,  2*k - 1}) +=     0*tmp;
-
-                    //     fineData({2*i-1,2*j,  2*k - 1}) +=   0*tmp;
-                    //     fineData({2*i+2,2*j,  2*k - 1}) +=   tmp;
-                    //     fineData({2*i+2,2*j+1,  2*k - 1}) += 0*tmp;
-                    //     fineData({2*i-1,2*j+1,  2*k - 1}) += 0*tmp;
-
-                                        
-                    //     fineData({2*i-1,2*j-1,  2*k - 1}) += 0*tmp;
-                    //     fineData({2*i+2,2*j-1,  2*k - 1}) += tmp;
-                    //     fineData({2*i+2,2*j+2,  2*k - 1}) += 0*tmp;
-                    //     fineData({2*i-1,2*j+2 , 2*k - 1}) += 0*tmp;
-
-                    //     fineData({2*i, 2*j-1,  2*k - 1}) +=     0*tmp;
-                    //     fineData({2*i + 1,2*j -1,  2*k - 1}) += tmp;
-                    //     fineData({2*i+1,2*j +2,  2*k - 1}) +=   0*tmp;
-                    //     fineData({2*i,2*j+2,  2*k - 1}) +=      0*tmp;
-                        
-                    // }
-
-            
-                    // {  
-                    //     fineData({2*i,2*j,  2*k}) +=        2*tmp;
-                    //     fineData({2*i + 1, 2*j,  2*k }) +=  3*tmp;
-                    //     fineData({2*i + 1, 2*j +1,  2*k})+= 2*tmp;
-                    //     fineData({2*i,2*j + 1,  2*k}) +=    2*tmp;
-
-                    //     fineData({2*i-1,2*j,  2*k})  += 0*tmp;
-                    //     fineData({2*i+2,2*j,  2*k})  += tmp;
-                    //     fineData(2*i+2,2*j+1,  2*k ) += 0*tmp;
-                    //     fineData(2*i-1,2*j+1,  2*k ) += 0*tmp;
-
-                                        
-                    //     fineData({2*i-1,2*j-1,  2*k }) += 0*tmp;
-                    //     fineData({2*i+2,2*j-1,  2*k }) += tmp;
-                    //     fineData({2*i+2,2*j+2,  2*k }) += 0*tmp;
-                    //     fineData({2*i-1,2*j+2,  2*k }) += 0*tmp;
-
-                    //     fineData({2*i, 2*j-1,      2*k}) += 0*tmp;
-                    //     fineData({2*i + 1,2*j -1,  2*k}) += tmp;
-                    //     fineData({2*i+1,2*j +2,    2*k}) += 0*tmp;
-                    //     fineData({2*i,2*j+2,       2*k}) += 0*tmp;
-                        
-                    // }
-
-                       
-                    // {  
-                    //     fineData({2*i,     2*j,     2*k + 1}) += 2*tmp;
-                    //     fineData({2*i + 1, 2*j,     2*k + 1}) += 2*tmp;
-                    //     fineData({2*i + 1, 2*j +1,  2*k + 1}) += 2*tmp;
-                    //     fineData({2*i,     2*j + 1, 2*k + 1}) += 3*tmp;
-
-                    //     fineData({2*i-1,2*j, 2*k + 1})   += 0*tmp;
-                    //     fineData({2*i+2,2*j, 2*k + 1})   += 0*tmp;
-                    //     fineData({2*i+2,2*j+1, 2*k + 1}) += 0*tmp;
-                    //     fineData({2*i-1,2*j+1, 2*k + 1}) += tmp;
-
-                                        
-                    //     fineData({2*i-1,2*j-1, 2*k + 1}) += 0*tmp;
-                    //     fineData({2*i+2,2*j-1, 2*k + 1}) += 0*tmp;
-                    //     fineData({2*i+2,2*j+2, 2*k + 1}) += 0*tmp;
-                    //     fineData({2*i-1,2*j+2, 2*k + 1}) += tmp;
-
-                    //     fineData({2*i, 2*j-1,     2*k + 1}) += 0*tmp;
-                    //     fineData({2*i + 1,2*j -1, 2*k + 1}) += 0*tmp;
-                    //     fineData({2*i+1,2*j +2,   2*k + 1}) += 0*tmp;
-                    //     fineData({2*i,2*j+2,      2*k + 1}) += tmp;
-                        
-                    // }
-                    
-
-                    // {  
-                    //     fineData({2*i,2*j, 2*k + 2})         += 0*tmp;
-                    //     fineData({2*i + 1, 2*j, 2*k + 2})    += 0*tmp;
-                    //     fineData({2*i + 1, 2*j +1, 2*k + 2}) += 0*tmp;
-                    //     fineData({2*i,2*j + 1, 2*k + 2})     += tmp;
-
-                    //     fineData({2*i-1,2*j, 2*k + 2})   += 0*tmp;
-                    //     fineData({2*i+2,2*j, 2*k + 2})   += 0*tmp;
-                    //     fineData({2*i+2,2*j+1, 2*k + 2}) += 0*tmp;
-                    //     fineData({2*i-1,2*j+1, 2*k + 2}) += tmp;
-
-                                        
-                    //     fineData({2*i-1,2*j-1, 2*k + 2}) += 0*tmp;
-                    //     fineData({2*i+2,2*j-1, 2*k + 2}) += 0*tmp;
-                    //     fineData({2*i+2,2*j+2, 2*k + 2}) += 0*tmp;
-                    //     fineData({2*i-1,2*j+2, 2*k + 2}) += tmp;
-
-                    //     fineData({2*i, 2*j-1, 2*k + 2})     += 0*tmp;
-                    //     fineData({2*i + 1,2*j -1, 2*k + 2}) += 0*tmp;
-                    //     fineData({2*i+1,2*j +2, 2*k + 2})   += 0*tmp;
-                    //     fineData({2*i,2*j+2, 2*k + 2})      += tmp;
-                        
-                    // }
-                    
-                    }
-                }
-            }
-
-            // TODO : add BC
-        }
-    }
-
-
-    /** @brief Kwak interpolation operator */
-    // TODO make sure ndArray is initialize to zero
-    template <typename T, int Ndim>
-    inline void kwak_interpolation_operator(ndArray<T, Ndim> &corseData, ndArray<T, Ndim> &fineData)
-    {
-        size_t nxc,nyc,nzc,nxf,nyf,nzf;
-        nxc = corseData.size(0); nyc = corseData.size(1); nzc = (Ndim==3) ? (corseData.size(2)) : 0;
-        nxf = fineData.size(0); nyf = fineData.size(1); nzf = (Ndim == 3) ? (fineData.size(2)) : 0;
-
-        if(Ndim == 2)
-        {
-            // update iner cells
-            for(int j = 1; j < nyc-1; j++)
-            {
-        
-                // for(int i = 1; i < nxc-1; i++)
-                // {
-                //     auto tmp = (1/4)*corseData({i,j});
-                //     fineData({2*i,2*j}) += 2*tmp;
-                //     fineData({2*i + 1, 2*j}) += 2*tmp;
-                //     fineData({2*i + 1, 2*j +1}) += 2*tmp;
-                //     fineData({2*i,2*j + 1}) += 2*tmp;
-
-                //     fineData({2*i-1,2*j}) += tmp;
-                //     fineData({2*i+2,2*j}) += tmp;
-                //     fineData({2*i+2,2*j+1}) += tmp;
-                //     fineData({2*i-1,2*j+1}) += tmp;
-
-                                       
-                //     fineData({2*i-1,2*j-1}) += 0*tmp;
-                //     fineData({2*i+2,2*j-1}) += 0*tmp;
-                //     fineData({2*i+2,2*j+2}) += 0*tmp;
-                //     fineData({2*i-1,2*j+2}) += 0*tmp;
-
-                //     fineData({2*i, 2*j-1}) += tmp;
-                //     fineData({2*i + 1,2*j -1}) += tmp;
-                //     fineData({2*i+1,2*j +2}) += tmp;
-                //     fineData({2*i,2*j+2}) += tmp;
-                   
-                // }
-                auto fj = 2*j;
-                for(int i = 1; i < nxc-1; i++)
-                {
-                    auto fi = 2*i;
-                    fineData({fi,fj}) = (1/4) * (2*corseData({i,j}) + corseData({i-1,j}) + corseData({i,j-1}));
-                    fineData({fi+1,fj}) = (1/4) * (2*corseData({i,j}) + corseData({i,j-1}) + corseData({i+1,j}));
-                    fineData({fi,fj+1}) = (1/4) * (2*corseData({i,j}) + corseData({i-1, j}) + corseData({i,j+1}));
-                    fineData({fi+1,fj+1}) = (1/4) * (2*corseData({i,j}) + corseData({i+1,j}) + corseData({i+1,j+1}));
-                   
-                }
-            }
-
-            // TODO BC to add on
-        }
-
-        if(Ndim == 3)
-        {
-            for(int k = 1; k < nzc-1; k++)
-            {
-                auto fk = 2*k;
-                for(int j = 1; j < nyc-1; j++)
-                {
-                    auto fj = 2*j;
-                    for(int i = 1; i < nxc-1; i++)
-                    {
-                        auto fi = 2*i;
-
-                        fineData({fi,fj,fk}) = (1/6) *(3*corseData({i,j,k}) + corseData({i-1,j,k}) + corseData({i-1,j-1,k}) + corseData({i,j,k-1}));
-
-                        fineData({fi+1,fj,fk}) = (1/6) *(3*corseData({i,j,k})  + corseData({i,j-1,k}) +  corseData({i+1,j,k}) + corseData({i,j,k-1}));
-
-                        fineData({fi,fj+1,fk}) = (1/6) *(3 * corseData({i,j,k}) + corseData({i,j+1,k}) + corseData({i-1,j,k}) + corseData({i,j,k-1}));
-
-                        fineData({fi+1,fj+1, fk}) = (1/6) * (3* corseData(i,j,k) +corseData({i+1,j,k}) +corseData({i,j+1,k}) + corseData({i,j,k-1}));
-
-                        fineData({fi,fj,fk+1}) = (1/6) * (3 * corseData({i,j,k}) + corseData({i,j-1,k}) +  corseData({i-1,j,k}) + corseData({i,j,k+1}));
-
-                        fineData({fi+1,fj,fk+1}) = (1/6) * (3 * corseData({i,j,k}) +  corseData({i+1,j,k}) + corseData({i,j-1,k}) +  corseData({i,j,k+1}));
-
-                        fineData({fi,fj+1,fk+1}) = (1/6) * (3 * corseData({i,j,k}) + corseData({i,j+1,k}) +  corseData(i-1,j,k) + corseData({i,j,k+1}));
-
-                        fineData({fi+1,fj+1,fk+1}) = (1/6) * (3 * corseData({i,j,k}) + corseData({i+1,j,k}) + corseData({i,j+1,k}) + corseData({i,j,k+1}));
-
-                    //     auto tmp = (1/6)*corseData({i,j,k });
-                    // {  
-                    //     fineData({2*i,2*j, 2*k - 1}) +=          tmp;
-                    //     fineData({2*i + 1, 2*j,  2*k - 1}) +=    tmp;
-                    //     fineData({2*i + 1, 2*j +1,  2*k - 1}) += tmp;
-                    //     fineData({2*i,2*j + 1,  2*k - 1}) +=     tmp;
-
-                    //     fineData({2*i-1,2*j,  2*k - 1}) +=    0*tmp;
-                    //     fineData({2*i+2,2*j,  2*k - 1}) +=    0*tmp;
-                    //     fineData({2*i+2,2*j+1,  2*k - 1}) +=  0*tmp;
-                    //     fineData({2*i-1,2*j+1,  2*k - 1}) +=  0*tmp;
-
-                                        
-                    //     fineData({2*i-1,2*j-1,  2*k - 1}) += 0*tmp;
-                    //     fineData({2*i+2,2*j-1,  2*k - 1}) += 0*tmp;
-                    //     fineData({2*i+2,2*j+2,  2*k - 1}) += 0*tmp;
-                    //     fineData({2*i-1,2*j+2 , 2*k - 1}) += 0*tmp;
-
-                    //     fineData({2*i, 2*j-1,  2*k - 1}) +=     0*tmp;
-                    //     fineData({2*i + 1,2*j -1,  2*k - 1}) += 0*tmp;
-                    //     fineData({2*i+1,2*j +2,  2*k - 1}) +=   0*tmp;
-                    //     fineData({2*i,2*j+2,  2*k - 1}) +=      0*tmp;
-                        
-                    // }
-
-            
-                    // {  
-                    //     fineData({2*i,2*j,  2*k}) +=        3*tmp;
-                    //     fineData({2*i + 1, 2*j,  2*k }) +=  3*tmp;
-                    //     fineData({2*i + 1, 2*j +1,  2*k})+= 3*tmp;
-                    //     fineData({2*i,2*j + 1,  2*k}) +=    3*tmp;
-
-                    //     fineData({2*i-1,2*j,  2*k})  += tmp;
-                    //     fineData({2*i+2,2*j,  2*k})  += tmp;
-                    //     fineData(2*i+2,2*j+1,  2*k ) += tmp;
-                    //     fineData(2*i-1,2*j+1,  2*k ) += tmp;
-
-                                        
-                    //     fineData({2*i-1,2*j-1,  2*k }) += 0*tmp;
-                    //     fineData({2*i+2,2*j-1,  2*k }) += 0*tmp;
-                    //     fineData({2*i+2,2*j+2,  2*k }) += 0*tmp;
-                    //     fineData({2*i-1,2*j+2,  2*k }) += 0*tmp;
-
-                    //     fineData({2*i, 2*j-1,      2*k}) += tmp;
-                    //     fineData({2*i + 1,2*j -1,  2*k}) += tmp;
-                    //     fineData({2*i+1,2*j +2,    2*k}) += tmp;
-                    //     fineData({2*i,2*j+2,       2*k}) += tmp;
-                        
-                    // }
-
-                       
-                    // {  
-                    //     fineData({2*i,     2*j,     2*k + 1}) += 3*tmp;
-                    //     fineData({2*i + 1, 2*j,     2*k + 1}) += 3*tmp;
-                    //     fineData({2*i + 1, 2*j +1,  2*k + 1}) += 3*tmp;
-                    //     fineData({2*i,     2*j + 1, 2*k + 1}) += 3*tmp;
-
-                    //     fineData({2*i-1,2*j, 2*k + 1})   += tmp;
-                    //     fineData({2*i+2,2*j, 2*k + 1})   += tmp;
-                    //     fineData({2*i+2,2*j+1, 2*k + 1}) += tmp;
-                    //     fineData({2*i-1,2*j+1, 2*k + 1}) += tmp;
-
-                                        
-                    //     fineData({2*i-1,2*j-1, 2*k + 1}) += 0*tmp;
-                    //     fineData({2*i+2,2*j-1, 2*k + 1}) += 0*tmp;
-                    //     fineData({2*i+2,2*j+2, 2*k + 1}) += 0*tmp;
-                    //     fineData({2*i-1,2*j+2, 2*k + 1}) += 0*tmp;
-
-                    //     fineData({2*i, 2*j-1,     2*k + 1}) += tmp;
-                    //     fineData({2*i + 1,2*j -1, 2*k + 1}) += tmp;
-                    //     fineData({2*i+1,2*j +2,   2*k + 1}) += tmp;
-                    //     fineData({2*i,2*j+2,      2*k + 1}) += tmp;
-                        
-                    // }
-                    
-
-                    // {  
-                    //     fineData({2*i,2*j, 2*k + 2})         += tmp;
-                    //     fineData({2*i + 1, 2*j, 2*k + 2})    += tmp;
-                    //     fineData({2*i + 1, 2*j +1, 2*k + 2}) += tmp;
-                    //     fineData({2*i,2*j + 1, 2*k + 2})     += tmp;
-
-                    //     fineData({2*i-1,2*j, 2*k + 2})   += 0*tmp;
-                    //     fineData({2*i+2,2*j, 2*k + 2})   += 0*tmp;
-                    //     fineData({2*i+2,2*j+1, 2*k + 2}) += 0*tmp;
-                    //     fineData({2*i-1,2*j+1, 2*k + 2}) += 0*tmp;
-
-                                        
-                    //     fineData({2*i-1,2*j-1, 2*k + 2}) += 0*tmp;
-                    //     fineData({2*i+2,2*j-1, 2*k + 2}) += 0*tmp;
-                    //     fineData({2*i+2,2*j+2, 2*k + 2}) += 0*tmp;
-                    //     fineData({2*i-1,2*j+2, 2*k + 2}) += 0*tmp;
-
-                    //     fineData({2*i, 2*j-1, 2*k + 2})     += 0*tmp;
-                    //     fineData({2*i + 1,2*j -1, 2*k + 2}) += 0*tmp;
-                    //     fineData({2*i+1,2*j +2, 2*k + 2})   += 0*tmp;
-                    //     fineData({2*i,2*j+2, 2*k + 2})      += 0*tmp;
-                        
-                    // }
-                    
-                    }
-                }
-            }
-
-            // update BC
-        }
-    }
-
-
-
-    /** @brief structure to set initial parameter for the multigrid class */
-    template <typename T>
-    struct Settings
-    {
-        // T aspectRatio{1};
-        size_t numberOfGrids{8}; // maxLevel
-        size_t minimumResolution{4};
-        T residualTolerance{1e-10};
-        size_t maxIterations{400};
-        CycleType cycleType{multigrid::wCycle};
-        size_t Npre{1}, Npost{1}, maxLevel{21}, Nvcyle_cvg{20};
-    };
-
-    /** @brief a stack to track grids at all level */
-    template <typename T, int Ndim>
-    class Stack : public std::vector<ndArray<T, Ndim>>
-    {
-    public:
-        Stack(const Settings<T> &s)
-        {
-            nGrids = s.numberOfGrids;
-            mini_resolution = s.minimumResolution;
-            finestLevel = (nGrids - 1);
-            this->resize(nGrids);
-            // set coarsest grid size
-            int nx{mini_resolution}, ny{mini_resolution}, nz{mini_resolution};
-            if (Ndim == 2)
-                nz = 0;
-
-            // Data set for all levels
-            for (auto level = 1; level <= finestLevel; level++)
-            {
-                nx = 2 * (nx - 1) + 1;
-                ny = 2 * (ny - 1) + 1;
-                nz = (Ndim == 3) ? (2 * (nz - 1) + 1) : 0;
-                auto lin_size = (Ndim == 1) ? (nx * ny) : (nx * ny * nz);
-                // (*this)[level] = std::vector<std::vector<T>>(std::vector<T>(0, nx), ny);
-                std::vector<T> tmp_init_data(0, lin_size);
-                (*this)[level] = ndArray<T, Ndim>(tmp_init_data.data(), {nx, ny, 1}, true);
-            }
-
-            // TODO Boundary conditions for all levels
-        };
-        virtual ~Stack() {};
-
-        size_t finestLevel;                    // finest level
-        static const size_t coarsestLevel = 0; // coarsest level
-
-        /** @brief function to coarse a grid from level l to level l-1 */
-        inline void coarsen(size_t level);
-
-        /** @brief function to coarse a grid from level l to level l-1 and store result in coarseLevelData */
-        inline void coarsen(size_t level, std::vector<std::vector<T>> &coarseLevelData);
-        /** @brief function to coarse a grid from level l to level l-1 and store result in coarseLevelData */
-        inline void coarsen(size_t level, ndArray<T, Ndim> &coarseLevelData);
-
-        /** @brief function to refine a grid from level l-1 to level l */
-        inline void refine(size_t level);
-        /** @brief function to coarse a grid from level l to level l-1 and store result in fineLevelData */
-        inline void refine(size_t level, std::vector<std::vector<T>> &fineLevelData);
-        /** @brief function to coarse a grid from level l to level l-1 and store result in fineLevelData */
-        inline void refine(size_t level, ndArray<T, Ndim> &fineLevelData);
-        BoundaryConditions bc; // boundary condition
-
-    private:
-        const size_t nGrids; // number of grid levels required
-        int mini_resolution; // minimum resolution
-    };
-
-    template <typename T, int Ndim>
-    inline void Stack<T, Ndim>::coarsen(size_t level)
-    {
-        restriction_operator<T, Ndim>((*this)[level - 1], (*this)[level]);
-    }
-
-    template <typename T, int Ndim>
-    inline void Stack<T, Ndim>::coarsen(size_t level, std::vector<std::vector<T>> &coarseLevelData)
-    {
-        restriction_operator(coarseLevelData, (*this)[level]);
-    }
-
-    template <typename T, int Ndim>
-    inline void Stack<T, Ndim>::coarsen(size_t level, ndArray<T, Ndim> &coarseLevelData)
-    {
-        restriction_operator(coarseLevelData, (*this)[level]);
-    }
-
-    template <typename T, int Ndim>
-    inline void Stack<T, Ndim>::refine(size_t level)
-    {
-        interpolation_operator((*this)[level], (*this)[level + 1]);
-    }
-
-    template <typename T, int Ndim>
-    inline void Stack<T, Ndim>::refine(size_t level, std::vector<std::vector<T>> &fineLevelData)
-    {
-        interpolation_operator((*this)[level], fineLevelData);
-    }
-
-    template <typename T, int Ndim>
-    inline void Stack<T, Ndim>::refine(size_t level, ndArray<T, Ndim> &fineLevelData)
-    {
-        interpolation_operator((*this)[level], fineLevelData);
-    }
-
+/*********************** MultigridBase class******************
+*  This is a class that's that will be specialized for each type of problem 
+*/
     template <typename T, int Ndim>
     class MultigridBase
     {
@@ -1035,57 +25,118 @@ namespace multigrid
         virtual ~MultigridBase() {};
 
         /** @brief get the output of the multigrid method */
-        inline ndArray<T, Ndim> &get_result();
-        // inline std::vector<std::vector<T>> &get_result();
+        inline ndArray<T, Ndim> &getSolution();
 
         /** @brief set the initial guess (e.g potential in the case of Poisson equation) */
         template <typename U>
-        inline void initial_guess(U arg);
-        // inline std::vector<std::vector<T>> &source_term();
+        inline void setInitialGuess(U arg);
 
         /** @brief get the soruce term */
-        inline ndArray<T, Ndim> &source_term();
+        inline ndArray<T, Ndim> &getSource();
 
         /** @brief set the source term with the given argument */
         template <typename U>
-        inline void source_term(U arg);
+        inline void setSource(U arg);
 
         /** @brief Compute L_{H}U_{H} on a given grid of resolution H */
-        inline void evaluate_operator(size_t level, std::vector<std::vector<T>> &result);
+        inline void evaluateOperator(size_t level, ndArray<T, Ndim> &result);
 
-        /** @brief Compute compute the residual */
-        inline void evaluate_residual(size_t level, std::vector<std::vector<T>> &result);
-
-        /** @brief Compute L_{H}U_{H} on a given grid of resolution H */
-        inline void evaluate_operator(size_t level, ndArray<T, Ndim> &result);
-        /** @brief Compute compute the residual */
-        inline void evaluate_residual(size_t level, ndArray<T, Ndim> &result);
+        /** @brief Compute compute the residual/defect */
+        inline void evaluateResidual(size_t level, ndArray<T, Ndim> &result);
 
         /** @brief Apply N times the smoother */
-        void relax(const size_t level, size_t N);
+        template<DiscreteOperator Lh>
+        void smoother(const size_t level, size_t N, T w = 1.0);
 
-        /** @brief Apply the smoother until convergence with respect to the given tolerance or until the maximum iteration */
-        void relax(const size_t level, const double tolerance);
+        /** @brief Apply the smoother until convergence with respect to the given tolerance or until the maximum iteration
+        *           Use this to get the coarse level solution
+         */
+        template<DiscreteOperator Lh>
+        void smoother(const size_t level, const double tolerance, T w = 1.0);
 
         /** @brief specialization class methods (e.g Liniar multigrid or NonLinear multigrid) */
         virtual inline void multigrid() {}
+
         virtual inline void solve() { multigrid(); }
 
         /** @brief get the differential operator at a given position in 2D*/  
         // specialized through class function specialization
-        virtual T differential_operator(size_t, int, int) = 0;
+        virtual T differentialOperator(size_t, int, int) = 0;
+
         /** @brief get the differential operator at a given position in 3D*/
          // specialized through class function specialization
-        virtual T differential_operator(size_t, int, int, int) = 0;
+        virtual T differentialOperator(size_t, int, int, int) = 0;
+
         /** @brief relation at a given position in 2D*/
          // specialized through class function specialization
-        virtual void relaxation_updater(size_t, int, int) = 0;
+        virtual void relaxationUpdater(size_t, int, int, T w=1.0) = 0;
+
         /** @brief relation at a given position in 3D*/
          // specialized through class function specialization
-        virtual void relaxation_updater(size_t, int, int, int) = 0;
+        virtual void relaxationUpdater(size_t, int, int, int, T w = 1.0) = 0;
+
+        /** @brief return the source at the current level*/
+        ndArray<T, Ndim> & getCurrentSource(){return source[current_level];}
+
+        /** @brief return the Solution (e.g potential) at the current level*/
+        ndArray<T, Ndim> & getCurrentSolution(){return solution[current_level];}
+
+        /** @brief return the old solution at the current*/
+        ndArray<T, Ndim> & getCurrentOldSolution() {return oldSolution[current_level];}
+
+        /** @brief return the current level*/
+        size_t getCurrentLevel(){return  current_level;}
+
+        /** @brief return the total number of level */
+        size_t getTotalNumberOfLevel(){return nLevel;}
+
+        /** @brief restrict the solution throw all level 
+        *          This will be useful for the full multigrid.
+        *        Endeed by restriction until the coarse level, one can then start the FMG algo.
+        */
+        inline void restrictSolution();
+
+        /** @brief restrict the the source through all level*/
+        inline void restrictSource();
+
+        /** @brief set solution at the given level to zero*/
+        inline void setSolutioToZero(size_t level);
+        
+        /** @brief set source  at the given level to zero*/
+        inline void setSourceToZero(size_t level);
+
+        /** @brief set solution at all level to zero  */
+        inline void setAllSolutionToZero();
+
+        /** @brief set source at all level  to zero*/
+        inline void setAllSourceToZero();
+
+        /** @brief perform One step down : Npre smooth + Restriction to the coarsest level*/
+        inline void oneStepDown();
+
+        /** @brief perform One step up :  Prolongation + correction + Npost smooth*/
+        inline void oneStepUp();
+
+        /** @brief perform V-cyle multigrid iteration starting from the current level */
+        inline void mgiVcycle();
+
+        /** @brief perform W-cycle multigrid iteration starting from the current level */
+        inline void mgiWcycle();
+
+        /** @brief perform F-cycle multigrid iteration starting from the current level*/
+        inline void mgiFcycle();
+
+        /** @brief perform multigrid iteration starting from the current level*/
+        inline void mgi(const CycleType& cycle_type);
+
+        
+
+
+
+
 
     protected:
-        Stack<T, Ndim> solution, source;   // Grids for solution and source term
+        Stack<T, Ndim> solution, source, oldSolution;   // Grids for solution and source term
         Stack<T, Ndim> temp;               // Extra storage for muligrid solver
         CycleType cycle_type;              // cycle type (V, W or F)
         size_t Npre;                       // Number of pre-smoothing step
@@ -1093,9 +144,13 @@ namespace multigrid
         const size_t maxIter;              // Maximum iteration
         const T residualTolerance;         // Tolerance
         size_t finestLevel, coarsestLevel; // finest and coarsest levels
-        size_t nxfine, nyfine, nzfine;     // grid resolutions
+        size_t nxfine, nyfine, nzfine;     // grid (finest level) resolutions
         bool isSourceSet;                  // flag related to source setting
         bool isInitialValueSet;            // flag related to initial guess setting
+        size_t current_level;              // the current level
+        size_t nLevel;                     // Total number of level
+        T w ;                              // smoothing parameter
+
 
     private:
         T residualSum, normSum; // residual and solution norms
@@ -1114,7 +169,8 @@ namespace multigrid
                                                                          residualTolerance(settings.residualTolerance),
                                                                          maxIter(settings.maxIterations),
                                                                          isSourceSet(false),
-                                                                         isInitialValueSet(false)
+                                                                         isInitialValueSet(false),
+                                                                         w(settings.w)
     {
         finestLevel = solution.finestLevel;
         coarsestLevel = solution.coarsestLevel;
@@ -1138,14 +194,14 @@ namespace multigrid
     // }
 
     template <typename T, int Ndim>
-    inline ndArray<T, Ndim> &MultigridBase<T, Ndim>::get_result()
+    inline ndArray<T, Ndim> &MultigridBase<T, Ndim>::getSolution()
     {
         return solution[finestLevel];
     }
 
     template <typename T, int Ndim>
     template <typename U>
-    inline void MultigridBase<T, Ndim>::initial_guess(U arg)
+    inline void MultigridBase<T, Ndim>::setInitialGuess(U arg)
     {
         solution[finestLevel] = arg;
         isInitialValueSet = true;
@@ -1158,49 +214,21 @@ namespace multigrid
     // }
 
     template <typename T, int Ndim>
-    inline ndArray<T, Ndim> &MultigridBase<T, Ndim>::source_term()
+    inline ndArray<T, Ndim> &MultigridBase<T, Ndim>::getSource()
     {
         return source[finestLevel];
     }
 
     template <typename T, int Ndim>
     template <typename U>
-    inline void MultigridBase<T, Ndim>::source_term(U arg)
+    inline void MultigridBase<T, Ndim>::setSource(U arg)
     {
         source[finestLevel] = arg;
         isSourceSet = true;
     }
 
     template <typename T, int Ndim>
-    inline void MultigridBase<T, Ndim>::evaluate_operator(size_t level, std::vector<std::vector<T>> &result)
-    {
-        size_t nx = result.size();
-        size_t ny = result[0].size();
-        for (auto i = 0; i < nx; i++)
-        {
-            for (auto j = 0; j < ny; j++)
-            {
-                result[i][j] = differential_operator(level, i, j);
-            }
-        }
-    }
-
-    template <typename T, int Ndim>
-    inline void MultigridBase<T, Ndim>::evaluate_residual(size_t level, std::vector<std::vector<T>> &result)
-    {
-        size_t nx = result.size();
-        size_t ny = result[0].size();
-        for (auto i = 0; i < nx; i++)
-        {
-            for (auto j = 0; j < ny; j++)
-            {
-                result[i][j] = source[level][i][j] - differential_operator(level, i, j);
-            }
-        }
-    }
-
-    template <typename T, int Ndim>
-    inline void MultigridBase<T, Ndim>::evaluate_operator(size_t level, ndArray<T, Ndim> &result)
+    inline void MultigridBase<T, Ndim>::evaluateOperator(size_t level, ndArray<T, Ndim> &result)
     {
         size_t nx = result.size(0);
         size_t ny = result.size(1);
@@ -1214,7 +242,7 @@ namespace multigrid
             {
                 for (auto j = 0; j < ny; j++)
                 {
-                    result({i, j}) = differential_operator(level, i, j);
+                    result({i, j}) = differentialOperator(level, i, j);
                 }
             }
         }
@@ -1227,7 +255,7 @@ namespace multigrid
                 {
                     for (auto i = 0; i < nx; i++)
                     {
-                        result({i, j, k}) = differential_operator(level, i, j, k);
+                        result({i, j, k}) = differentialOperator(level, i, j, k);
                     }
                 }
             }
@@ -1235,7 +263,7 @@ namespace multigrid
     }
 
     template <typename T, int Ndim>
-    inline void MultigridBase<T, Ndim>::evaluate_residual(size_t level, ndArray<T, Ndim> &result)
+    inline void MultigridBase<T, Ndim>::evaluateResidual(size_t level, ndArray<T, Ndim> &result)
     {
         size_t nx = result.size(0);
         size_t ny = result.size(1);
@@ -1249,7 +277,7 @@ namespace multigrid
             {
                 for (auto i = 0; i < nx; i++)
                 {
-                    result({i, j}) = source[level]({i, j}) - differential_operator(level, i, j);
+                    result({i, j}) = source[level]({i, j}) - differentialOperator(level, i, j);
                 }
             }
         }
@@ -1262,7 +290,7 @@ namespace multigrid
                 {
                     for (auto i = 0; i < nx; i++)
                     {
-                        result({i, j, k}) = source[level]({i, j, k}) - differential_operator(level, i, j, k);
+                        result({i, j, k}) = source[level]({i, j, k}) - differentialOperator(level, i, j, k);
                     }
                 }
             }
@@ -1270,9 +298,14 @@ namespace multigrid
     }
 
 
-// RB-GS smoother
-    template <typename T, int Ndim>
-    void MultigridBase<T, Ndim>::relax(const size_t level, size_t N)
+// RB-GS smoother  TODO extended it to add JACOBI, SOR, RKL
+// Change the interface so it can take as argument an operator Lh <depending of the problem both in (2D/3D)>,
+// the unknown vector (e.g defect or potential) and the  RHS vector (e.g the source)
+// The name should be change to smoother 
+    
+    template <typename T, int Ndim >
+    template<DiscreteOperator Lh>
+    void MultigridBase<T, Ndim>::smoother(const size_t level, size_t N, T w)
     {
         size_t nx{solution[level].size(0)}, ny{solution[level].size(1)};
         size_t nz = (Ndim == 3) ? solution[level].size(2) : 0;
@@ -1289,7 +322,7 @@ namespace multigrid
                         auto i = pColor - power(-1, pColor) * (j % 2);
                         for (; i < nx - 1; i += 2)
                         {
-                            relaxation_updater(level, i, j);
+                            relaxationUpdater(level, i, j,w);
                         }
                     }
                 }
@@ -1303,7 +336,7 @@ namespace multigrid
                             auto i = pColor - power(-1, pColor) * ((k + j) % 2);
                             for (; i < nx - 1; i += 2)
                             {
-                                relaxation_updater(level, i, j, k);
+                                relaxationUpdater(level, i, j, k,w);
                             }
                         }
                     }
@@ -1311,45 +344,13 @@ namespace multigrid
             }
             // TODO : Boundaries update
         }
-
-        // Row-major order RB-GS
-        /*
-        for(size_t pColor = 2; pColor > 0; pColor--)
-        {
-            if(Ndim == 2)
-            {
-                for(size_t i = 1; i < nx - 1; i++)
-                {
-                    auto j = pColor + power(-1,pColor-1) * (i%2);
-                    for(; j < ny -1; j+=2)
-                    {
-                        relaxation_updater(level, i, j);
-                    }
-                }
-            }
-
-            else if(Ndim == 3)
-            {
-                for(size_t i = 1; j < nx-1; i++)
-                {
-                    for(size_t j = 1; j < ny -1; j++)
-                    {
-                        auto k = pColor + power(-1, pColor) * ((i + j) % 2);
-                        for(; k < nz - 1; k+=2)
-                        {
-                            relaxation_updater(level, i,j,k);
-                        }
-                    }
-                }
-            }
-        }
-        */
     }
 
 
 // RB-GS smoother
     template <typename T, int Ndim>
-    void MultigridBase<T, Ndim>::relax(const size_t level, const double tolerance)
+    template<DiscreteOperator Lh>
+    void MultigridBase<T, Ndim>::smoother(const size_t level, const double tolerance, T w)
     {
         size_t nx{solution[level].size(0)}, ny{solution[level].size(1)};
         size_t nz = (Ndim == 3) ? solution[level].size(2) : 0;
@@ -1369,7 +370,7 @@ namespace multigrid
                         for (; i < nx - 1; i += 2)
                         {
                             tmp_buf = solution[level]({i, j});
-                            relaxation_updater(level, i, j);
+                            relaxationUpdater(level, i, j, w);
 
                             // current defect
                             // TODO include boundaries cells in the residuals norm
@@ -1390,7 +391,7 @@ namespace multigrid
                             for (; i < nx - 1; i += 2)
                             {
                                 tmp_buf = solution[level]({i, j, k});
-                                relaxation_updater(level, i, j, k);
+                                relaxationUpdater(level, i, j, k,w);
                                 // current defect
                                 // TODO include boundaries cells in the residuals norm
                                 tmp_buf = solution[level]({i, j, k}) - tmp_buf;
@@ -1408,6 +409,115 @@ namespace multigrid
             }
         }
     }
+
+    template<typename  T, int Ndim >
+    inline  void  MultigridBase<T,Ndim>::restrictSolution() {
+        for(auto level=finestLevel; level > 0; level--)
+        {
+            solution.coarsen(level);
+        }
+    }
+
+    template<typename T, int Ndim>
+    inline void MultigridBase<T, Ndim>::restrictSource(){
+        for(auto level = finestLevel; level > 0; level--)
+        {
+            source.coarsen(level);
+        }
+    }
+
+    template<typename T, int Ndim>
+    inline void MultigridBase<T,Ndim>::setSolutioToZero(size_t level) { solution[level].set_zero();}
+
+    template<typename  T, int Ndim>
+    inline void MultigridBase<T, Ndim>::setAllSolutionToZero()
+    {
+        for(auto level = finestLevel; level >=0; level--)
+            setSolutioToZero(level);
+    }
+
+
+    template<typename  T, int Ndim>
+    inline void MultigridBase<T,Ndim>::setSourceToZero(size_t level){ source[level].set_zero();}
+
+
+    template<typename  T, int Ndim>
+    inline void MultigridBase<T, Ndim>::setAllSourceToZero()
+    {
+        for(auto level = finestLevel; level >=0; level--)
+            setSourceToZero(level);
+    }
+
+    template<typename T, int Ndim>
+    inline void MultigridBase<T, Ndim>::oneStepDown()
+    {
+        if(current_level == coarsestLevel)
+            return;
+
+        // perform Npre smoothing step
+        smoother(current_level, Npre,w);
+
+        // evaluate the defect/residual in the current stage
+        evaluateResidual(current_level, temp[current_level]);
+
+        // restrict the defect to the next level. The restrict defect is store in the next level source ndArray, so it can be used as source for the next level step
+        temp[current_level].coarsen(current_level, source[current_level-1]);
+
+        // set the initial guess for the next level to zero 
+        setSolutioToZero(current_level-1);
+        current_level--;
+    }
+
+    template<typename T, int Ndim>
+    inline void MultigridBase<T, Ndim>::oneStepUp()
+    {
+        // prolongate the correction to the finest level 
+        solution[current_level].refine(current_level, temp[current_level+1]);
+
+        // apply correction
+        solution[current_level+1] += temp[current_level+1];
+
+        // perform Npost relaxation
+        smoother(current_level+1, Npost, w);
+        current_level++;
+    }
+
+    template<typename T, int Ndim>
+    inline void MultigridBase<T, Ndim>::mgiVcycle()
+    {
+        size_t startLevel = current_level;
+        // Downstroke
+        while (current_level != coarsestLevel) {
+            oneStepDown();
+        }
+        // solve the coarsest level
+        smoother(current_level,residualTolerance,w);
+        // Upstroke
+        while(current_level != startLevel)
+        {
+            oneStepUp();
+        }
+    }
+
+    template<typename T, int Ndim>
+    inline void MultigridBase<T, Ndim>::mgi(const CycleType& cycle_type )
+    {
+        if (cycle_type == CycleType::fCycle)
+        {
+            mgiFcycle();
+        }
+        else if (cycle_type == CycleType::vCycle) {
+            mgiVcycle();
+        }
+        else if (cycle_type == CycleType::wCycle) {
+            mgiWcycle();
+        }
+        else {
+            std::cout << "user-defined multigrid cycle not implemented " << std::endl; 
+        }
+    }
+
+
 
 }
 

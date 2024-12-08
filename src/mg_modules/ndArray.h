@@ -132,6 +132,7 @@ public:
     // Copy constructor
     ndArray( const self& other ) { operator=(other); }
     self& operator= ( const self& other );
+    self& operator+= (const self& other);
 
     // Check pointer validity
     inline bool empty() const { return !((bool) m_data); }
@@ -205,6 +206,13 @@ public:
 
     inline pointer begin() const { return data(); }
     inline pointer end() const { return data() + m_numel; }
+    void set_zero() 
+    { 
+        for (auto it = data(); it < (data() + m_numel); it++)
+        {
+            *(it) = 0;
+        }
+    }
 
 
 
