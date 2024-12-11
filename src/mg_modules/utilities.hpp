@@ -12,7 +12,7 @@ namespace multigrid {
 
     enum CycleType{vCycle, wCycle, fCycle,userdef };
     enum BcType{dirichlet, neumann};
-    enum TransfertOperator{PointAverage, Linear, Khalil, Kwak};
+    enum TransfertOperator{PointAverage, Linear, Khalil, Kwak,TreeCubic};
     struct BoundaryPoint {
         BcType bcType;
         double value;
@@ -72,6 +72,7 @@ enum DiscreteOperator{
         CycleType cycleType{multigrid::wCycle};
         size_t Npre{1}, Npost{1}, maxLevel{21}, Nvcyle_cvg{20};
         T w{1.0};
+        bool fixedNiter{false};
     };
 
 

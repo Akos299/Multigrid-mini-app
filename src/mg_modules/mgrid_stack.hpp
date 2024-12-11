@@ -57,7 +57,7 @@ namespace multigrid {
             template<TransfertOperator Op>
             inline void refine(size_t level);
     
-            /** @brief function to coarse a grid from level l to level l-1 and store result in fineLevelData */
+            /** @brief function to refine a grid from level l to level l+1 and store result in fineLevelData */
             template<TransfertOperator Op>
             inline void refine(size_t level, ndArray<T, Ndim> &fineLevelData);
             BoundaryConditions bc; // boundary condition
