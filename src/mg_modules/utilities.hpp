@@ -33,20 +33,29 @@ int power(int x, int n)
     return x * power(x, n - 1);
 }
 
+
+/** @brief a structure for derivatives */
 typedef struct {
     double dx, dy, dz, dxx, dyy, dzz, dxy, dxz, dyz;
 } Derivatives;
 
+
+/** @brief a structure for Laplacian in 2D*/
 typedef struct {
 std::array<std::array<int, 3>, 3> Laplace2D  {{{0,1,0},{1,-6,1},{0,1,0}}};
 } DiscreteOperator2D_Poisson;
 
+
+/** @brief a structure for derivatives  in 3D*/
 typedef struct {
     std::array<std::array<int, 3>, 3> Laplace3D_L  {{{0,0,0},{0,1,0},{0,0,0}}}; // k-1
     std::array<std::array<int, 3>, 3> Laplace3D_C  {{{0,1,0},{1,-6,1},{0,1,0}}}; // k
     std::array<std::array<int, 3>, 3> Laplace3D_R  {{{0,0,0},{0,1,0},{0,0,0}}}; // k+1
 } DiscreteOperator3D_Poisson;
 
+
+
+/** @brief Discrete Operator Lh */
 enum DiscreteOperator{
     laplacian
 };
@@ -62,17 +71,18 @@ enum DiscreteOperator{
     template <typename T>
     struct Settings
     {
-        // T aspectRatio{1};
-        size_t numberOfGrids{8}; // maxLevel
-        size_t x_minimumResolution{4};
-        size_t y_minimumResolution{4};
-        size_t z_minimumResolution{4};
-        T residualTolerance{1e-10};
-        size_t maxIterations{400};
-        CycleType cycleType{multigrid::wCycle};
-        size_t Npre{1}, Npost{1}, maxLevel{21}, Nvcyle_cvg{20};
+
+        size_t nb_levels{21}; // maxLevel
+        size_t nx_coarse{4};
+        size_t ny_coarse{4};
+        size_t nz_coarse{4};
+        T res_tol{1e-10};
+        size_t max_iter{400};
+        CycleType cycle_type{multigrid::wCycle};
+        size_t npre{1}, npost{1};
         T w{1.0};
         bool fixedNiter{false};
+        int Nghost{1};
     };
 
 

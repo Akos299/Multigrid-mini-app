@@ -44,7 +44,7 @@ namespace multigrid
     }
 
     /*********************** MultigridBase class******************
-     *  This is a class that's that will be specialized for each type of problem
+     *  This is a class that's will be specialized for each type of problem
      */
     template <typename T, int Ndim>
     class MultigridBase
@@ -175,24 +175,24 @@ namespace multigrid
         inline void iterateMGCycleToConvergence(const CycleType &cycle_type, const int n_iter);
 
     protected:
-        Stack<T, Ndim> solution, source, oldSolution; // Grids for solution and source term
+        Stack<T, Ndim> solution, source, old_solution; // Grids for solution and source term
         Stack<T, Ndim> temp;                          // Extra storage for muligrid solver
         CycleType cycle_type;                         // cycle type (V, W or F)
-        size_t Npre;                                  // Number of pre-smoothing step
-        size_t Npost;                                 // Number of post-smoothing step
-        const size_t maxIter;                         // Maximum iteration
-        const T residualTolerance;                    // Tolerance
-        size_t finestLevel, coarsestLevel;            // finest and coarsest levels
-        size_t nxfine, nyfine, nzfine;                // grid (finest level) resolutions
-        bool isSourceSet;                             // flag related to source setting
-        bool isInitialValueSet;                       // flag related to initial guess setting
+        size_t npre;                                  // Number of pre-smoothing step
+        size_t npost;                                 // Number of post-smoothing step
+        const size_t max_iter;                         // Maximum iteration
+        const T res_tol;                    // Tolerance
+        size_t finest_level, coarsest_level;            // finest and coarsest levels
+        size_t nx_fine, ny_fine, nz_fine;                // grid (finest level) resolutions
+        bool is_source_set;                             // flag related to source setting
+        bool is_initial_value_set;                       // flag related to initial guess setting
         size_t current_level;                         // the current level
-        size_t nLevel;                                // Total number of level
+        size_t nb_levels;                                // Total number of level
         T w;                                          // smoothing parameter
         bool fixedNiter;
 
     private:
-        T residualSum, normSum; // residual and solution norms
+        T residual_sum, norm_sum; // residual and solution norms
         Derivatives du;
     };
 
@@ -202,7 +202,7 @@ namespace multigrid
                                                                          solution(settings),
                                                                          source(settings),
                                                                          temp(settings),
-                                                                         cycle_type(settings.cycleType),
+                                                                         cycle_type(settings.cycle_type),
                                                                          Npre(settings.Npre),
                                                                          Npost(settings.Npost),
                                                                          residualTolerance(settings.residualTolerance),

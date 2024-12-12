@@ -552,7 +552,7 @@ namespace multigrid
         if constexpr (Op == Kwak)
             kwak_prolongation_operator<T, Ndim>(corseData, fineData);
         if constexpr (Op == TreeCubic)
-            cubic_operator<T,Ndim>(corseData,fineData);
+            cubic_operator<T, Ndim>(corseData, fineData);
     }
 
     /** @brief Template based restriction operator
