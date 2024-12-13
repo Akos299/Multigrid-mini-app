@@ -55,6 +55,14 @@ ndArray<T, N> &ndArray<T, N>::operator*=(const T x)
 		(*this)({i}) *= x;
 	return (*this);
 }
+
+template<typename T, dimen_t N>
+ndArray<T,N> &ndArray<T,N>::operator=(const T x)
+{
+	for(index_t i=0; i < numel(); i++)
+		(*this)({i}) = x;
+	return (*this);
+}
 // ------------------------------------------------------------------------
 
 /**

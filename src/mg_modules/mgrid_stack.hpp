@@ -17,34 +17,41 @@ namespace multigrid {
             Stack(const Settings<T> &s)
             {
                 nb_levels = s.nb_levels;
-                nx_coarse = s.nx_coarse;
-                ny_coarse = s.ny_coarse;
-                nz_coarse = s.nz_coarse;
-                finestLevel = (nb_levels - 1);
+                nx_fine = s.nx_fine;
+                ny_fine = s.ny_fine;
+                nz_fine = s.nz_fine;
+                finest_level = (nb_levels - 1);
                 this->resize(nb_levels);
-                // set coarsest grid size
-                int nx{nx_coarse}, ny{ny_coarse}, nz{nz_coarse};
+                // set finest grid size
+                int nx{nx_fine + 2*s.Nghost}, ny{ny_fine + 2*s.Nghost}, nz{nz_fine + 2*s.Nghost};
                 if (Ndim == 2)
                     nz = 1;
-                nd::index_t coarse_size[3] = {nx,ny,nz};
-                nd::index_t coarse_numel   = nx*ny*nz;
-                (*this)[0] = ndArray<T,Ndim>(new T[coarse_numel], coarse_size, true);
-
+                nd::index_t finest_size[3] = {nx,ny,nz};
+                nd::index_t finest_numel   = nx*ny*nz;
+                if(Ndim == 2)
+                    (*this)[finest_level] = ndArray<T,Ndim>(new T[finest_numel], {nx,ny}, true);
+                else if(Ndim == 3)
+                        (*this)[finest_level] = ndArray<T,Ndim>(new T [finest_numel], {nx,ny,nz}, true);
+                else
+                {
+                    std::cout << "###### Warning in Stack<T,Ndim>::Stack(const Settings &s) : " << "\n";
+                    std::cout << "Only dimension = 2/3 can be supported." << "\n";
+                }
                 // Data set for all levels
-                for (auto level = 1; level <= finestLevel; level++)
+                for (auto level = finest_level-1; level >= coarsest_level; level--)
                 {
                     /* THIS IS GOOD FOR vertex-based multigrid-grid*/
                     // nx = 2 * (nx - 1) + 1;
                     // ny = 2 * (ny - 1) + 1;
                     // nz = (Ndim == 3) ? (2 * (nz - 1) + 1) : 0;
-                    nx = 2 * nx;
-                    ny = 2 * ny;
-                    nz = (Ndim == 3) ? (2 * nz) : 0;
+                    nx = int(nx/2) +1;
+                    ny = int(ny/2) +1;
+                    nz = (Ndim == 3) ? (int(nz/2)+1) : 0;
                     auto lev_numel = (Ndim == 2) ? (nx * ny) : (nx * ny * nz);
                     if(Ndim == 2)
-                        (*this)[0] = ndArray<T,Ndim>(new T [lev_numel], {nx,ny}, true);
+                        (*this)[level] = ndArray<T,Ndim>(new T [lev_numel], {nx,ny}, true);
                     else if(Ndim == 3)
-                        (*this)[0] = ndArray<T,Ndim>(new T [lev_numel], {nx,ny,nz}, true);
+                        (*this)[level] = ndArray<T,Ndim>(new T [lev_numel], {nx,ny,nz}, true);
                     else
                     {
                         std::cout << "###### Warning in Stack<T,Ndim>::Stack(const Settings &s) : " << "\n";
@@ -54,6 +61,9 @@ namespace multigrid {
 
                 // TODO Boundary conditions for all levels
                 // Initialize Boundaries conditions
+
+                for(auto level = coarsest_level; level < nb_levels; level++)
+                    (*this)[level].set_zero();
             };
             virtual ~Stack() {};
 
@@ -79,7 +89,7 @@ namespace multigrid {
 
         private:
             const size_t nb_levels; // number of grid levels required
-            int nx_coarse, ny_coarse, nz_coarse; // coarse resolution
+            int nx_fine, ny_fine, nz_fine; // coarse resolution
     };
 
 
@@ -87,28 +97,28 @@ namespace multigrid {
     template<TransfertOperator Op>
     inline void Stack<T, Ndim>::coarsen(size_t level)
     {
-        restriction_operator<T, Ndim>((*this)[level - 1], (*this)[level]);
+        restriction_operator<T, Op,Ndim>((*this)[level - 1], (*this)[level]);
     }
 
     template <typename T, int Ndim>
      template<TransfertOperator Op>
     inline void Stack<T, Ndim>::coarsen(size_t level, ndArray<T, Ndim> &coarse_level_data)
     {
-        restriction_operator(coarse_level_data, (*this)[level]);
+        restriction_operator<T,Op,Ndim>(coarse_level_data, (*this)[level]);
     }
 
     template <typename T, int Ndim>
      template<TransfertOperator Op>
     inline void Stack<T, Ndim>::refine(size_t level)
     {
-        prolongation_operator((*this)[level], (*this)[level + 1]);
+        prolongation_operator<T,Op,Ndim>((*this)[level], (*this)[level + 1]);
     }
 
     template <typename T, int Ndim>
     template<TransfertOperator Op>
     inline void Stack<T, Ndim>::refine(size_t level, ndArray<T, Ndim> &fine_level_data)
     {
-        prolongation_operator((*this)[level], fine_level_data);
+        prolongation_operator<T,Op,Ndim>((*this)[level], fine_level_data);
     }
 }
 

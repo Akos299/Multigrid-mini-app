@@ -73,9 +73,9 @@ enum DiscreteOperator{
     {
 
         size_t nb_levels{21}; // maxLevel
-        size_t nx_coarse{4};
-        size_t ny_coarse{4};
-        size_t nz_coarse{4};
+        size_t nx_fine{16};
+        size_t ny_fine{16};
+        size_t nz_fine{16};
         T res_tol{1e-10};
         size_t max_iter{400};
         CycleType cycle_type{multigrid::wCycle};
@@ -83,6 +83,8 @@ enum DiscreteOperator{
         T w{1.0};
         bool fixedNiter{false};
         int Nghost{1};
+        
+
     };
 
 

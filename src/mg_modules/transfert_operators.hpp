@@ -541,7 +541,7 @@ namespace multigrid
     /** @brief Te;plate based prolongation operator
      */
     template <typename T, TransfertOperator Op, int Ndim>
-    inline void polongation_operator(ndArray<T, Ndim> &corseData, ndArray<T, Ndim> &fineData)
+    inline void prolongation_operator(ndArray<T, Ndim> &corseData, ndArray<T, Ndim> &fineData)
     {
         if constexpr (Op == PointAverage)
             constantwise_prolongation_operator<T, Ndim>(corseData, fineData);

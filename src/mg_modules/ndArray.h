@@ -235,6 +235,7 @@ namespace nd {
        self& operator+=(const self& other); /*TESTED*/
        self& operator+=(const T x); /*TESTED*/
        self& operator*=(const T x); /*TESTED*/
+	   self& operator= (const T x);
       
 
 
