@@ -200,7 +200,7 @@ namespace multigrid
         Derivatives du;
     };
 
-    template <typename T, int Ndim>
+    template<typename T, int Ndim>
     MultigridBase<T, Ndim>::MultigridBase(const Settings<T> &settings, std::array<double, 3> &starts, std::array<double, 3> &ends, TransfertOperator &rest_operator,
                                           TransfertOperator &inter_operator) :
 

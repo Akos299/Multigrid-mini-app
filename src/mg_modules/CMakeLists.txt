@@ -48,10 +48,7 @@ ELSE(${build_library}
     )      
 
 
-
-
-
-add_library(ndarray PUBLIC ndArray.h ndArray.hpp)
+# add_library(ndarray PUBLIC ndArray.h ndArray.hpp)
 
 
 
