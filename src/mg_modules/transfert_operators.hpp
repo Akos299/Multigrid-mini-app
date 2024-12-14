@@ -19,7 +19,7 @@ namespace multigrid
      */
     /** @brief linear restriction operator */
     template <typename T, int Ndim>
-    inline void linear_restriction_operator(ndArray<T, Ndim> &corseData, ndArray<T, Ndim> &fineData)
+    inline void linear_restriction_operator(nd::ndArray<T, Ndim> &corseData, nd::ndArray<T, Ndim> &fineData)
     {
         size_t nxc, nyc, nzc, nxf, nyf, nzf;
         nxc = corseData.size(0);
@@ -74,7 +74,7 @@ namespace multigrid
 
     /** @brief khalil restriction operator */
     template <typename T, int Ndim>
-    inline void khalil_restriction_operator(ndArray<T, Ndim> &corseData, ndArray<T, Ndim> &fineData)
+    inline void khalil_restriction_operator(nd::ndArray<T, Ndim> &corseData, nd::ndArray<T, Ndim> &fineData)
     {
         size_t nxc, nyc, nzc, nxf, nyf, nzf;
         nxc = corseData.size(0);
@@ -123,7 +123,7 @@ namespace multigrid
 
     /** @brief kwak restriction operator */
     template <typename T, int Ndim>
-    inline void kwak_restriction_operator(ndArray<T, Ndim> &corseData, ndArray<T, Ndim> &fineData)
+    inline void kwak_restriction_operator(nd::ndArray<T, Ndim> &corseData, nd::ndArray<T, Ndim> &fineData)
     {
         size_t nxc, nyc, nzc, nxf, nyf, nzf;
         nxc = corseData.size(0);
@@ -178,7 +178,7 @@ namespace multigrid
 
     /** @brief constant restriction operator */
     template <typename T, int Ndim>
-    inline void constantwise_restriction_operator(ndArray<T, Ndim> &corseData, ndArray<T, Ndim> &fineData)
+    inline void constantwise_restriction_operator(nd::ndArray<T, Ndim> &corseData, nd::ndArray<T, Ndim> &fineData)
     {
         size_t nxc, nyc, nzc, nxf, nyf, nzf;
         nxc = corseData.size(0);
@@ -227,7 +227,7 @@ namespace multigrid
 
     /** @brief constantwise prolongation operator */
     template <typename T, int Ndim>
-    inline void constantwise_prolongation_operator(ndArray<T, Ndim> &corseData, ndArray<T, Ndim> &fineData)
+    inline void constantwise_prolongation_operator(nd::ndArray<T, Ndim> &corseData, nd::ndArray<T, Ndim> &fineData)
     {
         size_t nxc, nyc, nzc, nxf, nyf, nzf;
         nxc = corseData.size(0);
@@ -284,9 +284,9 @@ namespace multigrid
     }
 
     /** @brief linear prolongation operator */
-    // TODO make sure ndArray is initialize to zero
+    // TODO make sure nd::ndArray is initialize to zero
     template <typename T, int Ndim>
-    inline void linear_prolongation_operator(ndArray<T, Ndim> &corseData, ndArray<T, Ndim> &fineData)
+    inline void linear_prolongation_operator(nd::ndArray<T, Ndim> &corseData, nd::ndArray<T, Ndim> &fineData)
     {
         size_t nxc, nyc, nzc, nxf, nyf, nzf;
         nxc = corseData.size(0);
@@ -351,9 +351,9 @@ namespace multigrid
     }
 
     /** @brief Khalil prolongation operator */
-    // TODO make sure ndArray is initialize to zero
+    // TODO make sure nd::ndArray is initialize to zero
     template <typename T, int Ndim>
-    inline void khalil_prolongation_operator(ndArray<T, Ndim> &corseData, ndArray<T, Ndim> &fineData)
+    inline void khalil_prolongation_operator(nd::ndArray<T, Ndim> &corseData, nd::ndArray<T, Ndim> &fineData)
     {
         size_t nxc, nyc, nzc, nxf, nyf, nzf;
         nxc = corseData.size(0);
@@ -419,9 +419,9 @@ namespace multigrid
     }
 
     /** @brief Kwak prolongation operator */
-    // TODO make sure ndArray is initialize to zero
+    // TODO make sure nd::ndArray is initialize to zero
     template <typename T, int Ndim>
-    inline void kwak_prolongation_operator(ndArray<T, Ndim> &corseData, ndArray<T, Ndim> &fineData)
+    inline void kwak_prolongation_operator(nd::ndArray<T, Ndim> &corseData, nd::ndArray<T, Ndim> &fineData)
     {
         size_t nxc, nyc, nzc, nxf, nyf, nzf;
         nxc = corseData.size(0);
@@ -486,7 +486,7 @@ namespace multigrid
     }
 
     template <typename T, TransfertOperator Op, int Ndim>
-    inline void cubic_operator(ndArray<T, Ndim> &corseData, ndArray<T, Ndim> &fineData)
+    inline void cubic_operator(nd::ndArray<T, Ndim> &corseData, nd::ndArray<T, Ndim> &fineData)
     {
         size_t nxc, nyc, nzc, nxf, nyf, nzf;
         nxc = corseData.size(0);
@@ -541,7 +541,7 @@ namespace multigrid
     /** @brief Te;plate based prolongation operator
      */
     template <typename T, TransfertOperator Op, int Ndim>
-    inline void prolongation_operator(ndArray<T, Ndim> &corseData, ndArray<T, Ndim> &fineData)
+    inline void prolongation_operator(nd::ndArray<T, Ndim> &corseData, nd::ndArray<T, Ndim> &fineData)
     {
         if constexpr (Op == PointAverage)
             constantwise_prolongation_operator<T, Ndim>(corseData, fineData);
@@ -558,7 +558,7 @@ namespace multigrid
     /** @brief Template based restriction operator
      */
     template <typename T, TransfertOperator Op, int Ndim>
-    inline void restriction_operator(ndArray<T, Ndim> &corseData, ndArray<T, Ndim> &fineData)
+    inline void restriction_operator(nd::ndArray<T, Ndim> &corseData, nd::ndArray<T, Ndim> &fineData)
     {
         if constexpr (Op == PointAverage)
             constantwise_restriction_operator<T, Ndim>(corseData, fineData);

@@ -11,6 +11,6 @@ Poisson<T,Ndim>::~Poisson(){}
 template<typename T, int Ndim>
 void Poisson<T,Ndim>::solve()
 {
-    fmg(cycle_type);
+    fmg(this->cycle_type);
 }
         

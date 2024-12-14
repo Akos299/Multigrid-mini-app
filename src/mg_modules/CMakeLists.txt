@@ -1,15 +1,16 @@
 
-project(multigrid VERSION 1.0
+project(multigrid
                 DESCRIPTION "a mini app for mcell-centering geometric multigrid"
                 LANGUAGES CXX)
 
 #Configure cmake build
 cmake_minimum_required(VERSION 3.7...3.31)
-
 if(${CMAKE_VERSION} VERSION_LESS 3.12)
     cmake_policy(VERSION ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION})
 endif()
-
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "cmake") 
+set(CMAKE_VERBOSE_MAKEFILE false)
 #set source file directory
 set(source_directory .)
 
@@ -46,7 +47,7 @@ ELSE(${build_library}
     add_executable(${PROJECT_NAME} ${sources})
     include_directories(${INCLUDES} ${source_directory})
     )      
-
+ENDIF(${build_library})
 
 # add_library(ndarray PUBLIC ndArray.h ndArray.hpp)
 

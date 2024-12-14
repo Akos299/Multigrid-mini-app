@@ -13,7 +13,7 @@ namespace multigrid
 {
 
     template <typename T, int Ndim>
-    T L2Norm(ndArray<T, Ndim> &in_arr)
+    T L2Norm(nd::ndArray<T, Ndim> &in_arr)
     {
         T res = 0.;
         size_t nx = in_arr.size(0), ny = in_arr.size(1), nz = in_arr.size(2);
@@ -54,24 +54,24 @@ namespace multigrid
         virtual ~MultigridBase() {};
 
         /** @brief get the output of the multigrid method */
-        inline ndArray<T, Ndim> &get_solution();
+        inline nd::ndArray<T, Ndim> &get_solution();
 
         /** @brief set the initial guess (e.g potential in the case of Poisson equation) */
         template <typename U>
         inline void set_initial_guess(U arg);
 
         /** @brief get the soruce term */
-        inline ndArray<T, Ndim> &get_source();
+        inline nd::ndArray<T, Ndim> &get_source();
 
         /** @brief set the source term with the given argument */
         template <typename U>
         inline void set_source(U arg);
 
         /** @brief Compute L_{H}U_{H} on a given grid of resolution H */
-        inline void evaluate_operator(size_t level, ndArray<T, Ndim> &result);
+        inline void evaluate_operator(size_t level, nd::ndArray<T, Ndim> &result);
 
         /** @brief Compute compute the residual/defect */
-        inline void evaluate_residual(size_t level, ndArray<T, Ndim> &result);
+        inline void evaluate_residual(size_t level, nd::ndArray<T, Ndim> &result);
 
         /** @brief Apply N times the smoother */
         template <DiscreteOperator Lh>
@@ -107,19 +107,19 @@ namespace multigrid
         void relaxation_updater(size_t, int, int, int, T w = 1.0);
 
         /** @brief return the source at the current level*/
-        ndArray<T, Ndim> &get_current_source() { return source[current_level]; }
+        nd::ndArray<T, Ndim> &get_current_source() { return source[current_level]; }
 
         /** @brief return the Solution (e.g potential) at the current level*/
-        ndArray<T, Ndim> &get_current_solution() { return solution[current_level]; }
+        nd::ndArray<T, Ndim> &get_current_solution() { return solution[current_level]; }
 
         /** @brief return the old solution at the current*/
-        ndArray<T, Ndim> &get_current_old_solution() { return oldSolution[current_level]; }
+        nd::ndArray<T, Ndim> &get_current_old_solution() { return old_solution[current_level]; }
 
         /** @brief return the current level*/
         size_t get_current_level() { return current_level; }
 
         /** @brief return the total number of level */
-        size_t get_total_number_of_level() { return nLevel; }
+        size_t get_total_number_of_level() { return nb_levels; }
 
         /** @brief restrict the solution throw all level
          *          This will be useful for the full multigrid.
@@ -244,7 +244,7 @@ namespace multigrid
     }
 
     template <typename T, int Ndim>
-    void MultigridBase<T, Ndim>::relaxation_updater(size_t level, int i, int j, T w = 1.0)
+    void MultigridBase<T, Ndim>::relaxation_updater(size_t level, int i, int j, T w )
     {
         size_t nx{solution[level].size(0)}, ny{solution[level].size(1)}, nz{1};
 
@@ -261,7 +261,7 @@ namespace multigrid
     }
 
     template <typename T, int Ndim>
-    void MultigridBase<T, Ndim>::relaxation_updater(size_t level, int i, int j, int k, T w = 1.0)
+    void MultigridBase<T, Ndim>::relaxation_updater(size_t level, int i, int j, int k, T w )
     {
         size_t nx{solution[level].size(0)}, ny{solution[level].size(1)}, nz{1};
 
@@ -278,7 +278,7 @@ namespace multigrid
     }
 
     template <typename T, int Ndim>
-    inline ndArray<T, Ndim> &MultigridBase<T, Ndim>::get_solution()
+    inline nd::ndArray<T, Ndim> &MultigridBase<T, Ndim>::get_solution()
     {
         return solution[finest_level];
     }
@@ -292,7 +292,7 @@ namespace multigrid
     }
 
     template <typename T, int Ndim>
-    inline ndArray<T, Ndim> &MultigridBase<T, Ndim>::get_source()
+    inline nd::ndArray<T, Ndim> &MultigridBase<T, Ndim>::get_source()
     {
         return source[finest_level];
     }
@@ -306,7 +306,7 @@ namespace multigrid
     }
 
     template <typename T, int Ndim>
-    inline void MultigridBase<T, Ndim>::evaluate_operator(size_t level, ndArray<T, Ndim> &result)
+    inline void MultigridBase<T, Ndim>::evaluate_operator(size_t level, nd::ndArray<T, Ndim> &result)
     {
         size_t nx = result.size(0);
         size_t ny = result.size(1);
@@ -360,7 +360,7 @@ namespace multigrid
     }
 
     template <typename T, int Ndim>
-    inline void MultigridBase<T, Ndim>::evaluate_residual(size_t level, ndArray<T, Ndim> &result)
+    inline void MultigridBase<T, Ndim>::evaluate_residual(size_t level, nd::ndArray<T, Ndim> &result)
     {
         size_t nx = result.size(0);
         size_t ny = result.size(1);
@@ -455,7 +455,7 @@ namespace multigrid
 
                 else if (Ndim == 3)
                 {
-                    for (size_t k = start; k < k_end; k++)
+                    for (size_t k = k_start; k < k_end; k++)
                     {
                         for (size_t j = j_start; j < j_end; j++)
                         {
@@ -513,7 +513,7 @@ namespace multigrid
                 {
                     for (size_t k = k_start; k < k_end; k++)
                     {
-                        for (size_t j = j_start; j < nj_end; j++)
+                        for (size_t j = j_start; j < j_end; j++)
                         {
                             auto i = pColor - power(-1, pColor) * ((k + j) % 2);
                             for (; i < i_end; i += 2)
@@ -583,12 +583,12 @@ namespace multigrid
             return;
 
         // perform Npre smoothing step
-        smoother(current_level, Npre, w);
+        smoother(current_level, npre, w);
 
         // evaluate the defect/residual in the current stage
         evaluate_residual(current_level, temp[current_level]);
 
-        // restrict the defect to the next level. The restrict defect is store in the next level source ndArray, so it can be used as source for the next level step
+        // restrict the defect to the next level. The restrict defect is store in the next level source nd::ndArray, so it can be used as source for the next level step
         temp[current_level].coarsen<res_ope>(current_level, source[current_level - 1]);
 
         // set the initial guess for the next level to zero
@@ -606,7 +606,7 @@ namespace multigrid
         solution[current_level + 1] += temp[current_level + 1];
 
         // perform Npost relaxation
-        smoother(current_level + 1, Npost, w);
+        smoother(current_level + 1, npost, w);
         current_level++;
     }
 
@@ -650,27 +650,27 @@ namespace multigrid
     }
 
     template <typename T, int Ndim>
-    inline void MultigridBase<T, Ndim>::fmg_cycle(const CycleType &cycle_type, const int mgc_per_level = 1.0 /*Number of multigrid cycle per level*/)
+    inline void MultigridBase<T, Ndim>::fmg_cycle(const CycleType &cycle_type, const int mgc_per_level  /*Number of multigrid cycle per level*/)
     {
         for (int level = 0; level < finest_level; level++)
         {
             solution.refine<cubic_operator>(level);
             current_level = level + 1;
             for (int i = 0; i < mgc_per_level; i++)
-                mgi<T, Ndim>(cycle_type);
+                mgi(cycle_type);
         }
     }
 
     template <typename T, int Ndim>
-    inline void MultigridBase<T, Ndim>::fmg(const CycleType &cycle_type, const int mgc_per_level = 1.0 /*Number of multigrid cycle per level*/)
+    inline void MultigridBase<T, Ndim>::fmg(const CycleType &cycle_type, const int mgc_per_level  /*Number of multigrid cycle per level*/)
     {
         // perform a restriction from the finest level to the coarsest one
-        restrict_solution<T, Ndim>();
-        restrict_source<T, Ndim>();
+        restrict_solution();
+        restrict_source();
         // solve the coarsest level
         smoother<T, Ndim>(coarsest_level, res_tol, w);
         // perform the full multigrid cycle
-        fmg_cycle<T, Ndim>(cycle_type, mgc_per_level);
+        fmg_cycle(cycle_type, mgc_per_level);
 
         /**
          * If in the full multigrid algorithm we apply one V(or W or F)-cycle
@@ -680,28 +680,28 @@ namespace multigrid
          * See also remark 2.6.2 from Trottenberg et al.2001
          */
         if (fixedNiter)
-            iterate_mg_cycle_to_convergence<T, Ndim>(cycle_type, res_tol);
+            iterate_mg_cycle_to_convergence(cycle_type, res_tol);
         else
-            iterate_mg_cycle_to_convergence<T, Ndim>(cycle_type, max_iter);
+            iterate_mg_cycle_to_convergence(cycle_type, max_iter);
     }
 
     template <typename T, int Ndim>
     inline void MultigridBase<T, Ndim>::iterate_mg_cycle_to_convergence(const CycleType &cycle_type, const T eps)
     {
 
-        ndArray<T, Ndim> _result; /** size of the grid to be specified*/
+        nd::ndArray<T, Ndim> _result; /** size of the grid to be specified*/
         int n_iter = 0;
 
         // computed the residual or the defect ====> should be modified to implement the equation (20) int Tomida & Stone (2023)
-        evaluateResidual<T, Ndim>(finest_level, _result);
+        evaluate_residual(finest_level, _result);
 
         // compute the norm of the residual or the defect
 
         T def_norm = L2Norm<T, Ndim>(_result);
         while (def_norm > eps)
         {
-            mgi<T, Ndim>(cycle_type);
-            evaluate_residual<T, Ndim>(finest_level, _result);
+            mgi(cycle_type);
+            evaluate_residual(finest_level, _result);
             T def_norm_new = L2Norm<T, Ndim>(_result);
 
             if (def_norm_new / def_norm > 1.0)
@@ -723,13 +723,13 @@ namespace multigrid
     inline void MultigridBase<T, Ndim>::iterate_mg_cycle_to_convergence(const CycleType &cycle_type, const int n_iter)
     {
 
-        ndArray<T, Ndim> _result; /** size of the grid to be specified*/
+        nd::ndArray<T, Ndim> _result; /** size of the grid to be specified*/
 
         for (int i = 0; i < n_iter; i++)
         {
-            mgi<T, Ndim>(cycle_type);
+            mgi(cycle_type);
             // computed the residual or the defect ====> should be modified to implement the equation (20) int Tomida & Stone (2023)
-            evaluateResidual<T, Ndim>(finest_level, _result);
+            evaluate_residual(finest_level, _result);
             T def_norm_new = L2Norm<T, Ndim>(_result);
 
             // TODO add in the function signature a std::vector<T> to store the history of the residual

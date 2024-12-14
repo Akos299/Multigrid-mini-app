@@ -1,6 +1,7 @@
 #ifndef __STACK__
 #define __STACK__
 
+#include "ndArray.h"
 #include "transfert_operators.hpp"
 #include "boundary_condition.hpp"
 
@@ -11,7 +12,7 @@ namespace multigrid {
 */
     /** @brief a stack to track grids at all level */
     template <typename T, int Ndim>
-    class Stack : public std::vector<ndArray<T, Ndim>>
+    class Stack : public std::vector<nd::ndArray<T, Ndim>>
     {
         public:
             Stack(const Settings<T> &s)
@@ -23,15 +24,15 @@ namespace multigrid {
                 finest_level = (nb_levels - 1);
                 this->resize(nb_levels);
                 // set finest grid size
-                int nx{nx_fine + 2*s.Nghost}, ny{ny_fine + 2*s.Nghost}, nz{nz_fine + 2*s.Nghost};
+                nd::index_t nx{nx_fine + 2*s.Nghost}, ny{ny_fine + 2*s.Nghost}, nz{nz_fine + 2*s.Nghost};
                 if (Ndim == 2)
                     nz = 1;
                 nd::index_t finest_size[3] = {nx,ny,nz};
                 nd::index_t finest_numel   = nx*ny*nz;
                 if(Ndim == 2)
-                    (*this)[finest_level] = ndArray<T,Ndim>(new T[finest_numel], {nx,ny}, true);
+                    (*this)[finest_level] = nd::ndArray<T,Ndim>(new T[finest_numel], {nx,ny}, true);
                 else if(Ndim == 3)
-                        (*this)[finest_level] = ndArray<T,Ndim>(new T [finest_numel], {nx,ny,nz}, true);
+                        (*this)[finest_level] = nd::ndArray<T,Ndim>(new T [finest_numel], {nx,ny,nz}, true);
                 else
                 {
                     std::cout << "###### Warning in Stack<T,Ndim>::Stack(const Settings &s) : " << "\n";
@@ -49,9 +50,9 @@ namespace multigrid {
                     nz = (Ndim == 3) ? (int(nz/2)+1) : 0;
                     auto lev_numel = (Ndim == 2) ? (nx * ny) : (nx * ny * nz);
                     if(Ndim == 2)
-                        (*this)[level] = ndArray<T,Ndim>(new T [lev_numel], {nx,ny}, true);
+                        (*this)[level] = nd::ndArray<T,Ndim>(new T [lev_numel], {nx,ny}, true);
                     else if(Ndim == 3)
-                        (*this)[level] = ndArray<T,Ndim>(new T [lev_numel], {nx,ny,nz}, true);
+                        (*this)[level] = nd::ndArray<T,Ndim>(new T [lev_numel], {nx,ny,nz}, true);
                     else
                     {
                         std::cout << "###### Warning in Stack<T,Ndim>::Stack(const Settings &s) : " << "\n";
@@ -76,7 +77,7 @@ namespace multigrid {
 
             /** @brief function to coarse a grid from level l to level l-1 and store result in coarseLevelData */
             template<TransfertOperator Op>
-            inline void coarsen(size_t level, ndArray<T, Ndim> &coarse_level_data);
+            inline void coarsen(size_t level, nd::ndArray<T, Ndim> &coarse_level_data);
 
             /** @brief function to refine a grid from level l to level l+1 */
             template<TransfertOperator Op>
@@ -84,7 +85,7 @@ namespace multigrid {
     
             /** @brief function to refine a grid from level l to level l+1 and store result in fineLevelData */
             template<TransfertOperator Op>
-            inline void refine(size_t level, ndArray<T, Ndim> &fine_level_data);
+            inline void refine(size_t level, nd::ndArray<T, Ndim> &fine_level_data);
             // BoundaryConditions bc; // boundary condition
 
         private:
@@ -102,7 +103,7 @@ namespace multigrid {
 
     template <typename T, int Ndim>
      template<TransfertOperator Op>
-    inline void Stack<T, Ndim>::coarsen(size_t level, ndArray<T, Ndim> &coarse_level_data)
+    inline void Stack<T, Ndim>::coarsen(size_t level, nd::ndArray<T, Ndim> &coarse_level_data)
     {
         restriction_operator<T,Op,Ndim>(coarse_level_data, (*this)[level]);
     }
@@ -116,7 +117,7 @@ namespace multigrid {
 
     template <typename T, int Ndim>
     template<TransfertOperator Op>
-    inline void Stack<T, Ndim>::refine(size_t level, ndArray<T, Ndim> &fine_level_data)
+    inline void Stack<T, Ndim>::refine(size_t level, nd::ndArray<T, Ndim> &fine_level_data)
     {
         prolongation_operator<T,Op,Ndim>((*this)[level], fine_level_data);
     }
