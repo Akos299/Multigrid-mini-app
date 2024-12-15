@@ -1,0 +1,5 @@
+file( GLOB HEADER_LIST ../include/*.hpp)
+file(GLOB SOURCE_LIST multigrid_base.cpp mgrid_stack)
+add_library(multigrid_library ${SOURCE_LIST} ${HEADER_LIST})
+target_include_directories(multigrid_library PUBLIC ../include)
+target_compile_features(multigrid_library PUBLIC cxx_std_17)

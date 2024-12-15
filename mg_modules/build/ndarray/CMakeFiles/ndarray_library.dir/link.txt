@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc libndarray_library.a CMakeFiles/ndarray_library.dir/ndArray.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib libndarray_library.a

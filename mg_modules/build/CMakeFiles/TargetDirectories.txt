@@ -1,0 +1,11 @@
+/Users/lsewanou/Multigrid/mg_modules/build/CMakeFiles/edit_cache.dir
+/Users/lsewanou/Multigrid/mg_modules/build/CMakeFiles/rebuild_cache.dir
+/Users/lsewanou/Multigrid/mg_modules/build/poisson/CMakeFiles/poisson.dir
+/Users/lsewanou/Multigrid/mg_modules/build/poisson/CMakeFiles/edit_cache.dir
+/Users/lsewanou/Multigrid/mg_modules/build/poisson/CMakeFiles/rebuild_cache.dir
+/Users/lsewanou/Multigrid/mg_modules/build/src/CMakeFiles/multigrid_library.dir
+/Users/lsewanou/Multigrid/mg_modules/build/src/CMakeFiles/edit_cache.dir
+/Users/lsewanou/Multigrid/mg_modules/build/src/CMakeFiles/rebuild_cache.dir
+/Users/lsewanou/Multigrid/mg_modules/build/ndarray/CMakeFiles/ndarray_library.dir
+/Users/lsewanou/Multigrid/mg_modules/build/ndarray/CMakeFiles/edit_cache.dir
+/Users/lsewanou/Multigrid/mg_modules/build/ndarray/CMakeFiles/rebuild_cache.dir
