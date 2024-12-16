@@ -1,2 +1,0 @@
-/Library/Developer/CommandLineTools/usr/bin/ar qc libmultigrid_library.a CMakeFiles/multigrid_library.dir/multigrid_base.cpp.o CMakeFiles/multigrid_library.dir/mgrid_stack.cpp.o
-/Library/Developer/CommandLineTools/usr/bin/ranlib libmultigrid_library.a
