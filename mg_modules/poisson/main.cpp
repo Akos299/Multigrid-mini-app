@@ -1,6 +1,5 @@
 
 #include "poisson.hpp"
-// #include "../include/multigrid_base.hpp"
 #include <iostream>
 #include <vector>
 #include <memory>

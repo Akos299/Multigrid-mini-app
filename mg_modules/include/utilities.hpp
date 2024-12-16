@@ -1,23 +1,19 @@
-#ifndef __TYPES_HPP__
-#define __TYPES_HPP__
+#ifndef __UTILITIES_HPP__
+#define __UTILITIES_HPP__
 
-#include <vector>
-#include <tuple>
-#include <iostream>
 #include <array>
 #include <math.h>
-#include "../ndarray/ndArray.hpp"
 
 namespace multigrid {
 
+    /** @brief Different type of multigrid iteration cycle */
     enum CycleType{vCycle, wCycle, fCycle,userdef };
-    enum BcType{dirichlet, neumann};
+
+    /** @brief Different type of Boundary condition*/
+    enum BcType{Periodic, ZeroGradient, ZeroFixed, Isolated, UserDef};
+
+    /** @brief Different type of Transfert Operator*/
     enum TransfertOperator{PointAverage, Linear, Khalil, Kwak,TreeCubic};
-    struct BoundaryPoint {
-        BcType bcType;
-        double value;
-    };
-    typedef std::array<BoundaryPoint,1> Boundary;
 
 /** @brief // This code is contributed by Aditya Kumar (adityakumar129). From Geeksforgeeks
  */
@@ -83,8 +79,7 @@ enum DiscreteOperator{
         T w{1.0};
         bool fixedNiter{false};
         int Nghost{1};
-        
-
+        BcType bc_condition_type {Periodic};
     };
 
 

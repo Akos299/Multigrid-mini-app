@@ -136,6 +136,30 @@ multigrid_library/fast:
 	cd /Users/lsewanou/Multigrid/mg_modules/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/multigrid_library.dir/build.make src/CMakeFiles/multigrid_library.dir/build
 .PHONY : multigrid_library/fast
 
+mgrid_stack.o: mgrid_stack.cpp.o
+.PHONY : mgrid_stack.o
+
+# target to build an object file
+mgrid_stack.cpp.o:
+	cd /Users/lsewanou/Multigrid/mg_modules/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/multigrid_library.dir/build.make src/CMakeFiles/multigrid_library.dir/mgrid_stack.cpp.o
+.PHONY : mgrid_stack.cpp.o
+
+mgrid_stack.i: mgrid_stack.cpp.i
+.PHONY : mgrid_stack.i
+
+# target to preprocess a source file
+mgrid_stack.cpp.i:
+	cd /Users/lsewanou/Multigrid/mg_modules/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/multigrid_library.dir/build.make src/CMakeFiles/multigrid_library.dir/mgrid_stack.cpp.i
+.PHONY : mgrid_stack.cpp.i
+
+mgrid_stack.s: mgrid_stack.cpp.s
+.PHONY : mgrid_stack.s
+
+# target to generate assembly for a file
+mgrid_stack.cpp.s:
+	cd /Users/lsewanou/Multigrid/mg_modules/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/multigrid_library.dir/build.make src/CMakeFiles/multigrid_library.dir/mgrid_stack.cpp.s
+.PHONY : mgrid_stack.cpp.s
+
 multigrid_base.o: multigrid_base.cpp.o
 .PHONY : multigrid_base.o
 
@@ -169,6 +193,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... multigrid_library"
+	@echo "... mgrid_stack.o"
+	@echo "... mgrid_stack.i"
+	@echo "... mgrid_stack.s"
 	@echo "... multigrid_base.o"
 	@echo "... multigrid_base.i"
 	@echo "... multigrid_base.s"

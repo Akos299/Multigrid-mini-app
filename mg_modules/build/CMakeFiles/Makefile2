@@ -151,12 +151,12 @@ poisson/CMakeFiles/poisson.dir/all: src/CMakeFiles/multigrid_library.dir/all
 poisson/CMakeFiles/poisson.dir/all: ndarray/CMakeFiles/ndarray_library.dir/all
 	$(MAKE) $(MAKESILENT) -f poisson/CMakeFiles/poisson.dir/build.make poisson/CMakeFiles/poisson.dir/depend
 	$(MAKE) $(MAKESILENT) -f poisson/CMakeFiles/poisson.dir/build.make poisson/CMakeFiles/poisson.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/lsewanou/Multigrid/mg_modules/build/CMakeFiles --progress-num=5,6,7 "Built target poisson"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/lsewanou/Multigrid/mg_modules/build/CMakeFiles --progress-num=6,7,8 "Built target poisson"
 .PHONY : poisson/CMakeFiles/poisson.dir/all
 
 # Build rule for subdir invocation for target.
 poisson/CMakeFiles/poisson.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/lsewanou/Multigrid/mg_modules/build/CMakeFiles 7
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/lsewanou/Multigrid/mg_modules/build/CMakeFiles 8
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 poisson/CMakeFiles/poisson.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/lsewanou/Multigrid/mg_modules/build/CMakeFiles 0
 .PHONY : poisson/CMakeFiles/poisson.dir/rule
@@ -182,12 +182,12 @@ poisson/CMakeFiles/poisson.dir/clean:
 src/CMakeFiles/multigrid_library.dir/all:
 	$(MAKE) $(MAKESILENT) -f src/CMakeFiles/multigrid_library.dir/build.make src/CMakeFiles/multigrid_library.dir/depend
 	$(MAKE) $(MAKESILENT) -f src/CMakeFiles/multigrid_library.dir/build.make src/CMakeFiles/multigrid_library.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/lsewanou/Multigrid/mg_modules/build/CMakeFiles --progress-num=1,2 "Built target multigrid_library"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/lsewanou/Multigrid/mg_modules/build/CMakeFiles --progress-num=1,2,3 "Built target multigrid_library"
 .PHONY : src/CMakeFiles/multigrid_library.dir/all
 
 # Build rule for subdir invocation for target.
 src/CMakeFiles/multigrid_library.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/lsewanou/Multigrid/mg_modules/build/CMakeFiles 2
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/lsewanou/Multigrid/mg_modules/build/CMakeFiles 3
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/CMakeFiles/multigrid_library.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/lsewanou/Multigrid/mg_modules/build/CMakeFiles 0
 .PHONY : src/CMakeFiles/multigrid_library.dir/rule
@@ -213,7 +213,7 @@ src/CMakeFiles/multigrid_library.dir/clean:
 ndarray/CMakeFiles/ndarray_library.dir/all:
 	$(MAKE) $(MAKESILENT) -f ndarray/CMakeFiles/ndarray_library.dir/build.make ndarray/CMakeFiles/ndarray_library.dir/depend
 	$(MAKE) $(MAKESILENT) -f ndarray/CMakeFiles/ndarray_library.dir/build.make ndarray/CMakeFiles/ndarray_library.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/lsewanou/Multigrid/mg_modules/build/CMakeFiles --progress-num=3,4 "Built target ndarray_library"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/lsewanou/Multigrid/mg_modules/build/CMakeFiles --progress-num=4,5 "Built target ndarray_library"
 .PHONY : ndarray/CMakeFiles/ndarray_library.dir/all
 
 # Build rule for subdir invocation for target.

@@ -76,29 +76,29 @@ poisson/CMakeFiles/poisson.dir/poisson.cpp.o: poisson/CMakeFiles/poisson.dir/fla
 poisson/CMakeFiles/poisson.dir/poisson.cpp.o: /Users/lsewanou/Multigrid/mg_modules/poisson/poisson.cpp
 poisson/CMakeFiles/poisson.dir/poisson.cpp.o: poisson/CMakeFiles/poisson.dir/compiler_depend.ts
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/lsewanou/Multigrid/mg_modules/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object poisson/CMakeFiles/poisson.dir/poisson.cpp.o"
-	cd /Users/lsewanou/Multigrid/mg_modules/build/poisson && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT poisson/CMakeFiles/poisson.dir/poisson.cpp.o -MF CMakeFiles/poisson.dir/poisson.cpp.o.d -o CMakeFiles/poisson.dir/poisson.cpp.o -c /Users/lsewanou/Multigrid/mg_modules/poisson/poisson.cpp
+	cd /Users/lsewanou/Multigrid/mg_modules/build/poisson && g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT poisson/CMakeFiles/poisson.dir/poisson.cpp.o -MF CMakeFiles/poisson.dir/poisson.cpp.o.d -o CMakeFiles/poisson.dir/poisson.cpp.o -c /Users/lsewanou/Multigrid/mg_modules/poisson/poisson.cpp
 
 poisson/CMakeFiles/poisson.dir/poisson.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/poisson.dir/poisson.cpp.i"
-	cd /Users/lsewanou/Multigrid/mg_modules/build/poisson && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/lsewanou/Multigrid/mg_modules/poisson/poisson.cpp > CMakeFiles/poisson.dir/poisson.cpp.i
+	cd /Users/lsewanou/Multigrid/mg_modules/build/poisson && g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/lsewanou/Multigrid/mg_modules/poisson/poisson.cpp > CMakeFiles/poisson.dir/poisson.cpp.i
 
 poisson/CMakeFiles/poisson.dir/poisson.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/poisson.dir/poisson.cpp.s"
-	cd /Users/lsewanou/Multigrid/mg_modules/build/poisson && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/lsewanou/Multigrid/mg_modules/poisson/poisson.cpp -o CMakeFiles/poisson.dir/poisson.cpp.s
+	cd /Users/lsewanou/Multigrid/mg_modules/build/poisson && g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/lsewanou/Multigrid/mg_modules/poisson/poisson.cpp -o CMakeFiles/poisson.dir/poisson.cpp.s
 
 poisson/CMakeFiles/poisson.dir/main.cpp.o: poisson/CMakeFiles/poisson.dir/flags.make
 poisson/CMakeFiles/poisson.dir/main.cpp.o: /Users/lsewanou/Multigrid/mg_modules/poisson/main.cpp
 poisson/CMakeFiles/poisson.dir/main.cpp.o: poisson/CMakeFiles/poisson.dir/compiler_depend.ts
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/lsewanou/Multigrid/mg_modules/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object poisson/CMakeFiles/poisson.dir/main.cpp.o"
-	cd /Users/lsewanou/Multigrid/mg_modules/build/poisson && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT poisson/CMakeFiles/poisson.dir/main.cpp.o -MF CMakeFiles/poisson.dir/main.cpp.o.d -o CMakeFiles/poisson.dir/main.cpp.o -c /Users/lsewanou/Multigrid/mg_modules/poisson/main.cpp
+	cd /Users/lsewanou/Multigrid/mg_modules/build/poisson && g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT poisson/CMakeFiles/poisson.dir/main.cpp.o -MF CMakeFiles/poisson.dir/main.cpp.o.d -o CMakeFiles/poisson.dir/main.cpp.o -c /Users/lsewanou/Multigrid/mg_modules/poisson/main.cpp
 
 poisson/CMakeFiles/poisson.dir/main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/poisson.dir/main.cpp.i"
-	cd /Users/lsewanou/Multigrid/mg_modules/build/poisson && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/lsewanou/Multigrid/mg_modules/poisson/main.cpp > CMakeFiles/poisson.dir/main.cpp.i
+	cd /Users/lsewanou/Multigrid/mg_modules/build/poisson && g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/lsewanou/Multigrid/mg_modules/poisson/main.cpp > CMakeFiles/poisson.dir/main.cpp.i
 
 poisson/CMakeFiles/poisson.dir/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/poisson.dir/main.cpp.s"
-	cd /Users/lsewanou/Multigrid/mg_modules/build/poisson && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/lsewanou/Multigrid/mg_modules/poisson/main.cpp -o CMakeFiles/poisson.dir/main.cpp.s
+	cd /Users/lsewanou/Multigrid/mg_modules/build/poisson && g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/lsewanou/Multigrid/mg_modules/poisson/main.cpp -o CMakeFiles/poisson.dir/main.cpp.s
 
 # Object files for target poisson
 poisson_OBJECTS = \

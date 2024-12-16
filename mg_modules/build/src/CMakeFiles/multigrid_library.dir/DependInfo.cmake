@@ -8,6 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
+  "/Users/lsewanou/Multigrid/mg_modules/src/mgrid_stack.cpp" "src/CMakeFiles/multigrid_library.dir/mgrid_stack.cpp.o" "gcc" "src/CMakeFiles/multigrid_library.dir/mgrid_stack.cpp.o.d"
   "/Users/lsewanou/Multigrid/mg_modules/src/multigrid_base.cpp" "src/CMakeFiles/multigrid_library.dir/multigrid_base.cpp.o" "gcc" "src/CMakeFiles/multigrid_library.dir/multigrid_base.cpp.o.d"
   )
 

@@ -1,4 +1,6 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/multigrid_library.dir/mgrid_stack.cpp.o"
+  "CMakeFiles/multigrid_library.dir/mgrid_stack.cpp.o.d"
   "CMakeFiles/multigrid_library.dir/multigrid_base.cpp.o"
   "CMakeFiles/multigrid_library.dir/multigrid_base.cpp.o.d"
   "libmultigrid_library.a"

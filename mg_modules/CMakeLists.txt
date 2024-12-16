@@ -8,7 +8,8 @@ if(${CMAKE_VERSION} VERSION_LESS 3.12)
 endif()
 
 #set C++ version to be used
-set(CMAKE_CXX_STANDARD 17) 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_COMPILER g++)  
 # set PATH to cmake config files       
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "cmake") 
 # 

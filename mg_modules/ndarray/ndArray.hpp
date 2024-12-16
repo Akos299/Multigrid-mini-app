@@ -342,9 +342,6 @@ namespace nd {
 
 	// ------------------------------------------------------------------------
 
-	// Include implementation
-	#include "ndArray.hpp"
-
 }
 
 #endif

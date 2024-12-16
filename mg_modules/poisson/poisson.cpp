@@ -6,6 +6,8 @@ template<typename T, int Ndim>
 Poisson<T,Ndim>::Poisson(const multigrid::Settings<T>& setting, std::array<double, 3> &starts, std::array<double, 3> &ends, multigrid::TransfertOperator &rest_operator,
                                           multigrid::TransfertOperator &inter_operator){
 
+                                        std::cout<< "Poisson constructor" << std::endl;
+                                            // source[finest_level] = -1.0; sourceIsSet = true;
                                           }
 template<typename T, int Ndim>
 Poisson<T,Ndim>::~Poisson(){}

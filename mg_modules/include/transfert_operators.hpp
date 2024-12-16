@@ -1,5 +1,5 @@
-#ifndef __TRANSFERT_OPERATORS__
-#define __TRANSFERT_OPERATORS__
+#ifndef __TRANSFERT_OPERATORS_HPP__
+#define __TRANSFERT_OPERATORS_HPP__
 
 #include "../ndarray/ndArray.hpp"
 #include "../include/utilities.hpp"

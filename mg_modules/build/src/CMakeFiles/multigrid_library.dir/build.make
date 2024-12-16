@@ -76,27 +76,43 @@ src/CMakeFiles/multigrid_library.dir/multigrid_base.cpp.o: src/CMakeFiles/multig
 src/CMakeFiles/multigrid_library.dir/multigrid_base.cpp.o: /Users/lsewanou/Multigrid/mg_modules/src/multigrid_base.cpp
 src/CMakeFiles/multigrid_library.dir/multigrid_base.cpp.o: src/CMakeFiles/multigrid_library.dir/compiler_depend.ts
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/lsewanou/Multigrid/mg_modules/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object src/CMakeFiles/multigrid_library.dir/multigrid_base.cpp.o"
-	cd /Users/lsewanou/Multigrid/mg_modules/build/src && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/CMakeFiles/multigrid_library.dir/multigrid_base.cpp.o -MF CMakeFiles/multigrid_library.dir/multigrid_base.cpp.o.d -o CMakeFiles/multigrid_library.dir/multigrid_base.cpp.o -c /Users/lsewanou/Multigrid/mg_modules/src/multigrid_base.cpp
+	cd /Users/lsewanou/Multigrid/mg_modules/build/src && g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/CMakeFiles/multigrid_library.dir/multigrid_base.cpp.o -MF CMakeFiles/multigrid_library.dir/multigrid_base.cpp.o.d -o CMakeFiles/multigrid_library.dir/multigrid_base.cpp.o -c /Users/lsewanou/Multigrid/mg_modules/src/multigrid_base.cpp
 
 src/CMakeFiles/multigrid_library.dir/multigrid_base.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/multigrid_library.dir/multigrid_base.cpp.i"
-	cd /Users/lsewanou/Multigrid/mg_modules/build/src && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/lsewanou/Multigrid/mg_modules/src/multigrid_base.cpp > CMakeFiles/multigrid_library.dir/multigrid_base.cpp.i
+	cd /Users/lsewanou/Multigrid/mg_modules/build/src && g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/lsewanou/Multigrid/mg_modules/src/multigrid_base.cpp > CMakeFiles/multigrid_library.dir/multigrid_base.cpp.i
 
 src/CMakeFiles/multigrid_library.dir/multigrid_base.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/multigrid_library.dir/multigrid_base.cpp.s"
-	cd /Users/lsewanou/Multigrid/mg_modules/build/src && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/lsewanou/Multigrid/mg_modules/src/multigrid_base.cpp -o CMakeFiles/multigrid_library.dir/multigrid_base.cpp.s
+	cd /Users/lsewanou/Multigrid/mg_modules/build/src && g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/lsewanou/Multigrid/mg_modules/src/multigrid_base.cpp -o CMakeFiles/multigrid_library.dir/multigrid_base.cpp.s
+
+src/CMakeFiles/multigrid_library.dir/mgrid_stack.cpp.o: src/CMakeFiles/multigrid_library.dir/flags.make
+src/CMakeFiles/multigrid_library.dir/mgrid_stack.cpp.o: /Users/lsewanou/Multigrid/mg_modules/src/mgrid_stack.cpp
+src/CMakeFiles/multigrid_library.dir/mgrid_stack.cpp.o: src/CMakeFiles/multigrid_library.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/lsewanou/Multigrid/mg_modules/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object src/CMakeFiles/multigrid_library.dir/mgrid_stack.cpp.o"
+	cd /Users/lsewanou/Multigrid/mg_modules/build/src && g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/CMakeFiles/multigrid_library.dir/mgrid_stack.cpp.o -MF CMakeFiles/multigrid_library.dir/mgrid_stack.cpp.o.d -o CMakeFiles/multigrid_library.dir/mgrid_stack.cpp.o -c /Users/lsewanou/Multigrid/mg_modules/src/mgrid_stack.cpp
+
+src/CMakeFiles/multigrid_library.dir/mgrid_stack.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/multigrid_library.dir/mgrid_stack.cpp.i"
+	cd /Users/lsewanou/Multigrid/mg_modules/build/src && g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/lsewanou/Multigrid/mg_modules/src/mgrid_stack.cpp > CMakeFiles/multigrid_library.dir/mgrid_stack.cpp.i
+
+src/CMakeFiles/multigrid_library.dir/mgrid_stack.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/multigrid_library.dir/mgrid_stack.cpp.s"
+	cd /Users/lsewanou/Multigrid/mg_modules/build/src && g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/lsewanou/Multigrid/mg_modules/src/mgrid_stack.cpp -o CMakeFiles/multigrid_library.dir/mgrid_stack.cpp.s
 
 # Object files for target multigrid_library
 multigrid_library_OBJECTS = \
-"CMakeFiles/multigrid_library.dir/multigrid_base.cpp.o"
+"CMakeFiles/multigrid_library.dir/multigrid_base.cpp.o" \
+"CMakeFiles/multigrid_library.dir/mgrid_stack.cpp.o"
 
 # External object files for target multigrid_library
 multigrid_library_EXTERNAL_OBJECTS =
 
 src/libmultigrid_library.a: src/CMakeFiles/multigrid_library.dir/multigrid_base.cpp.o
+src/libmultigrid_library.a: src/CMakeFiles/multigrid_library.dir/mgrid_stack.cpp.o
 src/libmultigrid_library.a: src/CMakeFiles/multigrid_library.dir/build.make
 src/libmultigrid_library.a: src/CMakeFiles/multigrid_library.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/lsewanou/Multigrid/mg_modules/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX static library libmultigrid_library.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/lsewanou/Multigrid/mg_modules/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX static library libmultigrid_library.a"
 	cd /Users/lsewanou/Multigrid/mg_modules/build/src && $(CMAKE_COMMAND) -P CMakeFiles/multigrid_library.dir/cmake_clean_target.cmake
 	cd /Users/lsewanou/Multigrid/mg_modules/build/src && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/multigrid_library.dir/link.txt --verbose=$(VERBOSE)
 

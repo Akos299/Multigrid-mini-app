@@ -76,15 +76,15 @@ ndarray/CMakeFiles/ndarray_library.dir/ndArray.cpp.o: ndarray/CMakeFiles/ndarray
 ndarray/CMakeFiles/ndarray_library.dir/ndArray.cpp.o: /Users/lsewanou/Multigrid/mg_modules/ndarray/ndArray.cpp
 ndarray/CMakeFiles/ndarray_library.dir/ndArray.cpp.o: ndarray/CMakeFiles/ndarray_library.dir/compiler_depend.ts
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/lsewanou/Multigrid/mg_modules/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object ndarray/CMakeFiles/ndarray_library.dir/ndArray.cpp.o"
-	cd /Users/lsewanou/Multigrid/mg_modules/build/ndarray && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT ndarray/CMakeFiles/ndarray_library.dir/ndArray.cpp.o -MF CMakeFiles/ndarray_library.dir/ndArray.cpp.o.d -o CMakeFiles/ndarray_library.dir/ndArray.cpp.o -c /Users/lsewanou/Multigrid/mg_modules/ndarray/ndArray.cpp
+	cd /Users/lsewanou/Multigrid/mg_modules/build/ndarray && g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT ndarray/CMakeFiles/ndarray_library.dir/ndArray.cpp.o -MF CMakeFiles/ndarray_library.dir/ndArray.cpp.o.d -o CMakeFiles/ndarray_library.dir/ndArray.cpp.o -c /Users/lsewanou/Multigrid/mg_modules/ndarray/ndArray.cpp
 
 ndarray/CMakeFiles/ndarray_library.dir/ndArray.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/ndarray_library.dir/ndArray.cpp.i"
-	cd /Users/lsewanou/Multigrid/mg_modules/build/ndarray && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/lsewanou/Multigrid/mg_modules/ndarray/ndArray.cpp > CMakeFiles/ndarray_library.dir/ndArray.cpp.i
+	cd /Users/lsewanou/Multigrid/mg_modules/build/ndarray && g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/lsewanou/Multigrid/mg_modules/ndarray/ndArray.cpp > CMakeFiles/ndarray_library.dir/ndArray.cpp.i
 
 ndarray/CMakeFiles/ndarray_library.dir/ndArray.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/ndarray_library.dir/ndArray.cpp.s"
-	cd /Users/lsewanou/Multigrid/mg_modules/build/ndarray && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/lsewanou/Multigrid/mg_modules/ndarray/ndArray.cpp -o CMakeFiles/ndarray_library.dir/ndArray.cpp.s
+	cd /Users/lsewanou/Multigrid/mg_modules/build/ndarray && g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/lsewanou/Multigrid/mg_modules/ndarray/ndArray.cpp -o CMakeFiles/ndarray_library.dir/ndArray.cpp.s
 
 # Object files for target ndarray_library
 ndarray_library_OBJECTS = \

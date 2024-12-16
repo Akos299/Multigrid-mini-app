@@ -1,5 +1,6 @@
-#ifndef __POISSON__
-#define __POISSON__
+#ifndef __POISSON_HPP__
+#define __POISSON_HPP__
+
 #include "../include/multigrid_base.hpp"
 
 template<typename T, int Ndim>
