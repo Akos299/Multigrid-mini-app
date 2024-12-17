@@ -1,7 +1,7 @@
 #ifndef __TRANSFERT_OPERATORS_HPP__
 #define __TRANSFERT_OPERATORS_HPP__
 
-#include "../ndarray/ndArray.hpp"
+#include "../include/ndArray.h"
 #include "../include/utilities.hpp"
 
 namespace multigrid
@@ -32,10 +32,10 @@ namespace multigrid
         if (Ndim == 2)
         {
             // update iner cells
-            for (int j = 1; j < nyc - 1; j++)
+            for (nd::index_t j = 1; j < nyc - 1; j++)
             {
                 auto fj = 2 * j;
-                for (int i = 1; i < nxc - 1; i++)
+                for (nd::index_t i = 1; i < nxc - 1; i++)
                 {
                     auto fi = 2 * i;
                     corseData({i, j}) = (1 / 64) * (9 * fineData({fi, fj}) + 9 * fineData({fi + 1, fj}) + 9 * fineData({fi + 1, fj + 1}) + 9 * fineData({fi, fj + 1}) + 3 * fineData({fi - 1, fj}) + 3 * fineData({fi + 2, fj}) + 3 * fineData({fi + 2, fj + 1}) + 3 * fineData({fi - 1, fj + 1}) + fineData({fi - 1, fj - 1}) + fineData({fi + 2, fj - 1}) + fineData({fi + 2, fj + 2}) + fineData({fi - 1, fj + 2}) + 3 * fineData({fi, fj - 1}) + 3 * fineData({fi + 1, 2 * j - 1}) + 3 * fineData({fi + 1, fj + 2}) + 3 * fineData({fi, fj + 2}));
@@ -48,13 +48,13 @@ namespace multigrid
         else if (Ndim == 3)
         {
             // update iner cells
-            for (int k = 1; k < nzc - 1; k++)
+            for (nd::index_t k = 1; k < nzc - 1; k++)
             {
                 auto fk = 2 * k;
-                for (int j = 1; j < nyc - 1; j++)
+                for (nd::index_t j = 1; j < nyc - 1; j++)
                 {
                     auto fj = 2 * j;
-                    for (int i = 1; i < nxc - 1; i++)
+                    for (nd::index_t i = 1; i < nxc - 1; i++)
                     {
                         auto fi = 2 * i;
                         corseData({i, j, k}) = (1 / 512) * (fineData({fi - 1, fj + 2, fk - 1}) + 3 * fineData({fi - 1, fj + 1, fk - 1}) + 3 * fineData({fi - 1, fj, fk - 1}) + fineData({fi - 1, fj - 1, fk - 1}) + 3 * fineData({fi, fj + 2, fk - 1}) + 9 * fineData({fi, fj + 1, fk - 1}) + 9 * fineData({fi, fj, fk - 1}) + 3 * fineData({fi, fj - 1, fk - 1}) + 3 * fineData({fi + 1, fj + 2, fk - 1}) + 9 * fineData({fi + 1, fj + 1, fk - 1}) + 9 * fineData({fi + 1, fj, fk - 1}) + 3 * fineData({fi + 1, fj - 1, fk - 1}) + fineData({fi + 2, fj + 2, fk - 1}) + 3 * fineData({fi + 2, fj + 1, fk - 1}) + 3 * fineData({fi + 2, fj, fk - 1}) + fineData({fi + 2, fj - 1, fk - 1})
@@ -87,10 +87,10 @@ namespace multigrid
         if (Ndim == 2)
         {
             // update iner cells
-            for (int j = 1; j < nyc - 1; j++)
+            for (nd::index_t j = 1; j < nyc - 1; j++)
             {
                 auto fj = 2 * j;
-                for (int i = 1; i < nxc - 1; i++)
+                for (nd::index_t i = 1; i < nxc - 1; i++)
                 {
                     auto fi = 2 * i;
                     corseData({i, j}) = (1 / 16) * (2 * fineData({fi, fj}) + 3 * fineData({fi + 1, fj}) + 3 * fineData({fi, fj + 1}) + 3 * fineData({fi + 1, fj + 1}) + fineData({fi, fj + 2}) + 0 * fineData({fi, fj - 1}) + 0 * fineData({fi + 1, fj + 2}) + fineData({fi + 1, fj - 1}) + 0 * fineData({fi - 1, fj}) + fineData({fi - 1, fj + 1}) + 0 * fineData({fi + 2, fj + 1}) + 1 * fineData({fi + 2, fj}) + fineData({fi - 1, fj + 2}) + 0 * fineData({fi - 1, fj - 1}) + 0 * fineData({fi + 2, fj + 2}) + fineData({fi + 1, fj - 1}));
@@ -103,13 +103,13 @@ namespace multigrid
         else if (Ndim == 3)
         {
             // update iner cells
-            for (int k = 1; k < nzc - 1; k++)
+            for (nd::index_t k = 1; k < nzc - 1; k++)
             {
                 auto fk = 2 * k;
-                for (int j = 1; j < nyc - 1; j++)
+                for (nd::index_t j = 1; j < nyc - 1; j++)
                 {
                     auto fj = 2 * j;
-                    for (int i = 1; i < nxc - 1; i++)
+                    for (nd::index_t i = 1; i < nxc - 1; i++)
                     {
                         auto fi = 2 * i;
                         corseData({i, j, k}) = (1 / 32) * (fineData({fi + 1, fj, fk - 1}) + fineData({fi + 1, fj - 1, fk - 1}) + fineData({fi + 2, fj, fk - 1}) + fineData({fi + 2, fj - 1, fk - 1}) + 2 * fineData({fi, fj + 1, fk}) + 2 * fineData({fi, fj, fk}) + 2 * fineData({fi + 1, fj + 1, fk}) + 3 * fineData({fi + 1, fj, fk}) + fineData({fi + 1, fj - 1, fk}) + fineData({fi + 2, fj, fk}) + fineData({fi + 2, fj - 1, fk}) + fineData({fi - 1, fj + 2, fk + 1}) + fineData({fi - 1, fj + 1, fk + 1}) + fineData({fi, fj + 2, fk + 1}) + 3 * fineData({fi, fj + 1, fk + 1}) + 2 * fineData({fi, fj, fk + 1}) + 2 * fineData({fi + 1, fj + 1, fk + 1}) + 2 * fineData({fi + 1, fj, fk + 1}) + fineData({fi - 1, fj + 2, fk + 2}) + fineData({fi - 1, fj + 1, fk + 2}) + fineData({fi, fj + 2, fk + 2}) + fineData({fi, fj + 1, fk + 2}));
@@ -136,10 +136,10 @@ namespace multigrid
         if (Ndim == 2)
         {
             // update iner cells
-            for (int j = 1; j < nyc - 1; j++)
+            for (nd::index_t j = 1; j < nyc - 1; j++)
             {
                 auto fj = 2 * j;
-                for (int i = 1; i < nxc - 1; i++)
+                for (nd::index_t i = 1; i < nxc - 1; i++)
                 {
                     auto fi = 2 * i;
                     corseData({i, j}) = (1 / 16) * (2 * fineData({fi, fj}) + 2 * fineData({fi + 1, fj}) + 2 * fineData({fi, fj + 1}) + 2 * fineData({fi + 1, fj + 1}) + fineData({fi, fj + 2}) + fineData({fi, fj - 1}) + fineData({fi + 1, fj + 2}) + fineData({fi + 1, fj - 1}) + fineData({fi - 1, fj}) + fineData({fi - 1, fj + 1}) + fineData({fi + 2, fj + 1}) + fineData({fi + 2, fj}) + 0 * fineData({fi - 1, fj + 2}) + 0 * fineData({fi - 1, fj - 1}) + 0 * fineData({fi + 2, fj + 2}) + 0 * fineData({fi + 1, fj - 1}));
@@ -152,13 +152,13 @@ namespace multigrid
         else if (Ndim == 3)
         {
             // update iner cells
-            for (int k = 1; k < nzc - 1; k++)
+            for (nd::index_t k = 1; k < nzc - 1; k++)
             {
                 auto fk = 2 * k;
-                for (int j = 1; j < nyc - 1; j++)
+                for (nd::index_t j = 1; j < nyc - 1; j++)
                 {
                     auto fj = 2 * j;
-                    for (int i = 1; i < nxc - 1; i++)
+                    for (nd::index_t i = 1; i < nxc - 1; i++)
                     {
                         auto fi = 2 * i;
                         corseData({i, j, k}) = (1 / 48) * (fineData({i, j + 1, k - 1}) + fineData({i, j, k - 1}) + fineData({i + 1, j, k - 1}) + fineData({i + 1, j + 1, k - 1})
@@ -191,10 +191,10 @@ namespace multigrid
         if (Ndim == 2)
         {
             // update iner cells
-            for (int j = 1; j < nyc - 1; j++)
+            for (nd::index_t j = 1; j < nyc - 1; j++)
             {
                 auto fj = 2 * j;
-                for (int i = 1; i < nxc - 1; i++)
+                for (nd::index_t i = 1; i < nxc - 1; i++)
                 {
                     auto fi = 2 * i;
                     corseData({i, j}) = (1 / 4) * (fineData({fi, fj}) + fineData({fi + 1, fj}) + fineData({fi, fj + 1}) + fineData({fi + 1, fj + 1}));
@@ -207,13 +207,13 @@ namespace multigrid
         else if (Ndim == 3)
         {
             // update iner cells
-            for (int k = 1; k < nzc - 1; k++)
+            for (nd::index_t k = 1; k < nzc - 1; k++)
             {
                 auto fk = 2 * k;
-                for (int j = 1; j < nyc - 1; j++)
+                for (nd::index_t j = 1; j < nyc - 1; j++)
                 {
                     auto fj = 2 * j;
-                    for (int i = 1; i < nxc - 1; i++)
+                    for (nd::index_t i = 1; i < nxc - 1; i++)
                     {
                         auto fi = 2 * i;
                         corseData({i, j, k}) = (1 / 8) * (fineData({fi, fj, fk}) + fineData({fi + 1, fj, fk}) + fineData({fi, fj + 1, fk}) + fineData({fi, fj, fk + 1}) + fineData({fi + 1, fj, fk + 1}) + fineData({fi, fj + 1, fk + 1}) + fineData({fi + 1, fj + 1, fk}) + fineData({fi + 1, fj + 1, fk + 1}));
@@ -240,10 +240,10 @@ namespace multigrid
         if (Ndim == 2)
         {
             // update iner cells
-            for (int j = 0; j < nyc; j++)
+            for (nd::index_t j = 0; j < nyc; j++)
             {
                 auto fj = 2 * j;
-                for (int i = 0; i < nxc; i++)
+                for (nd::index_t i = 0; i < nxc; i++)
                 {
                     auto fi = 2 * i;
                     auto tmp = corseData({i, j});
@@ -258,13 +258,13 @@ namespace multigrid
         if (Ndim == 3)
         {
             // update iner cells
-            for (int k = 0; k < nzc; k++)
+            for (nd::index_t k = 0; k < nzc; k++)
             {
                 auto fk = 2 * k;
-                for (int j = 0; j < nyc; j++)
+                for (nd::index_t j = 0; j < nyc; j++)
                 {
                     auto fj = 2 * j;
-                    for (int i = 0; i < nxc; i++)
+                    for (nd::index_t i = 0; i < nxc; i++)
                     {
                         auto fi = 2 * i;
                         auto tmp = corseData({i, j, k});
@@ -299,10 +299,10 @@ namespace multigrid
         if (Ndim == 2)
         {
             // update iner cells
-            for (int j = 1; j < nyc - 1; j++)
+            for (nd::index_t j = 1; j < nyc - 1; j++)
             {
                 auto fj = 2 * j;
-                for (int i = 1; i < nxc - 1; i++)
+                for (nd::index_t i = 1; i < nxc - 1; i++)
                 {
                     auto fi = 2 * i;
                     fineData({fi, fj}) = (1 / 16) * (9 * corseData({i, j}) + 3 * corseData({i - 1, j}) + 3 * corseData({i, j - 1}) + corseData({i - 1, j - 1}));
@@ -316,14 +316,14 @@ namespace multigrid
         }
         if (Ndim == 3)
         {
-            for (int k = 1; k < nzc - 1; k++)
+            for (nd::index_t k = 1; k < nzc - 1; k++)
             {
 
                 auto fk = 2 * k;
-                for (int j = 1; j < nyc - 1; j++)
+                for (nd::index_t j = 1; j < nyc - 1; j++)
                 {
                     auto fj = 2 * j;
-                    for (int i = 1; i < nxc - 1; i++)
+                    for (nd::index_t i = 1; i < nxc - 1; i++)
                     {
                         auto fi = 2 * i;
 
@@ -366,11 +366,11 @@ namespace multigrid
         if (Ndim == 2)
         {
             // update iner cells
-            for (int j = 1; j < nyc - 1; j++)
+            for (nd::index_t j = 1; j < nyc - 1; j++)
             {
                 auto fj = j * 2;
 
-                for (int i = 1; i < nxc - 1; i++)
+                for (nd::index_t i = 1; i < nxc - 1; i++)
                 {
                     auto fi = 2 * i;
                     fineData({fi, fj}) = (1 / 4) * (2 * corseData({i, j}));
@@ -385,13 +385,13 @@ namespace multigrid
 
         if (Ndim == 3)
         {
-            for (int k = 1; k < nzc - 1; k++)
+            for (nd::index_t k = 1; k < nzc - 1; k++)
             {
                 auto fk = 2 * k;
-                for (int j = 1; j < nyc - 1; j++)
+                for (nd::index_t j = 1; j < nyc - 1; j++)
                 {
                     auto fj = 2 * j;
-                    for (int i = 1; i < nxc - 1; i++)
+                    for (nd::index_t i = 1; i < nxc - 1; i++)
                     {
                         auto fi = 2 * i;
 
@@ -434,10 +434,10 @@ namespace multigrid
         if (Ndim == 2)
         {
             // update iner cells
-            for (int j = 1; j < nyc - 1; j++)
+            for (nd::index_t j = 1; j < nyc - 1; j++)
             {
                 auto fj = 2 * j;
-                for (int i = 1; i < nxc - 1; i++)
+                for (nd::index_t i = 1; i < nxc - 1; i++)
                 {
                     auto fi = 2 * i;
                     fineData({fi, fj}) = (1 / 4) * (2 * corseData({i, j}) + corseData({i - 1, j}) + corseData({i, j - 1}));
@@ -452,13 +452,13 @@ namespace multigrid
 
         if (Ndim == 3)
         {
-            for (int k = 1; k < nzc - 1; k++)
+            for (nd::index_t k = 1; k < nzc - 1; k++)
             {
                 auto fk = 2 * k;
-                for (int j = 1; j < nyc - 1; j++)
+                for (nd::index_t j = 1; j < nyc - 1; j++)
                 {
                     auto fj = 2 * j;
-                    for (int i = 1; i < nxc - 1; i++)
+                    for (nd::index_t i = 1; i < nxc - 1; i++)
                     {
                         auto fi = 2 * i;
 
@@ -485,7 +485,7 @@ namespace multigrid
         }
     }
 
-    template <typename T, TransfertOperator Op, int Ndim>
+    template <typename T, int Ndim>
     inline void cubic_operator(nd::ndArray<T, Ndim> &corseData, nd::ndArray<T, Ndim> &fineData)
     {
         size_t nxc, nyc, nzc, nxf, nyf, nzf;
@@ -504,14 +504,14 @@ namespace multigrid
         if (Ndim == 3)
         {
 
-            for (int k = 1; k < nzc - 1; k++)
+            for (nd::index_t k = 1; k < nzc - 1; k++)
             {
 
                 auto fk = 2 * k;
-                for (int j = 1; j < nyc - 1; j++)
+                for (nd::index_t j = 1; j < nyc - 1; j++)
                 {
                     auto fj = 2 * j;
-                    for (int i = 1; i < nxc - 1; i++)
+                    for (nd::index_t i = 1; i < nxc - 1; i++)
                     {
                         auto fi = 2 * i;
 
@@ -540,34 +540,34 @@ namespace multigrid
 
     /** @brief Te;plate based prolongation operator
      */
-    template <typename T, TransfertOperator Op, int Ndim>
-    inline void prolongation_operator(nd::ndArray<T, Ndim> &corseData, nd::ndArray<T, Ndim> &fineData)
+    template <typename T, int Ndim>
+    inline void prolongation_operator(nd::ndArray<T, Ndim> &corseData, nd::ndArray<T, Ndim> &fineData, TransfertOperator Op)
     {
-        if constexpr (Op == PointAverage)
+        if (Op == PointAverage)
             constantwise_prolongation_operator<T, Ndim>(corseData, fineData);
-        if constexpr (Op == Linear)
+        if (Op == Linear)
             linear_prolongation_operator<T, Ndim>(corseData, fineData);
-        if constexpr (Op == Khalil)
+        if (Op == Khalil)
             khalil_prolongation_operator<T, Ndim>(corseData, fineData);
-        if constexpr (Op == Kwak)
+        if (Op == Kwak)
             kwak_prolongation_operator<T, Ndim>(corseData, fineData);
-        if constexpr (Op == TreeCubic)
+        if (Op == TreeCubic)
             cubic_operator<T, Ndim>(corseData, fineData);
     }
 
     /** @brief Template based restriction operator
      */
-    template <typename T, TransfertOperator Op, int Ndim>
-    inline void restriction_operator(nd::ndArray<T, Ndim> &corseData, nd::ndArray<T, Ndim> &fineData)
+    template <typename T,  int Ndim>
+    inline void restriction_operator(nd::ndArray<T, Ndim> &corseData, nd::ndArray<T, Ndim> &fineData, TransfertOperator Op)
     {
-        if constexpr (Op == PointAverage)
+        if (Op == PointAverage)
             constantwise_restriction_operator<T, Ndim>(corseData, fineData);
-        if constexpr (Op == Linear)
+        if (Op == Linear)
             linear_restriction_operator<T, Ndim>(corseData, fineData);
-        if constexpr (Op == Khalil)
+        if (Op == Khalil)
             khalil_restriction_operator<T, Ndim>(corseData, fineData);
-        if constexpr (Op == Kwak)
-            kwak_restriction_operator(corseData, fineData);
+        if (Op == Kwak)
+            kwak_restriction_operator<T,Ndim>(corseData, fineData);
     }
 }
 

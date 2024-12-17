@@ -4,7 +4,8 @@ set(HEADER_LIST ../include/utilities.hpp
 ../include/transfert_operators.hpp
 ../include/multigrid_base.hpp
 ../include/mgrid_stack.hpp
-../include/boundary_condition.hpp)
+../include/boundary_condition.hpp
+../include/ndArray.h)
 
 set(SOURCE_LIST multigrid_base.cpp mgrid_stack.cpp)
 add_library(multigrid_library ${SOURCE_LIST} ${HEADER_LIST})

@@ -25,7 +25,7 @@ add_subdirectory(poisson)
 add_subdirectory(src)
 
 # the  ndArray lib is here
-add_subdirectory(ndarray)
+# add_subdirectory(ndarray)
 
 
 

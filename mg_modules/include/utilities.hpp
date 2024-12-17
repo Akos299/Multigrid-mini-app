@@ -17,7 +17,7 @@ namespace multigrid {
 
 /** @brief // This code is contributed by Aditya Kumar (adityakumar129). From Geeksforgeeks
  */
-int power(int x, int n)
+inline int power(int x, int n)
 {
     // If x^0 return 1
     if (n == 0)
@@ -64,23 +64,24 @@ enum DiscreteOperator{
 */
 
     /** @brief structure to set initial parameter for the multigrid class */
-    template <typename T>
-    struct Settings
+    // template <typename T>
+    typedef struct Settings
     {
 
-        size_t nb_levels{21}; // maxLevel
-        size_t nx_fine{16};
-        size_t ny_fine{16};
-        size_t nz_fine{16};
-        T res_tol{1e-10};
-        size_t max_iter{400};
-        CycleType cycle_type{multigrid::wCycle};
-        size_t npre{1}, npost{1};
-        T w{1.0};
-        bool fixedNiter{false};
-        int Nghost{1};
-        BcType bc_condition_type {Periodic};
-    };
+        size_t nb_levels = 21; // maxLevel
+        size_t nx_fine = 16;
+        size_t ny_fine= 16;
+        size_t nz_fine= 16;
+        double res_tol =1e-10;
+        size_t max_iter = 400;
+        CycleType cycle_type = multigrid::wCycle;
+        size_t npre =1, npost =1;
+        double w =1.0;
+        bool fixedNiter = false;
+        int Nghost = 1;
+        BcType bc_condition_type  = Periodic;
+
+    } my_settings;
 
 
 }

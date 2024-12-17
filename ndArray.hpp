@@ -1,6 +1,4 @@
-#include "ndArray.hpp"
-
-using namespace nd;
+// using namespace nd;
 /**
  * Assignment operator.
  * Performs a shallow copy of the other instance.
