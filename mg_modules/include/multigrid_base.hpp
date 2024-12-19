@@ -3,11 +3,12 @@
 
 #include <array>
 #include <cstddef>
+#include <iostream>
 
-#include "../include/boundary_condition.hpp"
-#include "../include/mgrid_stack.hpp"
-#include "../include/ndArray.h"
-#include "../include/utilities.hpp"
+#include "boundary_condition.hpp"
+#include "mgrid_stack.hpp"
+#include "ndArray.h"
+#include "utilities.hpp"
 
 namespace multigrid {
 
@@ -55,6 +56,7 @@ public:
     std::cout << "I'm in the MultigridBase constructor" << "\n";
     finest_level = solution.get_finer_level();
     coarsest_level = solution.get_coarser_level();
+    current_level = finest_level;
 
     std::cout << "fin_lev = " << finest_level << " coa_lev = " << coarsest_level
               << "\n";
@@ -94,6 +96,7 @@ public:
       set_boundary_condition<T, Ndim>(solution[level],
                                       bc); // we used fixed-zero condition for
                                            // intermediate level for the moment
+    temp = solution;
   };
 
   virtual ~MultigridBase() {};
@@ -237,6 +240,11 @@ public:
   inline void iterate_mg_cycle_to_convergence_niter(const CycleType &cycle_type,
                                                     const int n_iter);
 
+  /** @brief 
+  *
+  */
+  inline void add_correction(nd::ndArray<T, Ndim> &to_add,int level);
+
 protected:
   Stack<T, Ndim> solution, source,
       old_solution;                    // Grids for solution and source term
@@ -316,6 +324,7 @@ void MultigridBase<T, Ndim>::relaxation_updater(size_t level, nd::index_t i,
 /**/
 template <typename T, int Ndim>
 inline nd::ndArray<T, Ndim> &MultigridBase<T, Ndim>::get_solution() {
+  std::cout << "==== In get_solution === \n ";
   return solution[finest_level];
 }
 
@@ -323,6 +332,7 @@ inline nd::ndArray<T, Ndim> &MultigridBase<T, Ndim>::get_solution() {
 template <typename T, int Ndim>
 template <typename U>
 inline void MultigridBase<T, Ndim>::set_initial_guess(U arg) {
+  std::cout << "==== In set_initial_guess ==== \n";
   solution[finest_level] = arg;
   is_initial_value_set = true;
 }
@@ -330,6 +340,7 @@ inline void MultigridBase<T, Ndim>::set_initial_guess(U arg) {
 /**/
 template <typename T, int Ndim>
 inline nd::ndArray<T, Ndim> &MultigridBase<T, Ndim>::get_source() {
+  std::cout << "==== In get_source ==== \n";
   return source[finest_level];
 }
 
@@ -337,6 +348,7 @@ inline nd::ndArray<T, Ndim> &MultigridBase<T, Ndim>::get_source() {
 template <typename T, int Ndim>
 template <typename U>
 inline void MultigridBase<T, Ndim>::set_source(U arg) {
+  std::cout << "==== In set_solution ==== \n";
   source[finest_level] = arg;
   is_source_set = true;
 }
@@ -346,6 +358,8 @@ template <typename T, int Ndim>
 inline void
 MultigridBase<T, Ndim>::evaluate_operator(size_t level,
                                           nd::ndArray<T, Ndim> &result) {
+
+  std::cout<< "==== In evaluate_operator ==== \n";
   size_t nx = result.size(0);
   size_t ny = result.size(1);
   size_t nz = 1;
@@ -404,6 +418,7 @@ template <typename T, int Ndim>
 inline void
 MultigridBase<T, Ndim>::evaluate_residual(size_t level,
                                           nd::ndArray<T, Ndim> &result) {
+  std::cout << "                         === evaluate_residual::start === \n\n";
   size_t nx = result.size(0);
   size_t ny = result.size(1);
   size_t nz = 0;
@@ -438,6 +453,10 @@ MultigridBase<T, Ndim>::evaluate_residual(size_t level,
   }
 
   else if (Ndim == 3) {
+    // std::cout << " buffer infos ( result, source, solution) \n";
+    // result.info();
+    // source[level].info();
+    // solution[level].info();
     for (auto k = k_start; k < k_end; k++) {
       for (auto j = j_start; j < j_end; j++) {
         for (auto i = i_start; i < i_end; i++) {
@@ -455,6 +474,7 @@ MultigridBase<T, Ndim>::evaluate_residual(size_t level,
       }
     }
   }
+  std::cout << "                         === evaluate_residual::end === \n\n";
 }
 
 /**/
@@ -466,6 +486,8 @@ MultigridBase<T, Ndim>::evaluate_residual(size_t level,
 template <typename T, int Ndim>
 // template <DiscreteOperator Lh>
 void MultigridBase<T, Ndim>::smoother(const size_t level, size_t N, T w) {
+
+std::cout << "                        === smoother-with-iter::start_call === \n\n";
   size_t nx{solution[level].size(0)}, ny{solution[level].size(1)}, nz{1};
   size_t i_start{1}, i_end{nx - 1}, j_start{1}, j_end{ny - 1}, k_start, k_end;
   double hx, hy, hz, ihxx, ihyy, ihzz;
@@ -538,6 +560,7 @@ void MultigridBase<T, Ndim>::smoother(const size_t level, size_t N, T w) {
     if (level != finest_level && bc == ZeroGradient)
       set_zero_gradient_bc<T, Ndim>(solution[level]);
   }
+  std::cout << "                        === smoother-with-iter::end_call === \n\n";
 }
 
 /**/
@@ -546,9 +569,15 @@ template <typename T, int Ndim>
 // template <DiscreteOperator Lh>
 void MultigridBase<T, Ndim>::smoother(const size_t level,
                                       const double tolerance, T w) {
+  std::cout<< "  ====@@@@ smoother-with-tol::start_call @@@@==== \n\n";
   size_t nx{solution[level].size(0)}, ny{solution[level].size(1)}, nz{1};
   size_t i_start{1}, i_end{nx - 1}, j_start{1}, j_end{ny - 1}, k_start, k_end;
-
+  if(Ndim == 3)
+  {
+    nz = solution[level].size(2);
+    k_start = 1; k_end = nz - 1;
+  }
+  int count = 0;
   for (size_t iter = 0; iter < max_iter; iter++) {
     T l2_res = 0, l2_sol = 0, cur_res = 0;
     /*Col-major mode*/
@@ -570,7 +599,15 @@ void MultigridBase<T, Ndim>::smoother(const size_t level,
         }
       }
 
+  
       else if (Ndim == 3) {
+
+ 
+        // std::cout << " =======start====== \n";
+        // std::cout << i_start << " " << j_start << " " << k_start << "\n";
+        // std::cout << " =======end======== \n";
+        // std::cout << i_end << " " << j_end << " " << k_end << "\n";
+
         for (size_t k = k_start; k < k_end; k++) {
           for (size_t j = j_start; j < j_end; j++) {
             auto i = pColor - power(-1, pColor) * ((k + j) % 2);
@@ -582,27 +619,39 @@ void MultigridBase<T, Ndim>::smoother(const size_t level,
               cur_res = solution[level]({i, j, k}) - cur_res;
               l2_res += power(cur_res, 2);
               l2_sol += power(solution[level]({i, j, k}), 2);
+
+              // if(count < 10)
+              //   std::cout << "smoother::count " << count << "\n";
+              // count ++;
+
             }
           }
         }
       }
 
+      // std::cout << "======================smoother::pcolor============ " << pColor <<'\n';
+
       // TODO : Boundaries update
       /** For IMG used zero-fixed boundary conditions at coarser levels.
        *  For FAS used specified physical boundary condition
        */
+      //  std::cout << "smoother::set_zero_gradient \n";
       if (level != finest_level && bc == ZeroGradient)
         set_zero_gradient_bc<T, Ndim>(solution[level]);
     }
-
+  //  std::cout << "smoother::check_cvg \n";
     if ((sqrt(l2_res) / sqrt(l2_sol)) < tolerance)
       return;
+    // std::cout << "smoother::end::check_cvg " << " iter = " << iter << "/" << max_iter << "\n";
+
   }
+   std::cout << "  ====@@@@ smoother-with-tol::end_call   @@@@==== \n\n";
 }
 
 /**/
 template <typename T, int Ndim>
 inline void MultigridBase<T, Ndim>::restrict_solution() {
+  std::cout<< " ====@@@@ restrict_solution(all levels)::start @@@@==== \n\n ";
   for (auto level = finest_level;
        level >
        0 /*coarsest_level*/ /*we prefer to use coarsest_level insteed of 0*/;
@@ -611,23 +660,31 @@ inline void MultigridBase<T, Ndim>::restrict_solution() {
     // updates boundary conditions
     // set_boundary_condition<T,Ndim>(solution[level], ZeroFixed);
   }
+  std::cout<< "====@@@@ restrict_solution(all levels)::end @@@@==== \n\n ";
 }
 
 /**/
 template <typename T, int Ndim>
 inline void MultigridBase<T, Ndim>::restrict_source() {
+  std::cout<< "  ====@@@@ restrict_source(all levels)::start @@@@==== \n\n ";
   for (auto level = finest_level;
        level >
        0 /*coarsest_level*/ /*we prefer to use coarsest_level insteed of 0*/;
        level--) {
     source.coarsen(level, res_ope);
   }
+  std::cout<< " ====@@@@ restrict_source(all levels)::end  @@@@==== \n\n ";
 }
 
 /**/
 template <typename T, int Ndim>
 inline void MultigridBase<T, Ndim>::set_solution_to_zero(size_t level) {
+  std::cout << "                         === set_solution_to_zero::level : " << level << "\n\n"; 
+  std::cout << "                         === set_solution_to_zero::numel : " << solution[level].numel() << "\n\n";
+  std::cout << "                         === set_solution_to_zero::info \n ";
+  solution[level].info();
   solution[level].set_zero();
+  std::cout << "                         === set_solution_to_zero::end \n\n"; 
 }
 
 template <typename T, int Ndim>
@@ -654,22 +711,31 @@ inline void MultigridBase<T, Ndim>::one_step_down() {
     return;
 
   // perform Npre smoothing step
+  std::cout << "                    ========== one_step_down::smoother ========= \n\n"; 
   smoother(current_level, npre, w);
 
   // evaluate the defect/residual in the current stage
+  std::cout << "                    ========== one_step_down::evaluate_residual ==== \n\n";
   evaluate_residual(current_level, temp[current_level]);
 
   // restrict the defect to the next level. The restrict defect is store in the
   // next level source nd::ndArray, so it can be used as source for the next
   // level step
+  std::cout << "                    ========== one_step_down::coarsen =========== \n\n";
   temp.coarsen(current_level, source[current_level - 1], res_ope);
 
+
   // set the initial guess for the next level to zero
+  std::cout << "                    ========== one_step_down::set_solution_to_zero ==== \n\n";
+
+  /** implement the function to explicitly set solution to zero*/
   set_solution_to_zero(current_level - 1);
   // set boundary condition
   //  set_boundary_condition<T,Ndim>(solution[current_level-1], bc);
 
+
   current_level--;
+  std::cout << "                   ========== one_step_down::current_level::end ==== \n\n";
 }
 
 /**/
@@ -677,14 +743,24 @@ inline void MultigridBase<T, Ndim>::one_step_down() {
 template <typename T, int Ndim>
 inline void MultigridBase<T, Ndim>::one_step_up() {
   // prolongate the correction to the finest level
+  std::cout << "                 ======== one_step_up::refine(interpolation) ==== \n\n";
   solution.refine(current_level, temp[current_level + 1], int_ope);
 
+  temp[current_level+1].info();
+
+  // make a function for the correction step
+  // add_correction(solution[current_level + 1], temp[current_level+1]);
+
   // apply correction
-  solution[current_level + 1] += temp[current_level + 1];
+   std::cout << "                ======== one_step_up::correction ====== \n\n";
+  // solution[current_level + 1] += temp[current_level + 1];
+  add_correction(temp[current_level+1], current_level+1 );
 
   // perform Npost relaxation
+  std::cout << "                 ======= one_step_up::post_smoother ====== \n\n";
   smoother(current_level + 1, npost, w);
   current_level++;
+  std::cout << "                 ======= one_step_up::current_level(after one upstroke) ====== :  " <<current_level <<" \n\n";
 }
 
 /**/
@@ -692,15 +768,22 @@ inline void MultigridBase<T, Ndim>::one_step_up() {
 template <typename T, int Ndim>
 inline void MultigridBase<T, Ndim>::mgi_Vcycle() {
   size_t start_level = current_level;
+  std::cout << "                 ============ mgi::Vcycle::current_level : " << current_level << "\n\n";
   // Downstroke
   while (current_level != 0 /*coarsest_level*/) {
     one_step_down();
+    std::cout << "               =========== mgi_Vcycle::downstroke::cureent_level(after one restriction) :  " << current_level << "\n\n";
   }
   // solve the coarsest level
+  
+  std::cout << "               ============ mgi_Vcycle::smoother_call (solve the coarsest level)::start =========== \n\n";
   smoother(current_level, res_tol, w);
+  std::cout << "               ============ mgi_Vcycle::smoother_call (solve the coarsest level)::end =========== \n\n";
   // Upstroke
   while (current_level != start_level) {
+    std::cout << "              ============ mgi_Vcycle::upstroke::cureent_level(start of the upstroke) : " << current_level << "\n\n";
     one_step_up();
+    std::cout << "              ============ mgi_Vcycle::upstroke::end ==== \n\n " ;
   }
 }
 
@@ -708,9 +791,10 @@ inline void MultigridBase<T, Ndim>::mgi_Vcycle() {
 template <typename T, int Ndim>
 inline void MultigridBase<T, Ndim>::mgi(const CycleType &cycle_type) {
   if (cycle_type == CycleType::vCycle) {
+    std::cout << "        ==== mgi::vCycle ====     \n\n";  
     mgi_Vcycle();
   } else {
-    std::cout << "user-defined multigrid cycle not implemented " << std::endl;
+    std::cout << "   ==== user-defined multigrid cycle not implemented ====   \n\n" << std::endl;
   }
 
   //   if (cycle_type == CycleType::fCycle) {
@@ -730,10 +814,13 @@ template <typename T, int Ndim>
 inline void MultigridBase<T, Ndim>::fmg_cycle(
     const CycleType &cycle_type,
     const int mgc_per_level /*Number of multigrid cycle per level*/) {
+  std::cout << "  ====@@@@ fmg_cycle::finest_level : " << finest_level << "\n\n";
   for (int level = 0; level < finest_level; level++) {
     TransfertOperator Op = TreeCubic;
+    std::cout << " ====@@@@ fmg_cycle::refine at lev (fmg prolongation) : " << level << "\n\n"; 
     solution.refine(level, Op);
     current_level = level + 1;
+    std::cout<< " ====@@@@ fmg_cycle::mgc_per_cycle(start mgi iteration) : " << mgc_per_level << "\n\n";
     for (int i = 0; i < mgc_per_level; i++)
       mgi(cycle_type);
   }
@@ -742,16 +829,24 @@ inline void MultigridBase<T, Ndim>::fmg_cycle(
 /**/
 template <typename T, int Ndim>
 inline void MultigridBase<T, Ndim>::fmg(
+  
     const CycleType &cycle_type,
     const int mgc_per_level /*Number of multigrid cycle per level*/) {
+  std::cout << "=========================@@@@@ fmg::start ============================@@@@@ \n\n\n\n";
   // perform a restriction from the finest level to the coarsest one
+  std::cout << "              =============== fmg::restrict::solution ================= \n\n";
   restrict_solution();
+  std::cout << "             =============== fmg::restrict::source    ================ \n\n";
   restrict_source();
   // solve the coarsest level
+  std::cout << "             =============== fmg::smoother            ================ \n\n";
   smoother(coarsest_level, res_tol, w);
+
   // perform the full multigrid cycle
+  std::cout << "              ============== fmg::fmg_cycle            ================ \n\n";
   fmg_cycle(cycle_type, mgc_per_level);
 
+  std::cout << "              ============= fmg::begin_iterate         =============== \n\n\n\n";
   /**
    * If in the full multigrid algorithm we apply one V(or W or F)-cycle
    * per level, then at the end of the full multigrid algorithm we need to
@@ -764,13 +859,25 @@ inline void MultigridBase<T, Ndim>::fmg(
     iterate_mg_cycle_to_convergence_tol(cycle_type, res_tol);
   else
     iterate_mg_cycle_to_convergence_niter(cycle_type, max_iter);
+  std::cout << "=========================@@@@@ fmg::end ============================@@@@@ \n\n\n\n";
 }
 /**/
 template <typename T, int Ndim>
 inline void MultigridBase<T, Ndim>::iterate_mg_cycle_to_convergence_tol(
     const CycleType &cycle_type, const T eps) {
 
-  nd::ndArray<T, Ndim> _result; /** size of the grid to be specified*/
+  std::cout << "==== iterate_mg_cycle_to_convergence_tol::begin ==== \n\n";
+  nd::index_t nx{solution[finest_level].size(0)}, ny{solution[finest_level].size(1)}, nz{solution[finest_level].size(2)};
+  if (Ndim == 2)
+      nz = 1;
+  nd::index_t finest_size_3[3] = {nx,ny,nz}, finest_size_2[2]={nx,ny};
+  nd::index_t finest_numel   = nx*ny*nz;
+  nd::ndArray<T, Ndim> _result;
+  if(Ndim == 2)
+    _result = nd::ndArray<T, Ndim>(new T[finest_numel], finest_size_2, true) ; /** size of the grid to be specified*/
+  else if(Ndim==3)
+    _result = nd::ndArray<T, Ndim>(new T[finest_numel], finest_size_3, true);
+
   int n_iter = 0;
 
   // computed the residual or the defect ====> should be modified to implement
@@ -800,25 +907,81 @@ inline void MultigridBase<T, Ndim>::iterate_mg_cycle_to_convergence_tol(
     }
     n_iter++;
   }
+  std::cout << "==== iterate_mg_cycle_to_convergence_tol::end ==== \n";
 }
 
 /**/
 template <typename T, int Ndim>
 inline void MultigridBase<T, Ndim>::iterate_mg_cycle_to_convergence_niter(
     const CycleType &cycle_type, const int n_iter) {
-
-  nd::ndArray<T, Ndim> _result; /** size of the grid to be specified*/
+  std::cout << "==== iterate_mg_cycle_to_convergence_niter::begin ==== \n";
+   nd::index_t nx{solution[finest_level].size(0)}, ny{solution[finest_level].size(1)}, nz{solution[finest_level].size(2)};
+  if (Ndim == 2)
+      nz = 1;
+  nd::index_t finest_size_3[3] = {nx,ny,nz}, finest_size_2[2]={nx,ny};
+  nd::index_t finest_numel   = nx*ny*nz;
+  nd::ndArray<T, Ndim> _result;
+  if(Ndim == 2)
+    _result = nd::ndArray<T, Ndim>(new T[finest_numel], finest_size_2, true) ; /** size of the grid to be specified*/
+  else if(Ndim==3)
+    _result = nd::ndArray<T, Ndim>(new T[finest_numel], finest_size_3, true); /** size of the grid to be specified*/
 
   for (int i = 0; i < n_iter; i++) {
     mgi(cycle_type);
     // computed the residual or the defect ====> should be modified to implement
     // the equation (20) int Tomida & Stone (2023)
+
+    std::cout << "iterate_mg_cycle_to_converge_niter:: evaluate_residual \n";
     evaluate_residual(finest_level, _result);
+
+    std::cout << "iterate_mg_cycle_to_converge_niter:: L2 norm \n";
     T def_norm_new = L2Norm<T, Ndim>(_result);
 
     // TODO add in the function signature a std::vector<T> to store the history
     // of the residual
   }
+  std::cout << "==== iterate_mg_cycle_to_convergence_tol::end ==== \n";
+}
+
+template <typename T, int Ndim>
+inline void MultigridBase<T, Ndim>::add_correction(nd::ndArray<T, Ndim>& to_add, int level)
+{
+
+  std::cout << "                         ==== add_correction::start ==== \n\n";
+  size_t nx{solution[level].size(0)}, ny{solution[level].size(1)}, nz{1};
+  size_t i_start{1}, i_end{nx - 1}, j_start{1}, j_end{ny - 1}, k_start, k_end;
+  if(Ndim == 3)
+  {
+    nz = solution[level].size(2);
+    k_start = 1; k_end = nz - 1;
+  }
+
+  if(Ndim == 2)
+  {
+    for(auto j = j_start; j < j_end; j++)
+    {
+      for(auto i = i_start; i < i_end; i++)
+      {
+        solution[level]({i,j}) += to_add({i,j});
+      }
+    }
+  }
+
+  else if (Ndim==3)
+  {
+    for(auto k = k_start; k < k_end; k++)
+    {
+      for(auto j = j_start; j < j_end; j++)
+      {
+        for(auto i = i_start; i < i_end; i++)
+        {
+          solution[level]({i,j,k}) += to_add({i,j,k});
+        }
+      }
+    }
+  }
+
+  std::cout << "                         ==== add_correction::end ==== \n\n";
 }
 
 } // namespace multigrid

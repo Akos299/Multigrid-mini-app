@@ -1,8 +1,8 @@
 #ifndef __TRANSFERT_OPERATORS_HPP__
 #define __TRANSFERT_OPERATORS_HPP__
 
-#include "../include/ndArray.h"
-#include "../include/utilities.hpp"
+#include "ndArray.h"
+#include "utilities.hpp"
 
 namespace multigrid
 {

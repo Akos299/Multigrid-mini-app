@@ -1,7 +1,7 @@
 
 
 #include "poisson.hpp"
-#include "../include/ndArray.h"
+#include "ndArray.h"
 
 // template<typename T, int Ndim>
 // Poisson<T,Ndim>::Poisson(const multigrid::Settings<T>& setting, std::array<double, 3> &starts, std::array<double, 3> &ends, multigrid::TransfertOperator &rest_operator,

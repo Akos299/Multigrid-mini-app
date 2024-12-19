@@ -1,5 +1,5 @@
-#include "../include/multigrid_base.hpp"
-#include "../include/boundary_condition.hpp"
+#include "multigrid_base.hpp"
+#include "boundary_condition.hpp"
 
 namespace multigrid {
 

@@ -1,8 +1,8 @@
 #ifndef __BCONDITIONS_HPP__
 #define __BCONDITIONS_HPP__
 
-#include "../include/utilities.hpp"
-#include "../include/ndArray.h"
+#include "utilities.hpp"
+#include "ndArray.h"
 
 namespace multigrid {
 

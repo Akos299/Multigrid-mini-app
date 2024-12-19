@@ -1,4 +1,4 @@
-#include "../include/mgrid_stack.hpp"
+#include "mgrid_stack.hpp"
 
 namespace multigrid {
 

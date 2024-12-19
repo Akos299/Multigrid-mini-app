@@ -1,10 +1,10 @@
 
 #include "poisson.hpp"
-#include "../include/multigrid_base.hpp"
+#include "multigrid_base.hpp"
 #include <iostream>
 #include <vector>
 #include <memory>
-#include "../include/ndArray.h"
+#include "ndArray.h"
 
 int main(int argc, char** argv)
 {
@@ -17,72 +17,41 @@ int main(int argc, char** argv)
         // Run through given aspect ratios
         std::cout << "Running..." << std::endl;
 
-        // Solve problems   
- 
-    //    struct multigrid::Settings _set;
+//================== @@@@@@@ Solve problems  @@@@@@@ =================== 
 
+        multigrid::my_settings init_setting;
+        /* set the level numbers */
+        init_setting.nb_levels = 3; // set the level numbers
+        /* set finest grid geometry*/
+        init_setting.nx_fine   = 16; init_setting.ny_fine   = 16; init_setting.nz_fine   = 16;
+        /* set the maximum number of iteration*/
+        init_setting.max_iter =  5;
+        /* set the mgi cycle type */
+        init_setting.cycle_type = multigrid::vCycle;
+        /* set the number of pre and post smoothings*/
+        init_setting.npre = 2; init_setting.npost = 2;
+        /* set the coarser levels boundary conditions
+        * for the mgi we used zero-fixed boundary condition for all coaser levels.
+        * But for FAS or non-linear problems, we should used the physical boundary
+        * conditions.
+        */
+        init_setting.bc_condition_type=multigrid::ZeroFixed;
+
+        /* set the initial grid sizes */
         std::array<double, 3> starts = {-0.5, -0.5, -0.5} ;
         std::array<double, 3> ends  = {0.5, 0.5, 0.5};
-        multigrid::TransfertOperator rest_Op = multigrid::PointAverage;
-        multigrid::TransfertOperator int_Op = multigrid::Linear;
-           std::cout << "11111111111 Finished!" << std::endl;
-        // std::unique_ptr<Poisson<double, 3>> problem(new Poisson<double,3>(settings,starts,ends,rest_Op,int_Op ));
 
-        // multigrid::Poisson<double, 3> problem(settings, starts,ends, rest_Op, int_Op);
-        multigrid::my_settings setss;
-        // std::cout << "Finished!" << std::endl;
-        multigrid::Poisson<double,3> problem(setss,starts,ends,rest_Op,int_Op);
+        /* set transfert operators : restriction and prolongation */
+        multigrid::TransfertOperator rest_Op = multigrid::PointAverage; // restriction operator
+        multigrid::TransfertOperator int_Op = multigrid::Linear;  // interpolation/prolongation operator
+        std::cout << "11111111111 Finished!" << std::endl;
 
-        std::cout << setss.max_iter << "\n";
-        // problem.solve();
+
+        multigrid::Poisson<double,3> problem(init_setting,starts,ends,rest_Op,int_Op);
+
+        std::cout << init_setting.max_iter << "\n";
+        problem.solve();
         std::cout << "Finished!" << std::endl;
         return 0;
-
-        // const nd::index_t size[1] = {5};
-        // nd::ndArray<double, 1> A(new double[5], size, true);
-        // A({1}) = 0;
-        // A.info();
-        // std::cout << A.size(0);
-
-        // return 0;
-    // std::cout << " poisson solver. " << "\n\n";
-    // return 0;
-    // try{
-    //     // Declare some option variables
     
-        
-    //     // Set up command-line options
-       
-        
-    //     // Run through given aspect ratios
-    //     std::cout << "Running..." << std::endl;
-
-    //     // Solve problems   
- 
-    // //    struct multigrid::Settings _set;
-
-    //     std::array<double, 3> starts = {-0.5, -0.5, -0.5} ;
-    //     std::array<double, 3> ends  = {0.5, 0.5, 0.5};
-    //     multigrid::TransfertOperator rest_Op = multigrid::PointAverage;
-    //     multigrid::TransfertOperator int_Op = multigrid::Linear;
-    //     // std::unique_ptr<Poisson<double, 3>> problem(new Poisson<double,3>(settings,starts,ends,rest_Op,int_Op ));
-
-    //     // multigrid::Poisson<double, 3> problem(settings, starts,ends, rest_Op, int_Op);
-    //     multigrid::my_settings setss;
-    //      multigrid::Poisson<double,3> problem(setss);
-
-    //     std::cout << setss.max_iter << "\n";
-    //     // problem.solve();
-    //     std::cout << "Finished!" << std::endl;
-    //     return 0;
-
-    //     const nd::index_t size[1] = {5};
-    //     nd::ndArray<double, 1> A(new double[5], size, true);
-    //     A({1}) = 0;
-    //     A.info();
-    //     std::cout << A.size(0);
-    // } catch (std::exception& e) {
-	// 	std::cout << e.what() << std::endl;
-    //     return 1;
-    // }    
 }

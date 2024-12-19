@@ -232,10 +232,10 @@ namespace nd {
 		void info() const;    /*TESTED*/
 
         //Arithmeticals operators
-       self& operator+=(const self& other); /*TESTED*/
-       self& operator+=(const T x); /*TESTED*/
-       self& operator*=(const T x); /*TESTED*/
-	   self& operator= (const T x);
+       inline self& operator+=(const self& other); /*TESTED*/
+       inline self& operator+=(const T x); /*TESTED*/
+       inline self& operator*=(const T x); /*TESTED*/
+	   inline self& operator= (const T x);
       
 
 
@@ -321,10 +321,14 @@ namespace nd {
 		inline index_t ndims() const { return N; }
 
 
-        void set_zero()      /*TESTED*/
+       inline void set_zero()      /*TESTED*/
         {
-            for(index_t i = 0; i < numel(); i++)
-            (*this)({i}) = 0;
+            // for(index_t i = 0; i < numel(); i++)
+			// {
+			// 	// std::cout << "nd::array::set_zero:: i " << i << "\n";
+			// 	// if(! this->empty())
+			// 		// (*this)({i}) = 0;
+			// }
         }
 
 
@@ -374,8 +378,17 @@ ndArray<T, N> &ndArray<T, N>::operator=(const self &other)
 template <typename T, dimen_t N>
 ndArray<T, N> &ndArray<T, N>::operator+=(const self &other)
 {
-	for (index_t i = 0; i < numel(); i++)
-		(*this)({i}) += other({i});
+
+	std::cout << " nd::array::operator+= \n";
+	std::cout << " sizes : " << this->numel() << " " << other.numel() << "\n";
+	for (index_t i = 0; i < this->numel(); i++)
+		{
+			std::cout << " i = " << i << " ";
+			std::cout << "other i " << other ({i}) << " ";	 
+			(*this)({i}) += other({i});
+		}
+	
+	std::cout << "\n nd::array::operator+=  end \n";
 	return (*this);
 }
 

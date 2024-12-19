@@ -1,10 +1,10 @@
 #ifndef __POISSON_HPP__
 #define __POISSON_HPP__
 
-#include "../include/multigrid_base.hpp"
-#include "../include/utilities.hpp"
+#include "multigrid_base.hpp"
+#include "utilities.hpp"
 #include <array>
-#include "../include/ndArray.h"
+#include "ndArray.h"
 
 
 namespace multigrid{

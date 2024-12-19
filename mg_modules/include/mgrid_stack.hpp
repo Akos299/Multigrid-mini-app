@@ -1,10 +1,10 @@
 #ifndef __STACK_HPP__
 #define __STACK_HPP__
 
-#include "../include/transfert_operators.hpp"
-#include "../include/boundary_condition.hpp"
+#include "transfert_operators.hpp"
+#include "boundary_condition.hpp"
 #include "utilities.hpp"
-#include "../include/ndArray.h"
+#include "ndArray.h"
 #include <vector>
 
 namespace multigrid {
@@ -140,7 +140,9 @@ namespace multigrid {
     template <typename T, int Ndim>
     inline void Stack<T, Ndim>::coarsen(size_t level, nd::ndArray<T, Ndim> &coarse_level_data, TransfertOperator& Op)
     {
+        std::cout << "                          === stack::coarsen::start ===\n\n";
         restriction_operator<T,Ndim>(coarse_level_data, (*this)[level], Op);
+        std::cout << "                          === stack::coarsen::end ===\n\n";
     }
 
     template <typename T, int Ndim>
