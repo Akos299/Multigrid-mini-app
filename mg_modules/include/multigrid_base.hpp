@@ -245,6 +245,29 @@ public:
   */
   inline void add_correction(nd::ndArray<T, Ndim> &to_add,int level);
 
+  /** @brief 
+  *
+  */
+  inline void set_solution_at_lev_to_zero(size_t level);
+
+  /** @brief 
+  *
+  */
+  inline void set_source_at_lev_to_zero(size_t level);
+
+  /** @brief 
+  *
+  */
+  inline void set_level_solution(size_t level, T value);
+  /** @brief 
+  *
+  */
+  inline void set_level_source(size_t level, T value);
+  /** @brief 
+  *
+  */
+  inline void print_level_data(size_t level, std::string data_value);
+
 protected:
   Stack<T, Ndim> solution, source,
       old_solution;                    // Grids for solution and source term
@@ -685,7 +708,7 @@ inline void MultigridBase<T, Ndim>::set_solution_to_zero(size_t level) {
   std::cout << "                         === set_solution_to_zero::numel : " << solution[level].numel() << "\n\n";
   std::cout << "                         === set_solution_to_zero::info \n ";
   solution[level].info();
-  solution[level].set_zero();
+  set_solution_at_lev_to_zero(level);
   std::cout << "                         === set_solution_to_zero::end \n\n"; 
 }
 
@@ -697,7 +720,7 @@ inline void MultigridBase<T, Ndim>::set_all_solution_to_zero() {
 
 template <typename T, int Ndim>
 inline void MultigridBase<T, Ndim>::set_source_to_zero(size_t level) {
-  source[level].set_zero();
+  set_source_at_lev_to_zero(level);
 }
 
 template <typename T, int Ndim>
@@ -945,6 +968,7 @@ inline void MultigridBase<T, Ndim>::iterate_mg_cycle_to_convergence_niter(
   std::cout << "==== iterate_mg_cycle_to_convergence_tol::end ==== \n";
 }
 
+/**/
 template <typename T, int Ndim>
 inline void MultigridBase<T, Ndim>::add_correction(nd::ndArray<T, Ndim>& to_add, int level)
 {
@@ -984,6 +1008,152 @@ inline void MultigridBase<T, Ndim>::add_correction(nd::ndArray<T, Ndim>& to_add,
   }
 
   std::cout << "                         ==== add_correction::end ==== \n\n";
+}
+
+/**/
+template<typename T, int Ndim>
+inline void MultigridBase<T, Ndim>::set_solution_at_lev_to_zero(size_t level)
+{
+  size_t nx = solution[level].size(0), ny = solution[level].size(1), nz = 1; 
+  if(Ndim == 2)
+  {
+
+    for(nd::index_t j = 0; j < ny; j++)
+    {
+      for(nd::index_t i = 0; i < nx; i++)
+      {
+         solution[level]({i,j}) = 0;
+      }
+    }
+  }
+
+  if(Ndim == 3)
+  {
+    nz  = solution[level].size(2);
+    for(nd::index_t k = 0; k < nz; k++)
+    {
+      for(nd::index_t j = 0; j < ny; j++)
+        {
+          for(nd::index_t i = 0; i < nx; i++)
+          {
+            solution[level]({i,j,k}) = 0;
+          }
+        }
+    }
+  }
+}
+
+/**/
+template<typename T, int Ndim>
+inline void MultigridBase<T, Ndim>::set_source_at_lev_to_zero(size_t level)
+{
+  size_t nx = source[level].size(0), ny = source[level].size(1), nz = 1; 
+  if(Ndim == 2)
+  {
+    nz  = source[level].size(2);
+    for(nd::index_t j = 0; j < ny; j++)
+    {
+      for(nd::index_t i = 0; i < nx; i++)
+      {
+         source[level]({i,j}) = 0;
+      }
+    }
+  }
+
+  if(Ndim == 3)
+  {
+    for(nd::index_t k = 0; k < nz; k++)
+    {
+      for(nd::index_t j = 0; j < ny; j++)
+        {
+          for(nd::index_t i = 0; i < nx; i++)
+          {
+            source[level]({i,j,k}) = 0;
+          }
+        }
+    }
+  }
+}
+
+/**/
+template <typename T, int Ndim>
+inline void MultigridBase<T, Ndim>::set_level_solution(size_t level, T value) {
+  size_t nx = this->solution[finest_level].size(0), ny = this->solution[finest_level].size(1), nz = 1;
+  if (Ndim == 3) {
+
+    std::cout << "==================================    multigridBase::set_level_solution  ====================== \n";
+    nz = this->solution[finest_level].size(2);
+
+    std::cout << " nx " << nx << " ny " << ny << " nz " << nz << "\n";
+    for (nd::index_t k = 0; k < nz; k++) {
+      for (nd::index_t j = 0; j < ny; j++) {
+        for (nd::index_t i = 0; i < nx; i++) {
+          solution[finest_level]({i, j, k}) = value;
+        }
+      }
+    }
+  }
+
+  if (Ndim == 2) {
+    for (nd::index_t j = 0; j < ny; j++) {
+      for (nd::index_t i = 0; i < nx; i++) {
+        solution[finest_level]({i, j}) = value;
+      }
+    }
+  }
+}
+
+/**/
+template <typename T, int Ndim>
+inline void MultigridBase<T, Ndim>::set_level_source(size_t level, T value) {
+  size_t nx = source[finest_level].size(0), ny = source[1].size(1), nz = 1;
+  if (Ndim == 3) {
+    nz = source[finest_level].size(2);
+    for (nd::index_t k = 0; k < nz; k++) {
+      for (nd::index_t j = 0; j < ny; j++) {
+        for (nd::index_t i = 0; i < nx; i++) {
+          source[finest_level]({i, j, k}) = value;
+        }
+      }
+    }
+  }
+
+  if (Ndim == 2) {
+    for (nd::index_t j = 0; j < ny; j++) {
+      for (nd::index_t i = 0; i < nx; i++) {
+        source[finest_level]({i, j}) = value;
+      }
+    }
+  }
+}
+
+
+/**/
+template <typename T, int Ndim>
+inline void
+MultigridBase<T, Ndim>::print_level_data(size_t level,
+                                             std::string data_value) {
+  size_t n_elts = 0;
+  if (data_value == "solution") {
+    for (nd::index_t k = 0; k < solution[level].size(2); k++) {
+      for (nd::index_t j = 0; j < solution[level].size(1); j++) {
+        for (nd::index_t i = 0; i < solution[level].size(0); i++) {
+          std::cout << solution[level]({i, j, k}) << " ";
+        }
+      }
+    }
+    std::cout << "\n";
+  }
+  if (data_value == "source") {
+    for (nd::index_t k = 0; k < source[level].size(2); k++) {
+      for (nd::index_t j = 0; j < source[level].size(1); j++) {
+        for (nd::index_t i = 0; i < source[level].size(0); i++) {
+          std::cout << source[level]({i, j, k}) << " ";
+        }
+      }
+    }
+    std::cout << "\n";
+  }
 }
 
 } // namespace multigrid

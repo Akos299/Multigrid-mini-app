@@ -21,9 +21,9 @@ int main(int argc, char** argv)
 
         multigrid::my_settings init_setting;
         /* set the level numbers */
-        init_setting.nb_levels = 8 ; // set the level numbers
+        init_setting.nb_levels = 2 ; // set the level numbers
         /* set finest grid geometry*/
-        init_setting.nx_fine   = 512; init_setting.ny_fine   = 512; init_setting.nz_fine   = 512;
+        init_setting.nx_fine   = 8; init_setting.ny_fine   = 8; init_setting.nz_fine   = 8;
         /* set the maximum number of iteration*/
         init_setting.max_iter =  1;
         /* set the mgi cycle type */
@@ -48,6 +48,8 @@ int main(int argc, char** argv)
 
         multigrid::Poisson<double,3> problem(init_setting,starts,ends,rest_Op,int_Op);
 
+        problem.set_level_solution(init_setting.nb_levels-1, 2);
+        problem.print_level_data(init_setting.nb_levels-1, "solution");
         std::cout << init_setting.max_iter << "\n";
         // problem.solve();
         std::cout << "Finished!" << std::endl;
