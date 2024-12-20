@@ -5,6 +5,7 @@
 #include "boundary_condition.hpp"
 #include "utilities.hpp"
 #include "ndArray.h"
+#include <iostream>
 #include <vector>
 
 namespace multigrid {
@@ -19,12 +20,25 @@ namespace multigrid {
         public:
             Stack(const my_settings &s)
             {
-                std::cout << "stack_constructor = "  << "\n";
+                std::cout << "\n stack_constructor = "  << "\n";
                 nb_levels    = s.nb_levels;
                 nx_fine      = s.nx_fine;
                 ny_fine      = s.ny_fine;
                 nz_fine      = s.nz_fine;
+                nx_coarse    = s.nx_coarse;
+                ny_coarse    = s.ny_coarse;
+                nz_coarse    = s.nz_coarse;
+                
                 finest_level = (nb_levels - 1);
+
+                auto valid_finest_grid_pints = nx_coarse * power(2, finest_level);
+                if(nx_fine != (valid_finest_grid_pints))
+                { 
+
+                    std::cout << " No valid setting parameters : nx_fine should verify (nx_fine = nx_coarse * 2^(finest_level)) but nx_fine = " << nx_fine \
+                    << " and  nx_coarse * 2^(finest_level) = " << valid_finest_grid_pints << "\n";
+                    return ;
+                }
                 // coarsest_level = 0;
                 this->resize(nb_levels);
                 // set finest grid size
@@ -45,19 +59,18 @@ namespace multigrid {
                     std::cout << "Only dimension = 2/3 can be supported." << "\n";
                 }
                 // Data set for all levels
-                std::cout << "finest_level = " << this->finest_level;
-                std::cout << "corsest_level = " << this->coarsest_level;
+                // std::cout << "finest_level = " << this->finest_level << "\n";
+                // std::cout << "corsest_level = " << this->coarsest_level << "\n";
                 for(int lev_ = finest_level-1; lev_ >= 0; --lev_)
                 {
-                    std::cout << " I'm in this loop lev = " << lev_ <<  "\n";
-                     nx = 2 * (nx - 1) + 1;
-                    ny = 2 * (ny - 1) + 1;
-                    nz = (Ndim == 3) ? (2 * (nz - 1) + 1) : 0;
+                    // std::cout << " nx " << nx << " ny " << ny << " nz " << nz << "\n";
+                    // std::cout << " I'm in this loop lev = " << lev_ <<  "\n";
                     nx = (nx/2) +1;
                     ny = (ny/2) +1;
                     nz = (Ndim == 3) ? (nz/2)+1 : 0;
                     auto lev_numel = (Ndim == 2) ? (nx * ny) : (nx * ny * nz);
                     nd::index_t finest_size_2[2] = {nx, ny}, finest_size_3[3] = {nx,ny,nz};
+                    // std::cout << " nx " << nx << " ny " << ny << " nz " << nz << "\n";
                     if(Ndim == 2)
                         (*this)[lev_] = nd::ndArray<T,Ndim>(new T [lev_numel],finest_size_2, true);
                     else if(Ndim == 3)
@@ -67,6 +80,7 @@ namespace multigrid {
                         std::cout << "###### Warning in Stack<T,Ndim>::Stack(const Settings &s) : " << "\n";
                         std::cout << "Only dimension = 2/3 can be supported." << "\n";
                     }
+                    (*this)[lev_].info();
                 }
                 // for (int level = this->finest_level-1; level >= this->coarsest_level; --level)
                 // {
@@ -96,6 +110,13 @@ namespace multigrid {
                 // std::cout << "nb_level = " << this->finest_level;
                 // for(int i = 0; i < this->nb_levels; i++)
                 //     (*this)[i].set_zero();
+
+                for(auto i = 0; i < finest_level; i++)
+                {
+                    std::cout << " stack::ndarray_infos at level  " << i << " : ";
+                    (*this)[i].info();
+                    
+                }
             };
             virtual ~Stack() {};
 
@@ -123,7 +144,8 @@ namespace multigrid {
 
         private:
             size_t nb_levels; // number of grid levels required
-            nd::index_t nx_fine, ny_fine, nz_fine; // coarse resolution
+            nd::index_t nx_fine, ny_fine, nz_fine; // fine resolution
+            nd::index_t nx_coarse, ny_coarse, nz_coarse; // coarse resolution
             int  finest_level;                    // finest level
            int  coarsest_level = 0; // coarsest level. for future extension coarsestLevel can be different to zero.
             

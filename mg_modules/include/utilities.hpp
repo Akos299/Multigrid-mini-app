@@ -2,6 +2,7 @@
 #define __UTILITIES_HPP__
 
 #include <array>
+#include <cstddef>
 #include <math.h>
 
 namespace multigrid {
@@ -69,9 +70,15 @@ enum DiscreteOperator{
     {
 
         size_t nb_levels = 21; // maxLevel
-        size_t nx_fine = 16;
+        /* 16 interior cells */
+        size_t nx_fine= 16;
         size_t ny_fine= 16;
         size_t nz_fine= 16;
+        /* 4 interior cells  */
+        size_t nx_coarse=4;
+        size_t ny_coarse=4;
+        size_t nz_coarse=4;
+
         double res_tol =1e-10;
         size_t max_iter = 400;
         CycleType cycle_type = multigrid::wCycle;

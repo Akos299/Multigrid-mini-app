@@ -69,7 +69,7 @@ public:
       nz_fine = solution[finest_level].size(2);
     }
     std::cout << " nx_fine = " << nx_fine << " ny_fine = " << ny_fine
-              << "nz_fine = " << nz_fine << "\n";
+              << " nz_fine = " << nz_fine << "\n";
 
     //=========  set Physical boundary conditions on the finest level==========
     if (bc == BcType::Periodic) {
@@ -656,10 +656,12 @@ inline void MultigridBase<T, Ndim>::restrict_solution() {
        level >
        0 /*coarsest_level*/ /*we prefer to use coarsest_level insteed of 0*/;
        level--) {
+    solution[level].info();
     solution.coarsen(level, res_ope);
     // updates boundary conditions
     // set_boundary_condition<T,Ndim>(solution[level], ZeroFixed);
   }
+  solution[0].info();
   std::cout<< "====@@@@ restrict_solution(all levels)::end @@@@==== \n\n ";
 }
 
@@ -713,7 +715,7 @@ inline void MultigridBase<T, Ndim>::one_step_down() {
   // perform Npre smoothing step
   std::cout << "                    ========== one_step_down::smoother ========= \n\n"; 
   smoother(current_level, npre, w);
-
+  std::cout << "                    ========== one_step_down::solution_shape at current level : " << solution[current_level].size(0);
   // evaluate the defect/residual in the current stage
   std::cout << "                    ========== one_step_down::evaluate_residual ==== \n\n";
   evaluate_residual(current_level, temp[current_level]);
